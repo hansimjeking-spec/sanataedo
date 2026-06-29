@@ -116,8 +116,8 @@ function initialState() {
             type: "care",
             name: "명지병원",
             memo: "진료와 건강관리",
-            x: 790,
-            y: 420,
+            x: 700,
+            y: 610,
             width: 160,
             height: 76
           }
@@ -972,9 +972,10 @@ function clearState() {
 function defaultResourcePosition(person, index) {
   var side = index % 2 === 0 ? 1 : -1;
   var tier = Math.floor(index / 2);
+  var verticalOffset = person.generation === 0 ? 135 + tier * 85 : tier * 90;
   return {
-    x: clamp(person.x + side * (190 + tier * 35), 100, 1000),
-    y: clamp(person.y + 15 + tier * 90, 70, 690)
+    x: clamp(person.x + side * (155 + tier * 45), 100, 1000),
+    y: clamp(person.y + verticalOffset, 70, 690)
   };
 }
 
