@@ -545,16 +545,11 @@ function personNode(person) {
       return;
     }
     if (event.detail > 1) return;
-    group.singleClickTimer = setTimeout(function() {
-      state.selectedId = person.id;
-      state.selectedResourceId = null;
-      render();
-    }, 190);
+    selectDiagramItem(person.id, null, group);
   });
   group.addEventListener("dblclick", function(event) {
     event.preventDefault();
     event.stopPropagation();
-    clearTimeout(group.singleClickTimer);
     openQuickEditor("person", person.id);
   });
   return group;
@@ -646,16 +641,11 @@ function resourceNode(owner, resource) {
   group.addEventListener("click", function(event) {
     event.stopPropagation();
     if (event.detail > 1) return;
-    group.singleClickTimer = setTimeout(function() {
-      state.selectedId = owner.id;
-      state.selectedResourceId = resource.id;
-      render();
-    }, 190);
+    selectDiagramItem(owner.id, resource.id, group);
   });
   group.addEventListener("dblclick", function(event) {
     event.preventDefault();
     event.stopPropagation();
-    clearTimeout(group.singleClickTimer);
     openQuickEditor("resource", owner.id, resource.id);
   });
   return group;
@@ -796,6 +786,23 @@ function finishDrag() {
   renderResources();
 }
 
+function selectDiagramItem(personId, resourceId, targetGroup) {
+  state.selectedId = personId;
+  state.selectedResourceId = resourceId;
+  svg.querySelectorAll(".person-node").forEach(function(node) {
+    node.classList.remove("selected");
+  });
+  svg.querySelectorAll(".resource-node").forEach(function(node) {
+    node.classList.remove("selected");
+  });
+  if (resourceId) targetGroup.classList.add("selected");
+  else targetGroup.classList.add("selected");
+  renderPeople();
+  renderSelected();
+  renderResources();
+  saveLocalState();
+}
+
 function addPerson() {
   var input = document.getElementById("newPersonName");
   var name = input.value.trim();
@@ -929,8 +936,14 @@ function upsertSocialLink(from, to, type) {
   var existing = state.links.find(function(link) {
     return (link.from === from && link.to === to) || (link.from === to && link.to === from);
   });
-  if (existing) existing.type = type;
-  else state.links.push({ id: uid(), from: from, to: to, type: type });
+  if (existing) {
+    existing.type = type;
+    state.selectedLinkId = existing.id;
+  } else {
+    var link = { id: uid(), from: from, to: to, type: type };
+    state.links.push(link);
+    state.selectedLinkId = link.id;
+  }
 }
 
 function deleteSelectedLink() {
@@ -1482,7 +1495,7 @@ document.getElementById("loadInput").addEventListener("change", function(event) 
   if (file) loadSelectedFile(file);
   event.target.value = "";
 });
-document.addEventListener("keydown", function(event) {
+window.addEventListener("keydown", function(event) {
   var tag = document.activeElement && document.activeElement.tagName;
   if (event.key === "Escape") {
     closeQuickEditor();
@@ -1493,10 +1506,17 @@ document.addEventListener("keydown", function(event) {
     }
   }
   if ((event.key === "Delete" || event.key === "Backspace") &&
-      state.selectedLinkId && tag !== "INPUT" && tag !== "SELECT") {
+      tag !== "INPUT" && tag !== "SELECT" && tag !== "TEXTAREA") {
     event.preventDefault();
-    deleteSelectedLink();
+    if (connectMode) {
+      connectMode = false;
+      connectStart = null;
+      render();
+      showToast("관계 연결을 취소했습니다.");
+    } else if (state.selectedLinkId) {
+      deleteSelectedLink();
+    }
   }
-});
+}, true);
 
 render();
