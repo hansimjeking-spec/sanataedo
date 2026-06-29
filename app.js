@@ -37,6 +37,7 @@ var dragging = null;
 var connectMode = false;
 var connectStart = null;
 var backgroundImageUrl = null;
+var exportInProgress = false;
 
 function uid() {
   return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random();
@@ -50,7 +51,7 @@ function initialState() {
   var originFamilyId = uid();
 
   return normalizeState({
-    version: 3,
+    version: 4,
     title: "우리 가족 생태도",
     selectedId: "client",
     selectedResourceId: null,
@@ -152,7 +153,8 @@ function initialState() {
 
 function normalizeState(next) {
   next = next || {};
-  next.version = 3;
+  var sourceVersion = Number(next.version) || 0;
+  next.version = 4;
   next.title = next.title || "나의 생태도";
   next.people = Array.isArray(next.people) ? next.people : [];
   next.links = Array.isArray(next.links) ? next.links : [];
@@ -207,6 +209,13 @@ function normalizeState(next) {
       }
     });
   });
+
+  if (sourceVersion < 4 && next.title === "우리 가족 생태도") {
+    var previousSampleClient = clientPerson(next);
+    if (previousSampleClient && previousSampleClient.name === "권경자") {
+      previousSampleClient.name = "클라이언트";
+    }
+  }
 
   next.familyGroups = next.familyGroups.map(function(group) {
     return {
@@ -1069,6 +1078,9 @@ function downloadJson() {
 }
 
 function exportPng(embedState) {
+  if (exportInProgress) return;
+  exportInProgress = true;
+  document.getElementById("saveButton").disabled = true;
   var clone = svg.cloneNode(true);
   clone.setAttribute("width", "1760");
   clone.setAttribute("height", "1216");
@@ -1097,14 +1109,24 @@ function exportPng(embedState) {
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
     URL.revokeObjectURL(url);
     canvas.toBlob(async function(png) {
-      if (!png) return;
-      var output = embedState ? await embedStateInPng(png, state) : png;
-      var suffix = embedState ? "-편집용" : "";
-      downloadBlob(output, safeFilename(state.title || "생태도") + suffix + ".png");
-      showToast(embedState
-        ? "편집 데이터를 포함한 PNG를 저장했습니다."
-        : "PNG 이미지를 저장했습니다.");
+      try {
+        if (!png) throw new Error("empty png");
+        var output = embedState ? await embedStateInPng(png, state) : png;
+        downloadBlob(output, safeFilename(state.title || "생태도") + ".png");
+        showToast("편집 데이터를 포함한 PNG를 저장했습니다.");
+      } catch (error) {
+        showToast("PNG 저장 중 오류가 발생했습니다.");
+      } finally {
+        exportInProgress = false;
+        document.getElementById("saveButton").disabled = false;
+      }
     }, "image/png");
+  };
+  image.onerror = function() {
+    URL.revokeObjectURL(url);
+    exportInProgress = false;
+    document.getElementById("saveButton").disabled = false;
+    showToast("PNG 저장 중 오류가 발생했습니다.");
   };
   image.src = url;
 }
@@ -1450,9 +1472,6 @@ document.getElementById("newButton").addEventListener("click", clearState);
 document.getElementById("resetButton").addEventListener("click", clearState);
 document.getElementById("saveButton").addEventListener("click", function() {
   exportPng(true);
-});
-document.getElementById("imageButton").addEventListener("click", function() {
-  exportPng(false);
 });
 document.getElementById("deleteLinkButton").addEventListener("click", deleteSelectedLink);
 document.getElementById("loadButton").addEventListener("click", function() {
