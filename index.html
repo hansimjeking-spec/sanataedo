@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>생태도 가계도 그리기</title>
+  <title>생태도 만들기</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app">
     <aside class="sidebar">
-      <h1 class="app-title">생태도 정보 입력</h1>
+      <h1 class="app-title">생태도 만들기</h1>
 
       <section class="section">
         <h2 class="section-title">기본 정보</h2>
@@ -117,14 +117,15 @@
         <button class="btn" id="loadButton">불러오기</button>
         <button class="btn danger" id="resetButton">전체 삭제</button>
       </div>
-      <input id="loadInput" type="file" accept="application/json" hidden>
+      <input id="loadInput" type="file" accept=".json,image/png,image/jpeg" hidden>
     </aside>
 
     <section class="workspace">
       <div class="toolbar">
         <button class="btn" id="newButton">새로 만들기</button>
-        <button class="btn primary" id="saveButton">파일 저장</button>
+        <button class="btn primary" id="saveButton">편집용 PNG 저장</button>
         <button class="btn" id="connectButton">관계 연결</button>
+        <button class="btn danger" id="deleteLinkButton" disabled>관계 삭제</button>
         <button class="btn" id="arrangeButton">가계도 정렬</button>
         <span class="toolbar-spacer"></span>
         <button class="btn" id="imageButton">이미지 저장(PNG)</button>
@@ -137,6 +138,7 @@
         <i class="canvas-corner bl"></i>
         <i class="canvas-corner br"></i>
         <div class="toast" id="toast"></div>
+        <div class="quick-editor" id="quickEditor" hidden></div>
       </main>
 
       <footer class="statusbar">

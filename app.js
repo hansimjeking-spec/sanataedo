@@ -32,9 +32,11 @@ var socialTypes = {
 
 var svg = document.getElementById("map");
 var toast = document.getElementById("toast");
+var quickEditor = document.getElementById("quickEditor");
 var dragging = null;
 var connectMode = false;
 var connectStart = null;
+var backgroundImageUrl = null;
 
 function uid() {
   return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random();
@@ -52,6 +54,7 @@ function initialState() {
     title: "우리 가족 생태도",
     selectedId: "client",
     selectedResourceId: null,
+    selectedLinkId: null,
     people: [
       {
         id: fatherId,
@@ -102,7 +105,7 @@ function initialState() {
       },
       {
         id: "client",
-        name: "권경자",
+        name: "클라이언트",
         gender: "female",
         role: "client",
         generation: 0,
@@ -221,6 +224,9 @@ function normalizeState(next) {
     next.selectedId = clientPerson(next).id;
   }
   if (!findResourceInState(next, next.selectedResourceId)) next.selectedResourceId = null;
+  if (!next.links.some(function(link) { return link.id === next.selectedLinkId; })) {
+    next.selectedLinkId = null;
+  }
   return next;
 
   function personExists(id) {
@@ -295,6 +301,7 @@ function render() {
   renderResources();
   renderMap();
   document.getElementById("connectButton").classList.toggle("active", connectMode);
+  document.getElementById("deleteLinkButton").disabled = !state.selectedLinkId;
   saveLocalState();
 }
 
@@ -347,10 +354,11 @@ function renderResources() {
   var list = document.getElementById("resourceList");
   list.innerHTML = person.resources.length ? person.resources.map(function(resource) {
     return '<div class="resource-card"><div><strong>' + escapeHtml(resource.name) +
-      '</strong><span>' + escapeHtml(resourceTypes[resource.type].label) +
-      (resource.memo ? " · " + escapeHtml(resource.memo) : "") +
+      '</strong><span>' + escapeHtml(resource.memo || "지원 내용 미입력") +
       " · " + Math.round(resource.width) + "×" + Math.round(resource.height) +
       '</span></div><div class="resource-card-actions">' +
+      '<button class="edit-resource" type="button" data-resource-edit="' + attr(resource.id) +
+      '">수정</button>' +
       '<button class="select-resource" type="button" data-resource-select="' + attr(resource.id) +
       '">크기</button><button class="delete-icon" type="button" title="자원 삭제" data-resource-delete="' +
       attr(resource.id) + '">×</button></div></div>';
@@ -387,6 +395,11 @@ function renderResources() {
       render();
     });
   });
+  list.querySelectorAll("[data-resource-edit]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      openQuickEditor("resource", person.id, button.dataset.resourceEdit);
+    });
+  });
   list.querySelectorAll("[data-resource-delete]").forEach(function(button) {
     button.addEventListener("click", function() {
       person.resources = person.resources.filter(function(resource) {
@@ -400,6 +413,17 @@ function renderResources() {
 
 function renderMap() {
   svg.innerHTML = "";
+  if (backgroundImageUrl) {
+    svg.appendChild(makeSvg("image", {
+      href: backgroundImageUrl,
+      x: 0,
+      y: 0,
+      width: 1100,
+      height: 760,
+      opacity: .28,
+      preserveAspectRatio: "xMidYMid meet"
+    }));
+  }
   state.familyGroups.forEach(drawFamilyGroup);
 
   state.links.forEach(function(link) {
@@ -408,13 +432,30 @@ function renderMap() {
     if (!from || !to) return;
     var path = makeSvg("path", {
       d: "M " + from.x + " " + from.y + " L " + to.x + " " + to.y,
-      class: "social-line " + link.type
+      class: "social-line " + link.type + (state.selectedLinkId === link.id ? " selected" : "")
     });
     path.addEventListener("click", function(event) {
       event.stopPropagation();
-      link.type = nextSocialType(link.type);
-      showToast("관계: " + socialTypes[link.type]);
-      render();
+      if (state.selectedLinkId === link.id) {
+        link.type = nextSocialType(link.type);
+        path.classList.remove("strong", "normal", "weak", "stress");
+        path.classList.add(link.type);
+        showToast("관계 유형: " + socialTypes[link.type] + " · 더블 클릭하면 삭제됩니다.");
+        saveLocalState();
+        return;
+      }
+      state.selectedLinkId = link.id;
+      svg.querySelectorAll(".social-line").forEach(function(line) {
+        line.classList.remove("selected");
+      });
+      path.classList.add("selected");
+      document.getElementById("deleteLinkButton").disabled = false;
+      showToast("관계선을 선택했습니다. 관계 삭제 버튼이나 Delete 키를 사용할 수 있습니다.");
+      saveLocalState();
+    });
+    path.addEventListener("dblclick", function(event) {
+      event.stopPropagation();
+      deleteLinkById(link.id);
     });
     svg.appendChild(path);
   });
@@ -439,7 +480,7 @@ function renderMap() {
 function drawFamilyGroup(group) {
   var parents = group.parents.map(personById).filter(Boolean).sort(byX);
   var children = group.children.map(personById).filter(Boolean).sort(byX);
-  if (!parents.length || !children.length) return;
+  if (!parents.length) return;
 
   var startX;
   var startY;
@@ -459,6 +500,7 @@ function drawFamilyGroup(group) {
     startY = parents[0].y + 46;
   }
 
+  if (!children.length) return;
   var childTop = Math.min.apply(null, children.map(function(child) { return child.y - 48; }));
   var branchY = Math.max(startY + 45, childTop - 72);
   var firstX = children[0].x;
@@ -489,12 +531,22 @@ function personNode(person) {
   group.addEventListener("pointerdown", startPersonDrag);
   group.addEventListener("click", function(event) {
     event.stopPropagation();
-    if (connectMode) handleConnectClick(person.id);
-    else {
+    if (connectMode) {
+      handleConnectClick(person.id);
+      return;
+    }
+    if (event.detail > 1) return;
+    group.singleClickTimer = setTimeout(function() {
       state.selectedId = person.id;
       state.selectedResourceId = null;
       render();
-    }
+    }, 190);
+  });
+  group.addEventListener("dblclick", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    clearTimeout(group.singleClickTimer);
+    openQuickEditor("person", person.id);
   });
   return group;
 }
@@ -584,22 +636,35 @@ function resourceNode(owner, resource) {
   group.addEventListener("pointerdown", startResourceDrag);
   group.addEventListener("click", function(event) {
     event.stopPropagation();
-    state.selectedId = owner.id;
-    state.selectedResourceId = resource.id;
-    render();
+    if (event.detail > 1) return;
+    group.singleClickTimer = setTimeout(function() {
+      state.selectedId = owner.id;
+      state.selectedResourceId = resource.id;
+      render();
+    }, 190);
+  });
+  group.addEventListener("dblclick", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    clearTimeout(group.singleClickTimer);
+    openQuickEditor("resource", owner.id, resource.id);
   });
   return group;
 }
 
 function addResourceLabel(group, resource) {
-  var maxChars = Math.max(6, Math.floor((resource.width - 22) / 13));
+  var scale = clamp(Math.min(resource.width / 150, resource.height / 72), .82, 1.9);
+  var nameSize = 13 * scale;
+  var metaSize = 9 * scale;
+  var maxChars = Math.max(6, Math.floor((resource.width - 22) / (nameSize * .9)));
   var lines = splitLabel(resource.name, maxChars).slice(0, 2);
   var name = makeSvg("text", {
     class: "resource-name",
-    y: -4 - (lines.length - 1) * 7
+    y: -4 - (lines.length - 1) * nameSize * .52,
+    style: "font-size:" + nameSize + "px"
   });
   lines.forEach(function(line, index) {
-    var tspan = makeSvg("tspan", { x: 0, dy: index === 0 ? 0 : 15 });
+    var tspan = makeSvg("tspan", { x: 0, dy: index === 0 ? 0 : nameSize * 1.15 });
     tspan.textContent = line;
     name.appendChild(tspan);
   });
@@ -607,9 +672,10 @@ function addResourceLabel(group, resource) {
   if (resource.height >= 68) {
     var meta = makeSvg("text", {
       class: "resource-meta",
-      y: resource.height / 2 - 10
+      y: resource.height / 2 - 10,
+      style: "font-size:" + metaSize + "px"
     });
-    meta.textContent = resourceTypes[resource.type].label;
+    meta.textContent = shortText(resource.memo || "지원 내용 미입력", Math.max(8, Math.floor(resource.width / (metaSize * .8))));
     group.appendChild(meta);
   }
 }
@@ -765,7 +831,11 @@ function attachByRole(person, role) {
     }
     if (role === "parent") {
       if (group.parents.length < 2) group.parents.push(person.id);
-      else state.links.push({ id: uid(), from: client.id, to: person.id, type: "normal" });
+      else state.familyGroups.push({
+        id: uid(),
+        parents: [person.id],
+        children: [client.id]
+      });
     } else if (group.children.indexOf(person.id) === -1) {
       group.children.push(person.id);
     }
@@ -779,7 +849,11 @@ function attachByRole(person, role) {
     }
     if (role === "spouse") {
       if (group.parents.length < 2) group.parents.push(person.id);
-      else state.links.push({ id: uid(), from: client.id, to: person.id, type: "normal" });
+      else state.familyGroups.push({
+        id: uid(),
+        parents: [client.id, person.id],
+        children: []
+      });
     } else if (group.children.indexOf(person.id) === -1) {
       group.children.push(person.id);
     }
@@ -850,6 +924,88 @@ function upsertSocialLink(from, to, type) {
   else state.links.push({ id: uid(), from: from, to: to, type: type });
 }
 
+function deleteSelectedLink() {
+  if (!state.selectedLinkId) {
+    showToast("삭제할 관계선을 먼저 선택해주세요.");
+    return;
+  }
+  deleteLinkById(state.selectedLinkId);
+}
+
+function deleteLinkById(linkId) {
+  state.links = state.links.filter(function(link) { return link.id !== linkId; });
+  state.selectedLinkId = null;
+  render();
+  showToast("관계 연결을 삭제했습니다.");
+}
+
+function openQuickEditor(kind, ownerId, itemId) {
+  closeQuickEditor();
+  quickEditor.hidden = false;
+  quickEditor.style.left = "50%";
+  quickEditor.style.top = "68px";
+  quickEditor.style.transform = "translateX(-50%)";
+
+  if (kind === "person") {
+    var person = personById(ownerId);
+    if (!person) return closeQuickEditor();
+    quickEditor.innerHTML =
+      '<h3>인물 바로 수정</h3>' +
+      '<div class="field"><label for="quickName">이름</label><input id="quickName" value="' + attr(person.name) + '"></div>' +
+      '<div class="row"><div class="field"><label for="quickGender">가계도 기호</label><select id="quickGender"></select></div>' +
+      '<div class="field"><label for="quickRole">역할</label><select id="quickRole"></select></div></div>' +
+      '<div class="row compact-row"><div class="field"><label for="quickBirthYear">출생연도</label>' +
+      '<input id="quickBirthYear" value="' + attr(person.birthYear) + '"></div>' +
+      '<label class="check-field"><input id="quickDeceased" type="checkbox"' +
+      (person.deceased ? " checked" : "") + '><span>사망 표시</span></label></div>' +
+      '<div class="editor-actions"><button class="btn" id="quickCancel" type="button">취소</button>' +
+      '<button class="btn primary" id="quickSave" type="button">적용</button></div>';
+    fillSelect(document.getElementById("quickGender"), genders, person.gender);
+    fillSelect(document.getElementById("quickRole"), roles, person.role);
+    document.getElementById("quickRole").disabled = person.role === "client";
+    document.getElementById("quickSave").addEventListener("click", function() {
+      var nextRole = document.getElementById("quickRole").value;
+      person.name = document.getElementById("quickName").value.trim() || "이름 없음";
+      person.gender = document.getElementById("quickGender").value;
+      person.birthYear = document.getElementById("quickBirthYear").value.trim();
+      person.deceased = document.getElementById("quickDeceased").checked;
+      closeQuickEditor();
+      if (person.role !== "client" && person.role !== nextRole) changePersonRole(person, nextRole);
+      else render();
+    });
+  } else {
+    var owner = personById(ownerId);
+    var resource = resourceById(owner, itemId);
+    if (!resource) return closeQuickEditor();
+    quickEditor.innerHTML =
+      '<h3>자원 바로 수정</h3>' +
+      '<div class="field"><label for="quickName">기관명 또는 자원 이름</label>' +
+      '<input id="quickName" value="' + attr(resource.name) + '"></div>' +
+      '<div class="field"><label for="quickMemo">지원 내용</label>' +
+      '<input id="quickMemo" value="' + attr(resource.memo) + '" placeholder="예: 정기 진료, 주 1회 상담"></div>' +
+      '<div class="field"><label for="quickResourceType">자원 분류</label><select id="quickResourceType"></select></div>' +
+      '<div class="editor-actions"><button class="btn" id="quickCancel" type="button">취소</button>' +
+      '<button class="btn primary" id="quickSave" type="button">적용</button></div>';
+    fillSelect(document.getElementById("quickResourceType"), resourceTypes, resource.type);
+    document.getElementById("quickSave").addEventListener("click", function() {
+      resource.name = document.getElementById("quickName").value.trim() || "이름 없는 자원";
+      resource.memo = document.getElementById("quickMemo").value.trim();
+      resource.type = document.getElementById("quickResourceType").value;
+      state.selectedId = owner.id;
+      state.selectedResourceId = resource.id;
+      closeQuickEditor();
+      render();
+    });
+  }
+  document.getElementById("quickCancel").addEventListener("click", closeQuickEditor);
+  document.getElementById("quickName").focus();
+}
+
+function closeQuickEditor() {
+  quickEditor.hidden = true;
+  quickEditor.innerHTML = "";
+}
+
 function arrangeMap() {
   var generations = {};
   state.people.forEach(function(person) {
@@ -912,7 +1068,7 @@ function downloadJson() {
   showToast("생태도 파일을 저장했습니다.");
 }
 
-function exportPng() {
+function exportPng(embedState) {
   var clone = svg.cloneNode(true);
   clone.setAttribute("width", "1760");
   clone.setAttribute("height", "1216");
@@ -940,11 +1096,125 @@ function exportPng() {
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
     URL.revokeObjectURL(url);
-    canvas.toBlob(function(png) {
-      if (png) downloadBlob(png, safeFilename(state.title || "생태도") + ".png");
+    canvas.toBlob(async function(png) {
+      if (!png) return;
+      var output = embedState ? await embedStateInPng(png, state) : png;
+      var suffix = embedState ? "-편집용" : "";
+      downloadBlob(output, safeFilename(state.title || "생태도") + suffix + ".png");
+      showToast(embedState
+        ? "편집 데이터를 포함한 PNG를 저장했습니다."
+        : "PNG 이미지를 저장했습니다.");
     }, "image/png");
   };
   image.src = url;
+}
+
+async function embedStateInPng(pngBlob, diagramState) {
+  var pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
+  var iendOffset = findPngChunkOffset(pngBytes, "IEND");
+  if (iendOffset < 0) return pngBlob;
+  var jsonBytes = new TextEncoder().encode(JSON.stringify(diagramState));
+  var payloadText = "ecomap-state\u0000" + bytesToBase64(jsonBytes);
+  var payload = new TextEncoder().encode(payloadText);
+  var textChunk = createPngChunk("tEXt", payload);
+  return new Blob([
+    pngBytes.slice(0, iendOffset),
+    textChunk,
+    pngBytes.slice(iendOffset)
+  ], { type: "image/png" });
+}
+
+async function extractStateFromPng(file) {
+  var bytes = new Uint8Array(await file.arrayBuffer());
+  if (bytes.length < 8 || bytes[0] !== 137 || bytes[1] !== 80 || bytes[2] !== 78 || bytes[3] !== 71) {
+    return null;
+  }
+  var view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  var offset = 8;
+  while (offset + 12 <= bytes.length) {
+    var length = view.getUint32(offset);
+    var type = String.fromCharCode(
+      bytes[offset + 4],
+      bytes[offset + 5],
+      bytes[offset + 6],
+      bytes[offset + 7]
+    );
+    var dataStart = offset + 8;
+    var dataEnd = dataStart + length;
+    if (dataEnd + 4 > bytes.length) break;
+    if (type === "tEXt") {
+      var text = new TextDecoder("latin1").decode(bytes.slice(dataStart, dataEnd));
+      if (text.indexOf("ecomap-state\u0000") === 0) {
+        var encoded = text.slice("ecomap-state\u0000".length);
+        return JSON.parse(new TextDecoder().decode(base64ToBytes(encoded)));
+      }
+    }
+    offset = dataEnd + 4;
+  }
+  return null;
+}
+
+function findPngChunkOffset(bytes, targetType) {
+  var view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  var offset = 8;
+  while (offset + 12 <= bytes.length) {
+    var length = view.getUint32(offset);
+    var type = String.fromCharCode(
+      bytes[offset + 4],
+      bytes[offset + 5],
+      bytes[offset + 6],
+      bytes[offset + 7]
+    );
+    if (type === targetType) return offset;
+    offset += 12 + length;
+  }
+  return -1;
+}
+
+function createPngChunk(type, data) {
+  var typeBytes = new TextEncoder().encode(type);
+  var chunk = new Uint8Array(12 + data.length);
+  var view = new DataView(chunk.buffer);
+  view.setUint32(0, data.length);
+  chunk.set(typeBytes, 4);
+  chunk.set(data, 8);
+  view.setUint32(8 + data.length, crc32(chunk.slice(4, 8 + data.length)));
+  return chunk;
+}
+
+function crc32(bytes) {
+  if (!crc32.table) {
+    crc32.table = [];
+    for (var index = 0; index < 256; index += 1) {
+      var value = index;
+      for (var bit = 0; bit < 8; bit += 1) {
+        value = (value & 1) ? (0xedb88320 ^ (value >>> 1)) : (value >>> 1);
+      }
+      crc32.table[index] = value >>> 0;
+    }
+  }
+  var crc = 0xffffffff;
+  for (var byteIndex = 0; byteIndex < bytes.length; byteIndex += 1) {
+    crc = crc32.table[(crc ^ bytes[byteIndex]) & 0xff] ^ (crc >>> 8);
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function bytesToBase64(bytes) {
+  var binary = "";
+  for (var index = 0; index < bytes.length; index += 1) {
+    binary += String.fromCharCode(bytes[index]);
+  }
+  return btoa(binary);
+}
+
+function base64ToBytes(value) {
+  var binary = atob(value);
+  var bytes = new Uint8Array(binary.length);
+  for (var index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return bytes;
 }
 
 function loadJson(file) {
@@ -961,10 +1231,47 @@ function loadJson(file) {
   reader.readAsText(file);
 }
 
+async function loadSelectedFile(file) {
+  var isJson = file.type === "application/json" || file.name.toLowerCase().endsWith(".json");
+  if (isJson) {
+    loadJson(file);
+    return;
+  }
+
+  if (file.type === "image/png" || file.name.toLowerCase().endsWith(".png")) {
+    try {
+      var embeddedState = await extractStateFromPng(file);
+      if (embeddedState) {
+        state = normalizeState(embeddedState);
+        backgroundImageUrl = null;
+        render();
+        showToast("편집용 PNG에서 생태도 데이터를 복원했습니다.");
+        return;
+      }
+    } catch (error) {
+      showToast("PNG의 편집 데이터를 읽지 못해 참고 배경으로 불러옵니다.");
+    }
+  }
+
+  if (file.type.indexOf("image/") === 0) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      backgroundImageUrl = reader.result;
+      renderMap();
+      showToast("이미지를 참고 배경으로 불러왔습니다. 일반 이미지는 요소별 편집으로 변환되지 않습니다.");
+    };
+    reader.readAsDataURL(file);
+    return;
+  }
+  showToast("JSON, PNG 또는 JPG 파일을 선택해주세요.");
+}
+
 function clearState() {
   state = initialState();
   connectMode = false;
   connectStart = null;
+  backgroundImageUrl = null;
+  closeQuickEditor();
   render();
   showToast("가계도 기본 틀을 새로 만들었습니다.");
 }
@@ -972,9 +1279,9 @@ function clearState() {
 function defaultResourcePosition(person, index) {
   var side = index % 2 === 0 ? 1 : -1;
   var tier = Math.floor(index / 2);
-  var verticalOffset = person.generation === 0 ? 135 + tier * 85 : tier * 90;
+  var verticalOffset = person.generation === 0 ? 105 + tier * 90 : tier * 90;
   return {
-    x: clamp(person.x + side * (155 + tier * 45), 100, 1000),
+    x: clamp(person.x + side * (245 + tier * 45), 100, 1000),
     y: clamp(person.y + verticalOffset, 70, 690)
   };
 }
@@ -1133,6 +1440,7 @@ document.getElementById("arrangeButton").addEventListener("click", arrangeMap);
 document.getElementById("connectButton").addEventListener("click", function() {
   connectMode = !connectMode;
   connectStart = null;
+  state.selectedLinkId = null;
   document.getElementById("statusText").textContent = connectMode
     ? "사회적 관계를 연결할 첫 번째 인물을 선택하세요."
     : "인물과 자원은 이동할 수 있고, 자원 오른쪽 아래 손잡이로 크기를 조절할 수 있습니다.";
@@ -1140,15 +1448,36 @@ document.getElementById("connectButton").addEventListener("click", function() {
 });
 document.getElementById("newButton").addEventListener("click", clearState);
 document.getElementById("resetButton").addEventListener("click", clearState);
-document.getElementById("saveButton").addEventListener("click", downloadJson);
-document.getElementById("imageButton").addEventListener("click", exportPng);
+document.getElementById("saveButton").addEventListener("click", function() {
+  exportPng(true);
+});
+document.getElementById("imageButton").addEventListener("click", function() {
+  exportPng(false);
+});
+document.getElementById("deleteLinkButton").addEventListener("click", deleteSelectedLink);
 document.getElementById("loadButton").addEventListener("click", function() {
   document.getElementById("loadInput").click();
 });
 document.getElementById("loadInput").addEventListener("change", function(event) {
   var file = event.target.files[0];
-  if (file) loadJson(file);
+  if (file) loadSelectedFile(file);
   event.target.value = "";
+});
+document.addEventListener("keydown", function(event) {
+  var tag = document.activeElement && document.activeElement.tagName;
+  if (event.key === "Escape") {
+    closeQuickEditor();
+    if (connectMode) {
+      connectMode = false;
+      connectStart = null;
+      render();
+    }
+  }
+  if ((event.key === "Delete" || event.key === "Backspace") &&
+      state.selectedLinkId && tag !== "INPUT" && tag !== "SELECT") {
+    event.preventDefault();
+    deleteSelectedLink();
+  }
 });
 
 render();
