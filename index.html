@@ -1,36 +1,1393 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>생태도 자원 맵</title>
-<style>
-:root{--bg:#f5f7f8;--panel:#fff;--soft:#edf3f5;--line:#d7e0e4;--ink:#1d2a2f;--muted:#66757c;--teal:#0b7a75;--green:#4f813f;--blue:#2f6f9f;--gold:#b38319;--red:#b94444;--violet:#7d5a9f;--rust:#b75b2a}*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);background:var(--bg)}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.app{min-height:100vh;display:grid;grid-template-columns:300px minmax(440px,1fr)340px;grid-template-rows:64px 1fr}header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.92)}.brand{display:flex;align-items:center;gap:12px}.mark{width:38px;height:38px;border-radius:8px;background:radial-gradient(circle at center,#fff 0 17%,transparent 18%),conic-gradient(from 20deg,var(--teal),var(--green),var(--gold),var(--rust),var(--blue),var(--teal))}h1{font-size:18px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:8px}.btn{min-height:36px;border-radius:8px;background:var(--soft);color:var(--ink);padding:0 11px;display:inline-flex;align-items:center;justify-content:center}.btn.primary{background:var(--teal);color:#fff}.icon{width:38px;padding:0;font-size:17px}aside{overflow:auto;background:rgba(255,255,255,.78);padding:16px}.left{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}.section{margin-bottom:18px}.section-title{font-size:13px;font-weight:800;color:#344348;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between}.palette{display:grid;grid-template-columns:1fr 1fr;gap:8px}.palette button,.person{border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left;min-height:48px;padding:8px 9px}.palette strong{display:block;font-size:13px}.palette span,.meta{font-size:11px;color:var(--muted)}.people{display:grid;gap:8px}.person{display:grid;grid-template-columns:10px 1fr auto;gap:9px;align-items:center;width:100%}.person.active{border-color:rgba(11,122,117,.65);box-shadow:0 0 0 3px rgba(11,122,117,.1)}.dot{width:10px;height:10px;border-radius:50%}.name{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.badge{min-width:24px;height:22px;border-radius:999px;background:var(--soft);font-size:11px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center}.stage{position:relative;overflow:hidden;background:linear-gradient(90deg,rgba(215,224,228,.8) 1px,transparent 1px),linear-gradient(180deg,rgba(215,224,228,.8) 1px,transparent 1px),#fafdfe;background-size:32px 32px}svg{width:100%;height:100%;display:block;touch-action:none}.link{fill:none;stroke-width:4;stroke-linecap:round;opacity:.8}.strong{stroke:var(--green)}.normal{stroke:#79939b;stroke-width:3}.weak{stroke:var(--gold);stroke-width:2.5;stroke-dasharray:7 8}.stress{stroke:var(--red);stroke-dasharray:3 7}.node{filter:drop-shadow(0 9px 18px rgba(31,51,58,.16));cursor:grab}.node circle{stroke:#fff;stroke-width:5}.node .ring{fill:none;stroke:rgba(11,122,117,.65);stroke-width:3;opacity:0}.node.selected .ring{opacity:1}.node text{fill:#17252a;font-weight:800;font-size:13px;text-anchor:middle;pointer-events:none}.node .type{display:none}.resource-link{fill:none;stroke:#9db4bb;stroke-width:2;stroke-linecap:round;opacity:.7}.resource-node{filter:drop-shadow(0 7px 14px rgba(31,51,58,.12));cursor:pointer}.resource-node circle{fill:#fff;stroke:#2f6f9f;stroke-width:3}.resource-node.risk circle{stroke:var(--red)}.resource-node.warn circle{stroke:var(--gold)}.resource-node text{fill:#17252a;font-weight:800;font-size:11px;text-anchor:middle;pointer-events:none}.chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}.chip{border-radius:999px;padding:3px 8px;background:#edf4f2;color:#245b50;border:1px solid #d3e6e1;font-size:11px;font-weight:700}.chip.warn{background:#fbf4df;color:#71530d;border-color:#eedca7}.chip.risk{background:#faecec;color:#7c2f2f;border-color:#efc8c8}.field{display:grid;gap:6px;margin-bottom:10px}label{font-size:12px;font-weight:700;color:var(--muted)}input,select,textarea{width:100%;min-height:36px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}textarea{min-height:72px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.resource-list{display:grid;gap:8px}.resource{border:1px solid var(--line);border-radius:8px;background:#fff;padding:10px}.resource-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.chip-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.resource strong{font-size:13px}.resource p{font-size:12px;line-height:1.45;color:var(--muted);margin:7px 0 0}.mini{width:28px;height:28px;border-radius:8px;background:var(--soft);color:var(--muted)}.empty{border:1px dashed #c9d5da;border-radius:8px;padding:14px;background:rgba(255,255,255,.72);color:var(--muted);font-size:13px;line-height:1.5}.legend{position:absolute;left:16px;bottom:16px;display:flex;gap:8px;flex-wrap:wrap;max-width:calc(100% - 32px);padding:8px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.9)}.legend span{font-size:11px;color:var(--muted);display:inline-flex;gap:6px;align-items:center}.sample{width:24px;border-top:3px solid #79939b}.sample.s1{border-color:var(--green);border-top-width:4px}.sample.s2{border-color:var(--gold);border-top-style:dashed}.sample.s3{border-color:var(--red);border-top-style:dotted}.toast{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:#17252a;color:#fff;border-radius:8px;padding:9px 12px;font-size:13px;opacity:0;transition:opacity .18s}.toast.show{opacity:1}@media(max-width:980px){.app{grid-template-columns:1fr;grid-template-rows:64px auto 58vh auto}.left,.right{border:0}.left{border-bottom:1px solid var(--line)}.right{border-top:1px solid var(--line)}.palette{grid-template-columns:repeat(4,minmax(130px,1fr));overflow:auto}.people{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}}@media(max-width:620px){header{height:auto;min-height:64px;align-items:flex-start;flex-direction:column;padding:10px}.actions{width:100%;overflow:auto}.app{grid-template-rows:auto auto 54vh auto}.palette,.row{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>생태도 그리기</title>
+  <style>
+    :root {
+      --blue: #3478e5;
+      --blue-dark: #245fbd;
+      --blue-soft: #eaf2ff;
+      --red: #eb493f;
+      --green: #24a35a;
+      --gold: #d6961d;
+      --ink: #20242a;
+      --muted: #6d7480;
+      --line: #d9dde4;
+      --soft: #f4f6f8;
+      --panel: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #eef1f5;
+      font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      font-size: 14px;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      height: 100vh;
+      min-height: 680px;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: 350px minmax(540px, 1fr);
+      gap: 8px;
+    }
+
+    .sidebar,
+    .workspace {
+      min-width: 0;
+      background: var(--panel);
+      border: 1px solid #cfd4dc;
+      border-radius: 7px;
+      box-shadow: 0 2px 8px rgba(31, 42, 55, .06);
+    }
+
+    .sidebar {
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .app-title {
+      margin: 0 0 10px;
+      color: var(--blue);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .section {
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      position: relative;
+      margin: 0 0 10px;
+      padding: 0 9px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+      margin-bottom: 9px;
+    }
+
+    label {
+      color: #313844;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 36px;
+      padding: 7px 10px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 58px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(52, 120, 229, .12);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn {
+      min-height: 34px;
+      padding: 0 14px;
+      color: #27313d;
+      background: #f0f2f5;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: #e5e8ed; }
+    .btn.primary {
+      color: #fff;
+      background: var(--blue);
+    }
+    .btn.primary:hover { background: var(--blue-dark); }
+    .btn.danger {
+      color: #fff;
+      background: var(--red);
+    }
+    .btn.danger:hover { background: #d83e35; }
+    .btn.active {
+      color: #fff;
+      background: var(--green);
+    }
+    .btn.full { width: 100%; }
+    .btn.small {
+      min-height: 28px;
+      padding: 0 9px;
+      font-size: 12px;
+    }
+
+    .people-list,
+    .resource-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .person-row {
+      width: 100%;
+      min-height: 45px;
+      padding: 7px 9px;
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 9px;
+      text-align: left;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+    }
+
+    .person-row:hover { background: #f8faff; }
+    .person-row.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .person-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .person-main { min-width: 0; }
+    .person-name {
+      display: block;
+      overflow: hidden;
+      font-size: 13px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .person-meta {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .count {
+      min-width: 24px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #526170;
+      background: var(--soft);
+      border-radius: 11px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .selected-panel {
+      padding: 9px;
+      background: #fafbfc;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .resource-card {
+      padding: 8px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 7px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+    }
+
+    .resource-card strong {
+      display: block;
+      overflow: hidden;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .resource-card span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .delete-icon {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      color: var(--red);
+      background: #fff;
+      border: 1px solid #f0c6c2;
+      border-radius: 5px;
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    .empty {
+      padding: 12px;
+      color: var(--muted);
+      background: #fff;
+      border: 1px dashed #cbd1da;
+      border-radius: 5px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .sidebar-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-rows: 52px minmax(0, 1fr) 30px;
+      overflow: hidden;
+    }
+
+    .toolbar {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .toolbar-spacer { flex: 1; }
+
+    .stage {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .canvas-corner {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      pointer-events: none;
+    }
+    .canvas-corner.tl { top: 9px; left: 9px; border-top: 2px solid #222; border-left: 2px solid #222; }
+    .canvas-corner.tr { top: 9px; right: 9px; border-top: 2px solid #222; border-right: 2px solid #222; }
+    .canvas-corner.bl { bottom: 9px; left: 9px; border-bottom: 2px solid #222; border-left: 2px solid #222; }
+    .canvas-corner.br { right: 9px; bottom: 9px; border-right: 2px solid #222; border-bottom: 2px solid #222; }
+
+    .statusbar {
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: #737a85;
+      border-top: 1px solid var(--line);
+      background: #fff;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .statusbar .legend {
+      display: flex;
+      gap: 12px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-line {
+      width: 21px;
+      border-top: 3px solid #7c8a97;
+    }
+    .legend-line.strong { border-color: var(--green); border-top-width: 4px; }
+    .legend-line.weak { border-color: var(--gold); border-top-style: dashed; }
+    .legend-line.stress { border-color: var(--red); border-top-style: dotted; }
+
+    .relation {
+      fill: none;
+      stroke: #7c8a97;
+      stroke-width: 3;
+      stroke-linecap: round;
+      cursor: pointer;
+    }
+    .relation.strong { stroke: var(--green); stroke-width: 4; }
+    .relation.weak { stroke: var(--gold); stroke-width: 2.5; stroke-dasharray: 8 8; }
+    .relation.stress { stroke: var(--red); stroke-width: 3; stroke-dasharray: 3 7; }
+
+    .resource-link {
+      fill: none;
+      stroke: #95a2af;
+      stroke-width: 2;
+      stroke-linecap: round;
+    }
+
+    .person-node,
+    .resource-node { cursor: grab; }
+    .person-node:active,
+    .resource-node:active { cursor: grabbing; }
+
+    .person-node .outer {
+      fill: #fff;
+      stroke-width: 4;
+    }
+    .person-node.client .outer { stroke: var(--blue); }
+    .person-node.selected .select-ring {
+      opacity: 1;
+    }
+    .select-ring {
+      fill: none;
+      stroke: rgba(52, 120, 229, .28);
+      stroke-width: 8;
+      opacity: 0;
+    }
+    .person-node text {
+      fill: #20242a;
+      text-anchor: middle;
+      pointer-events: none;
+    }
+    .person-node .node-name {
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .person-node .node-type {
+      fill: #6d7480;
+      font-size: 10px;
+    }
+
+    .resource-node .resource-circle {
+      fill: #fff;
+      stroke: #536d8a;
+      stroke-width: 3;
+    }
+    .resource-node.good .resource-circle { stroke: var(--green); }
+    .resource-node.warn .resource-circle { stroke: var(--gold); }
+    .resource-node.risk .resource-circle { stroke: var(--red); }
+    .resource-node text {
+      fill: #20242a;
+      text-anchor: middle;
+      pointer-events: none;
+    }
+    .resource-node .resource-name {
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .resource-node .resource-type {
+      fill: #727985;
+      font-size: 9px;
+    }
+
+    .toast {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      z-index: 3;
+      max-width: calc(100% - 32px);
+      padding: 8px 12px;
+      color: #fff;
+      background: rgba(31, 36, 43, .9);
+      border-radius: 5px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%);
+      transition: opacity .16s ease;
+      font-size: 12px;
+    }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 900px) {
+      .app {
+        height: auto;
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+      }
+      .sidebar { max-height: none; }
+      .workspace { height: 72vh; min-height: 580px; }
+    }
+
+    @media (max-width: 560px) {
+      .app { padding: 0; gap: 0; }
+      .sidebar,
+      .workspace { border-radius: 0; }
+      .row { grid-template-columns: 1fr; }
+      .toolbar { padding: 7px; }
+      .btn { padding: 0 10px; }
+      .statusbar .legend { display: none; }
+      .workspace { height: 68vh; min-height: 500px; }
+    }
+  </style>
 </head>
 <body>
-<div class="app"><header><div class="brand"><div class="mark"></div><div><h1>생태도 자원 맵</h1><div class="sub">클라이언트와 주변 인물 각각에 자원을 기록</div></div></div><div class="actions"><button class="btn" id="connectMode">관계 연결</button><button class="btn icon" id="arrange" title="보기 정리">⤢</button><button class="btn icon" id="save" title="저장">⇩</button><label class="btn icon" for="load" title="불러오기">⇧</label><input id="load" type="file" accept="application/json" hidden></div></header><aside class="left"><section class="section"><div class="section-title">인물 추가</div><div class="palette" id="palette"></div></section><section class="section"><div class="section-title"><span>인물 목록</span><button class="mini" id="reset" title="초기화">↺</button></div><div class="people" id="people"></div></section></aside><main class="stage"><svg id="map" viewBox="0 0 1000 720"></svg><div class="legend"><span><i class="sample s1"></i>강한 지지</span><span><i class="sample"></i>일반 관계</span><span><i class="sample s2"></i>약한 관계</span><span><i class="sample s3"></i>갈등/부담</span></div><div class="toast" id="toast"></div></main><aside class="right" id="detail"></aside></div>
-<script>
-var personTypes={client:{label:'클라이언트',hint:'중심 인물',color:'#0b7a75'},family:{label:'가족',hint:'동거/비동거 가족',color:'#4f813f'},friend:{label:'친구',hint:'친구와 지인',color:'#2f6f9f'},agency:{label:'기관',hint:'학교, 병원, 복지기관',color:'#b38319'},worker:{label:'전문가',hint:'상담사, 담당자',color:'#7d5a9f'},neighbor:{label:'이웃',hint:'지역사회 관계',color:'#b75b2a'}};
-var resourceTypes={emotional:{label:'정서',tone:'good'},care:{label:'돌봄',tone:'good'},money:{label:'경제',tone:'good'},info:{label:'정보',tone:'good'},place:{label:'공간',tone:'good'},risk:{label:'위험',tone:'risk'},stress:{label:'부담',tone:'warn'}};
-var relationTypes={strong:'강한 지지',normal:'일반 관계',weak:'약한 관계',stress:'갈등/부담'};
-var uid=function(){return crypto.randomUUID()};
-function initialState(){var motherId=uid(),schoolId=uid(),friendId=uid();return{selectedId:'client',people:[{id:'client',name:'클라이언트',type:'client',note:'중심 인물',x:500,y:360,resources:[{id:uid(),type:'emotional',name:'상담 참여 의지',memo:'개입 목표와 변화 의지를 기록합니다.'}]},{id:motherId,name:'어머니',type:'family',note:'주 보호자',x:320,y:270,resources:[{id:uid(),type:'care',name:'일상 돌봄',memo:'식사, 병원 동행 등 실질 지원'}]},{id:schoolId,name:'학교 상담실',type:'agency',note:'외부 기관',x:690,y:245,resources:[{id:uid(),type:'info',name:'학교생활 정보',memo:'출결, 교우관계, 학업 상황 공유'}]},{id:friendId,name:'친구 민지',type:'friend',note:'또래 지지',x:660,y:490,resources:[{id:uid(),type:'emotional',name:'정서적 지지',memo:'힘든 일을 들어주는 관계'}]}],links:[{id:uid(),from:'client',to:motherId,type:'normal'},{id:uid(),from:'client',to:schoolId,type:'normal'},{id:uid(),from:'client',to:friendId,type:'strong'}]}}
-var state=initialState(),connectMode=false,connectStart=null,dragging=null;var svg=document.getElementById('map'),palette=document.getElementById('palette'),people=document.getElementById('people'),detail=document.getElementById('detail'),toast=document.getElementById('toast');
-function selectedPerson(){return state.people.find(function(p){return p.id===state.selectedId})||state.people[0]}function render(){renderPalette();renderPeople();renderMap();renderDetail();document.getElementById('connectMode').classList.toggle('primary',connectMode)}
-function renderPalette(){palette.innerHTML=Object.keys(personTypes).map(function(type){var i=personTypes[type];return '<button type="button" data-add-person="'+type+'" style="border-left:5px solid '+i.color+'"><strong>'+i.label+'</strong><span>'+i.hint+'</span></button>'}).join('');palette.querySelectorAll('[data-add-person]').forEach(function(b){b.onclick=function(){addPerson(b.dataset.addPerson)}})}
-function renderPeople(){people.innerHTML=state.people.map(function(p){return '<button type="button" class="person '+(p.id===state.selectedId?'active':'')+'" data-select="'+p.id+'"><span class="dot" style="background:'+(personTypes[p.type]?personTypes[p.type].color:'#789')+'"></span><span><span class="name">'+esc(p.name)+'</span><span class="meta">'+typeLabel(p.type)+' · 자원 '+p.resources.length+'개</span></span><span class="badge">'+linkCount(p.id)+'</span></button>'}).join('');people.querySelectorAll('[data-select]').forEach(function(b){b.onclick=function(){state.selectedId=b.dataset.select;render()}})}
-function renderMap(){svg.innerHTML='';state.links.forEach(function(l){var f=state.people.find(function(p){return p.id===l.from}),t=state.people.find(function(p){return p.id===l.to});if(!f||!t)return;var dx=t.x-f.x,dy=t.y-f.y,len=Math.hypot(dx,dy)||1,c=Math.min(80,len/5),mx=(f.x+t.x)/2-dy/len*c,my=(f.y+t.y)/2+dx/len*c,path=makeSvg('path',{d:'M '+f.x+' '+f.y+' Q '+mx+' '+my+' '+t.x+' '+t.y,class:'link '+l.type});path.onclick=function(e){e.stopPropagation();l.type=nextRelation(l.type);showToast('관계: '+relationTypes[l.type]);render()};svg.appendChild(path)});state.people.forEach(function(p){resourcePositions(p).forEach(function(item){svg.appendChild(makeSvg('path',{d:'M '+p.x+' '+p.y+' L '+item.x+' '+item.y,class:'resource-link'}))})});state.people.forEach(function(p){svg.appendChild(nodeFor(p))});state.people.forEach(function(p){resourcePositions(p).forEach(function(item){svg.appendChild(resourceNodeFor(p,item))})})}
-function nodeFor(p){var r=p.type==='client'?58:52,g=makeSvg('g',{class:'node '+(p.id===state.selectedId?'selected':''),transform:'translate('+p.x+', '+p.y+')'});g.dataset.id=p.id;g.appendChild(makeSvg('circle',{class:'ring',r:r+8}));g.appendChild(makeSvg('circle',{r:r,fill:'#fff'}));g.appendChild(makeSvg('circle',{r:r-5,fill:'none',stroke:personTypes[p.type]?personTypes[p.type].color:'#789','stroke-width':4}));addSvgLabel(g,p.name,0,13,11);g.onpointerdown=startDrag;g.onclick=function(e){e.stopPropagation();nodeClick(p.id)};return g}
-function resourcePositions(p){var ownerRadius=p.type==='client'?58:52;return p.resources.map(function(res,i){var n=p.resources.length,spread=Math.min(Math.PI*1.25,Math.PI*.42*Math.max(1,n-1)),base=-Math.PI/2,start=-spread/2,angle=base+(n===1?0:start+spread*i/(n-1)),dist=ownerRadius+70;return{resource:res,x:clamp(p.x+Math.cos(angle)*dist,55,945),y:clamp(p.y+Math.sin(angle)*dist,55,665)}})}
-function resourceNodeFor(owner,item){var res=item.resource,tone=chipTone(res.type),g=makeSvg('g',{class:'resource-node '+tone,transform:'translate('+item.x+', '+item.y+')'});g.appendChild(makeSvg('circle',{r:37}));addSvgLabel(g,res.name,0,11,9);g.onclick=function(e){e.stopPropagation();state.selectedId=owner.id;showToast(owner.name+'의 자원: '+res.name);render()};return g}
-function renderDetail(){var p=selectedPerson();detail.innerHTML='<section class="section"><div class="section-title"><span>인물 정보</span>'+(p.id==='client'?'':'<button class="mini" id="deletePerson" title="인물 삭제">×</button>')+'</div><div class="field"><label>이름</label><input id="personName" value="'+attr(p.name)+'"></div><div class="row"><div class="field"><label>분류</label><select id="personType">'+Object.keys(personTypes).map(function(v){return '<option value="'+v+'" '+(p.type===v?'selected':'')+'>'+personTypes[v].label+'</option>'}).join('')+'</select></div><div class="field"><label>메모</label><input id="personNote" value="'+attr(p.note||'')+'"></div></div></section><section class="section"><div class="section-title">이 인물의 자원 추가</div><div class="row"><div class="field"><label>자원 종류</label><select id="resourceType">'+Object.keys(resourceTypes).map(function(v){return '<option value="'+v+'">'+resourceTypes[v].label+'</option>'}).join('')+'</select></div><div class="field"><label>자원 이름</label><input id="resourceName" placeholder="예: 정서적 지지"></div></div><div class="field"><label>내용</label><textarea id="resourceMemo" placeholder="자원이 어떻게 작동하는지 적어두세요."></textarea></div><button class="btn primary" id="addResource">자원 추가</button></section><section class="section"><div class="section-title">등록된 자원</div><div class="resource-list">'+(p.resources.length?p.resources.map(resourceCard).join(''):'<div class="empty">아직 등록된 자원이 없습니다. 클라이언트뿐 아니라 이 인물에게도 자원을 추가할 수 있습니다.</div>')+'</div></section><section class="section"><div class="section-title">관계</div><div class="field"><label>연결할 인물</label><select id="relationTarget">'+state.people.filter(function(t){return t.id!==p.id}).map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join('')+'</select></div><div class="field"><label>관계 유형</label><select id="relationType">'+Object.keys(relationTypes).map(function(v){return '<option value="'+v+'">'+relationTypes[v]+'</option>'}).join('')+'</select></div><button class="btn" id="addRelation">관계 추가</button></section>';document.getElementById('personName').oninput=function(e){p.name=e.target.value||'이름 없음';renderPeople();renderMap()};document.getElementById('personType').onchange=function(e){p.type=e.target.value;render()};document.getElementById('personNote').oninput=function(e){p.note=e.target.value;renderPeople()};document.getElementById('addResource').onclick=addResource;document.getElementById('addRelation').onclick=addRelation;detail.querySelectorAll('[data-delete-resource]').forEach(function(b){b.onclick=function(){deleteResource(b.dataset.deleteResource)}});var del=document.getElementById('deletePerson');if(del)del.onclick=deleteSelectedPerson}
-function resourceCard(r){var t=resourceTypes[r.type]||{label:'자원'};return '<div class="resource"><div class="resource-top"><div class="chip-row"><span class="chip '+chipTone(r.type)+'">'+t.label+'</span><strong>'+esc(r.name)+'</strong></div><button class="mini" data-delete-resource="'+r.id+'">×</button></div>'+(r.memo?'<p>'+esc(r.memo)+'</p>':'')+'</div>'}
-function addPerson(type){var n=state.people.length,p={id:uid(),name:personTypes[type].label,type:type,note:'',x:500+Math.cos(n*1.7)*240,y:360+Math.sin(n*1.7)*200,resources:[]};state.people.push(p);state.links.push({id:uid(),from:'client',to:p.id,type:'normal'});state.selectedId=p.id;render()}function nodeClick(id){if(!connectMode){state.selectedId=id;render();return}if(!connectStart){connectStart=id;state.selectedId=id;showToast('연결할 두 번째 인물을 선택하세요.');render();return}if(connectStart!==id){upsertLink(connectStart,id,'normal');showToast('관계를 연결했습니다.')}connectStart=null;connectMode=false;state.selectedId=id;render()}
-function addResource(){var p=selectedPerson(),type=document.getElementById('resourceType').value,name=document.getElementById('resourceName').value.trim(),memo=document.getElementById('resourceMemo').value.trim();if(!name){showToast('자원 이름을 입력하세요.');return}p.resources.push({id:uid(),type:type,name:name,memo:memo});render()}function deleteResource(id){var p=selectedPerson();p.resources=p.resources.filter(function(r){return r.id!==id});render()}function addRelation(){upsertLink(selectedPerson().id,document.getElementById('relationTarget').value,document.getElementById('relationType').value);render()}function upsertLink(from,to,type){var ex=state.links.find(function(l){return(l.from===from&&l.to===to)||(l.from===to&&l.to===from)});if(ex)ex.type=type;else state.links.push({id:uid(),from:from,to:to,type:type})}function deleteSelectedPerson(){var id=state.selectedId;if(id==='client')return;state.people=state.people.filter(function(p){return p.id!==id});state.links=state.links.filter(function(l){return l.from!==id&&l.to!==id});state.selectedId='client';render()}
-function startDrag(e){if(connectMode)return;var id=e.currentTarget.dataset.id,p=state.people.find(function(x){return x.id===id}),pt=svgPoint(e);dragging={id:id,dx:pt.x-p.x,dy:pt.y-p.y};state.selectedId=id;svg.setPointerCapture(e.pointerId);render()}svg.addEventListener('pointermove',function(e){if(!dragging)return;var p=state.people.find(function(x){return x.id===dragging.id}),pt=svgPoint(e);p.x=clamp(pt.x-dragging.dx,80,920);p.y=clamp(pt.y-dragging.dy,80,640);renderPeople();renderMap()});svg.addEventListener('pointerup',function(){dragging=null});
-document.getElementById('connectMode').onclick=function(){connectMode=!connectMode;connectStart=null;showToast(connectMode?'연결할 첫 번째 인물을 선택하세요.':'관계 연결을 종료했습니다.');render()};document.getElementById('arrange').onclick=function(){var c=state.people.find(function(p){return p.id==='client'});if(c){c.x=500;c.y=360}var others=state.people.filter(function(p){return p.id!=='client'});others.forEach(function(p,i){var a=Math.PI*2*i/Math.max(1,others.length)-Math.PI/2;p.x=500+Math.cos(a)*260;p.y=360+Math.sin(a)*210});render()};document.getElementById('reset').onclick=function(){state=initialState();render()};document.getElementById('save').onclick=function(){var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ecomap-resource-map.json';a.click();URL.revokeObjectURL(url)};document.getElementById('load').onchange=function(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{var next=JSON.parse(reader.result);if(!Array.isArray(next.people)||!Array.isArray(next.links))throw new Error('bad');state=next;state.selectedId=state.selectedId||(state.people[0]&&state.people[0].id)||'client';render()}catch(err){showToast('불러올 수 없는 파일입니다.')}};reader.readAsText(file);e.target.value=''};
-function addSvgLabel(group,text,y,fontSize,maxChars){var lines=splitLabel(text,maxChars||9).slice(0,2),base=y-(lines.length-1)*fontSize*.55;var label=makeSvg('text',{y:base});lines.forEach(function(line,i){var tspan=makeSvg('tspan',{x:0,dy:i===0?0:fontSize});tspan.textContent=line;label.appendChild(tspan)});group.appendChild(label)}function splitLabel(text,maxChars){text=String(text||'');if(text.length<=maxChars)return[text];var words=text.split(/\s+/);if(words.length>1){var lines=[''];words.forEach(function(w){var last=lines.length-1;if((lines[last]+' '+w).trim().length<=maxChars)lines[last]=(lines[last]+' '+w).trim();else lines.push(w)});return lines.map(function(line){return line.length>maxChars?line.slice(0,maxChars-1)+'...':line})}return[text.slice(0,maxChars),text.length>maxChars*2?text.slice(maxChars,maxChars*2-1)+'...':text.slice(maxChars)]}function svgPoint(e){var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}function makeSvg(tag,attrs){var el=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.keys(attrs).forEach(function(k){el.setAttribute(k,attrs[k])});return el}function typeLabel(type){return personTypes[type]?personTypes[type].label:'인물'}function chipTone(type){var t=resourceTypes[type]&&resourceTypes[type].tone;return t==='risk'?'risk':(t==='warn'?'warn':'')}function linkCount(id){return state.links.filter(function(l){return l.from===id||l.to===id}).length}function nextRelation(type){var order=['strong','normal','weak','stress'];return order[(order.indexOf(type)+1)%order.length]}function shortText(text,max){return text.length>max?text.slice(0,max-1)+'...':text}function clamp(v,min,max){return Math.max(min,Math.min(max,v))}function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(function(){toast.classList.remove('show')},1600)}function esc(v){return String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}function attr(v){return esc(v)}render();
-</script>
+  <div class="app">
+    <aside class="sidebar">
+      <h1 class="app-title">생태도 정보 입력</h1>
+
+      <section class="section">
+        <h2 class="section-title">기본 정보</h2>
+        <div class="field">
+          <label for="mapTitle">생태도 제목</label>
+          <input id="mapTitle" placeholder="예: 우리 가족 생태도">
+        </div>
+        <div class="field">
+          <label for="clientName">중심 인물(Client) 이름</label>
+          <input id="clientName" placeholder="중심 인물 이름">
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">주변 인물/조직 추가</h2>
+        <div class="field">
+          <label for="newPersonName">이름 또는 기관명</label>
+          <input id="newPersonName" placeholder="예: 남편, 제천병원">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="newPersonType">분류</label>
+            <select id="newPersonType"></select>
+          </div>
+          <div class="field">
+            <label for="newRelationType">관계</label>
+            <select id="newRelationType"></select>
+          </div>
+        </div>
+        <button class="btn primary full" id="addPerson">인물/조직 추가</button>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">
+          <span>내 생태도 목록</span>
+          <span class="count" id="peopleCount">0</span>
+        </h2>
+        <div class="people-list" id="peopleList"></div>
+      </section>
+
+      <section class="section" id="selectedSection">
+        <h2 class="section-title">
+          <span>선택 항목 편집</span>
+          <button class="btn danger small" id="deletePerson">삭제</button>
+        </h2>
+        <div class="selected-panel">
+          <div class="field">
+            <label for="selectedName">이름 또는 기관명</label>
+            <input id="selectedName">
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="selectedType">분류</label>
+              <select id="selectedType"></select>
+            </div>
+            <div class="field">
+              <label for="selectedNote">메모</label>
+              <input id="selectedNote" placeholder="관계나 역할">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">선택 항목의 자원 추가</h2>
+        <div class="field">
+          <label for="resourceName">자원 이름</label>
+          <input id="resourceName" placeholder="예: 제천병원, 주거비 지원">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="resourceType">자원 분류</label>
+            <select id="resourceType"></select>
+          </div>
+          <div class="field">
+            <label for="resourceMemo">내용</label>
+            <input id="resourceMemo" placeholder="지원 내용">
+          </div>
+        </div>
+        <button class="btn primary full" id="addResource">자원 추가</button>
+        <div class="resource-list" id="resourceList" style="margin-top:8px"></div>
+      </section>
+
+      <div class="sidebar-actions">
+        <button class="btn" id="loadButton">불러오기</button>
+        <button class="btn danger" id="resetButton">전체 삭제</button>
+      </div>
+      <input id="loadInput" type="file" accept="application/json" hidden>
+    </aside>
+
+    <section class="workspace">
+      <div class="toolbar">
+        <button class="btn" id="newButton">새로 만들기</button>
+        <button class="btn primary" id="saveButton">파일 저장</button>
+        <button class="btn" id="connectButton">관계 연결</button>
+        <button class="btn" id="arrangeButton">보기 정리</button>
+        <span class="toolbar-spacer"></span>
+        <button class="btn" id="imageButton">이미지 저장(PNG)</button>
+      </div>
+
+      <main class="stage" id="stage">
+        <svg id="map" viewBox="0 0 1000 720" aria-label="생태도 작업판"></svg>
+        <i class="canvas-corner tl"></i>
+        <i class="canvas-corner tr"></i>
+        <i class="canvas-corner bl"></i>
+        <i class="canvas-corner br"></i>
+        <div class="toast" id="toast"></div>
+      </main>
+
+      <footer class="statusbar">
+        <span id="statusText">노드와 자원을 드래그하여 이동할 수 있습니다.</span>
+        <span class="legend">
+          <span class="legend-item"><i class="legend-line strong"></i>강한 지지</span>
+          <span class="legend-item"><i class="legend-line"></i>일반 관계</span>
+          <span class="legend-item"><i class="legend-line weak"></i>약한 관계</span>
+          <span class="legend-item"><i class="legend-line stress"></i>갈등/부담</span>
+        </span>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    var personTypes = {
+      client: { label: "클라이언트", color: "#3478e5" },
+      family: { label: "가족", color: "#4d8f50" },
+      friend: { label: "친구/지인", color: "#4079a8" },
+      agency: { label: "기관/조직", color: "#a87816" },
+      worker: { label: "전문가", color: "#7c5aa1" },
+      neighbor: { label: "이웃/지역", color: "#b45f32" }
+    };
+
+    var resourceTypes = {
+      emotional: { label: "정서 지원", tone: "good" },
+      care: { label: "돌봄 지원", tone: "good" },
+      money: { label: "경제 지원", tone: "good" },
+      info: { label: "정보 제공", tone: "good" },
+      place: { label: "공간/환경", tone: "good" },
+      stress: { label: "부담 요인", tone: "warn" },
+      risk: { label: "위험 요인", tone: "risk" }
+    };
+
+    var relationTypes = {
+      strong: "강한 지지",
+      normal: "일반 관계",
+      weak: "약한 관계",
+      stress: "갈등/부담"
+    };
+
+    var svg = document.getElementById("map");
+    var toast = document.getElementById("toast");
+    var dragging = null;
+    var connectMode = false;
+    var connectStart = null;
+
+    function uid() {
+      return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random();
+    }
+
+    function initialState() {
+      var husbandId = uid();
+      var hospitalId = uid();
+      var clientResourceId = uid();
+      var husbandResourceId = uid();
+
+      return normalizeState({
+        title: "우리 가족 생태도",
+        selectedId: "client",
+        people: [
+          {
+            id: "client",
+            name: "권경자",
+            type: "client",
+            note: "중심 인물",
+            x: 500,
+            y: 370,
+            resources: [
+              {
+                id: clientResourceId,
+                type: "care",
+                name: "명지병원",
+                memo: "진료와 건강관리",
+                x: 755,
+                y: 370
+              }
+            ]
+          },
+          {
+            id: husbandId,
+            name: "남편",
+            type: "family",
+            note: "배우자",
+            x: 300,
+            y: 370,
+            resources: [
+              {
+                id: husbandResourceId,
+                type: "care",
+                name: "제천병원",
+                memo: "남편의 의료 자원",
+                x: 250,
+                y: 155
+              }
+            ]
+          },
+          {
+            id: hospitalId,
+            name: "복지관 담당자",
+            type: "worker",
+            note: "사례관리",
+            x: 540,
+            y: 575,
+            resources: []
+          }
+        ],
+        links: [
+          { id: uid(), from: "client", to: husbandId, type: "stress" },
+          { id: uid(), from: "client", to: hospitalId, type: "strong" }
+        ]
+      });
+    }
+
+    function normalizeState(next) {
+      next = next || {};
+      next.title = next.title || "나의 생태도";
+      next.people = Array.isArray(next.people) ? next.people : [];
+      next.links = Array.isArray(next.links) ? next.links : [];
+
+      if (!next.people.length) {
+        next.people.push({
+          id: "client",
+          name: "Client",
+          type: "client",
+          note: "중심 인물",
+          x: 500,
+          y: 360,
+          resources: []
+        });
+      }
+
+      next.people.forEach(function(person, personIndex) {
+        person.id = person.id || uid();
+        person.type = personTypes[person.type] ? person.type : (personIndex === 0 ? "client" : "family");
+        person.name = person.name || personTypes[person.type].label;
+        person.x = Number.isFinite(person.x) ? person.x : 500;
+        person.y = Number.isFinite(person.y) ? person.y : 360;
+        person.resources = Array.isArray(person.resources) ? person.resources : [];
+
+        person.resources.forEach(function(resource, resourceIndex) {
+          resource.id = resource.id || uid();
+          resource.type = resourceTypes[resource.type] ? resource.type : "info";
+          resource.name = resource.name || "이름 없는 자원";
+          if (!Number.isFinite(resource.x) || !Number.isFinite(resource.y)) {
+            var pos = defaultResourcePosition(person, resourceIndex, person.resources.length);
+            resource.x = pos.x;
+            resource.y = pos.y;
+          }
+        });
+      });
+
+      if (!next.people.some(function(person) { return person.id === next.selectedId; })) {
+        next.selectedId = next.people[0].id;
+      }
+
+      return next;
+    }
+
+    function loadLocalState() {
+      try {
+        var saved = localStorage.getItem("ecomap-drag-resource-state");
+        return saved ? normalizeState(JSON.parse(saved)) : initialState();
+      } catch (error) {
+        return initialState();
+      }
+    }
+
+    var state = loadLocalState();
+
+    function saveLocalState() {
+      localStorage.setItem("ecomap-drag-resource-state", JSON.stringify(state));
+    }
+
+    function selectedPerson() {
+      return state.people.find(function(person) {
+        return person.id === state.selectedId;
+      }) || state.people[0];
+    }
+
+    function fillSelect(select, source, selectedValue, includeClient) {
+      select.innerHTML = Object.keys(source)
+        .filter(function(key) { return includeClient || key !== "client"; })
+        .map(function(key) {
+          return '<option value="' + key + '"' + (key === selectedValue ? " selected" : "") + ">" +
+            escapeHtml(source[key].label || source[key]) + "</option>";
+        })
+        .join("");
+    }
+
+    function render() {
+      renderForm();
+      renderPeople();
+      renderSelected();
+      renderResources();
+      renderMap();
+      document.getElementById("connectButton").classList.toggle("active", connectMode);
+      saveLocalState();
+    }
+
+    function renderForm() {
+      document.getElementById("mapTitle").value = state.title;
+      var client = state.people.find(function(person) { return person.type === "client"; }) || state.people[0];
+      document.getElementById("clientName").value = client.name;
+      fillSelect(document.getElementById("newPersonType"), personTypes, "family", false);
+      fillSelect(document.getElementById("newRelationType"), relationTypes, "normal", true);
+      fillSelect(document.getElementById("resourceType"), resourceTypes, "emotional", true);
+    }
+
+    function renderPeople() {
+      var list = document.getElementById("peopleList");
+      document.getElementById("peopleCount").textContent = state.people.length;
+      list.innerHTML = state.people.map(function(person) {
+        return '<button class="person-row ' + (person.id === state.selectedId ? "active" : "") +
+          '" type="button" data-person-id="' + attr(person.id) + '">' +
+          '<i class="person-dot" style="background:' + personTypes[person.type].color + '"></i>' +
+          '<span class="person-main"><span class="person-name">' + escapeHtml(person.name) + '</span>' +
+          '<span class="person-meta">' + escapeHtml(personTypes[person.type].label) +
+          " · 자원 " + person.resources.length + "개</span></span>" +
+          '<span class="count">' + linkCount(person.id) + "</span></button>";
+      }).join("");
+
+      list.querySelectorAll("[data-person-id]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          state.selectedId = button.dataset.personId;
+          render();
+        });
+      });
+    }
+
+    function renderSelected() {
+      var person = selectedPerson();
+      document.getElementById("selectedName").value = person.name;
+      document.getElementById("selectedNote").value = person.note || "";
+      fillSelect(document.getElementById("selectedType"), personTypes, person.type, true);
+      document.getElementById("selectedType").disabled = person.type === "client";
+      document.getElementById("deletePerson").style.visibility = person.type === "client" ? "hidden" : "visible";
+    }
+
+    function renderResources() {
+      var person = selectedPerson();
+      var list = document.getElementById("resourceList");
+      list.innerHTML = person.resources.length ? person.resources.map(function(resource) {
+        return '<div class="resource-card"><div><strong>' + escapeHtml(resource.name) +
+          '</strong><span>' + escapeHtml(resourceTypes[resource.type].label) +
+          (resource.memo ? " · " + escapeHtml(resource.memo) : "") +
+          '</span></div><button class="delete-icon" type="button" title="자원 삭제" data-resource-delete="' +
+          attr(resource.id) + '">×</button></div>';
+      }).join("") : '<div class="empty">선택한 인물이나 기관에 등록된 자원이 없습니다.</div>';
+
+      list.querySelectorAll("[data-resource-delete]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          person.resources = person.resources.filter(function(resource) {
+            return resource.id !== button.dataset.resourceDelete;
+          });
+          render();
+        });
+      });
+    }
+
+    function renderMap() {
+      svg.innerHTML = "";
+
+      state.links.forEach(function(link) {
+        var from = personById(link.from);
+        var to = personById(link.to);
+        if (!from || !to) return;
+
+        var path = makeSvg("path", {
+          d: curvedPath(from.x, from.y, to.x, to.y),
+          class: "relation " + link.type
+        });
+        path.addEventListener("click", function(event) {
+          event.stopPropagation();
+          link.type = nextRelation(link.type);
+          showToast("관계: " + relationTypes[link.type]);
+          render();
+        });
+        svg.appendChild(path);
+      });
+
+      state.people.forEach(function(person) {
+        person.resources.forEach(function(resource) {
+          svg.appendChild(makeSvg("path", {
+            d: "M " + person.x + " " + person.y + " L " + resource.x + " " + resource.y,
+            class: "resource-link"
+          }));
+        });
+      });
+
+      state.people.forEach(function(person) {
+        svg.appendChild(personNode(person));
+      });
+
+      state.people.forEach(function(person) {
+        person.resources.forEach(function(resource) {
+          svg.appendChild(resourceNode(person, resource));
+        });
+      });
+    }
+
+    function personNode(person) {
+      var radius = person.type === "client" ? 58 : 52;
+      var group = makeSvg("g", {
+        class: "person-node " + (person.type === "client" ? "client " : "") +
+          (person.id === state.selectedId ? "selected" : ""),
+        transform: "translate(" + person.x + " " + person.y + ")"
+      });
+      group.dataset.personId = person.id;
+      group.appendChild(makeSvg("circle", { class: "select-ring", r: radius + 7 }));
+      group.appendChild(makeSvg("circle", {
+        class: "outer",
+        r: radius,
+        stroke: personTypes[person.type].color
+      }));
+      addLabel(group, person.name, -3, "node-name", 10);
+      var type = makeSvg("text", { y: 22, class: "node-type" });
+      type.textContent = personTypes[person.type].label;
+      group.appendChild(type);
+      group.addEventListener("pointerdown", startPersonDrag);
+      group.addEventListener("click", function(event) {
+        event.stopPropagation();
+        if (connectMode) {
+          handleConnectClick(person.id);
+        } else {
+          state.selectedId = person.id;
+          render();
+        }
+      });
+      return group;
+    }
+
+    function resourceNode(owner, resource) {
+      var tone = resourceTypes[resource.type].tone;
+      var group = makeSvg("g", {
+        class: "resource-node " + tone,
+        transform: "translate(" + resource.x + " " + resource.y + ")"
+      });
+      group.dataset.ownerId = owner.id;
+      group.dataset.resourceId = resource.id;
+      group.appendChild(makeSvg("circle", { class: "resource-circle", r: 44 }));
+      addLabel(group, resource.name, -4, "resource-name", 9);
+      var type = makeSvg("text", { y: 25, class: "resource-type" });
+      type.textContent = resourceTypes[resource.type].label;
+      group.appendChild(type);
+      group.addEventListener("pointerdown", startResourceDrag);
+      group.addEventListener("click", function(event) {
+        event.stopPropagation();
+        state.selectedId = owner.id;
+        showToast(owner.name + "의 자원: " + resource.name);
+        render();
+      });
+      return group;
+    }
+
+    function startPersonDrag(event) {
+      if (connectMode) return;
+      event.preventDefault();
+      var person = personById(event.currentTarget.dataset.personId);
+      var point = svgPoint(event);
+      dragging = {
+        kind: "person",
+        personId: person.id,
+        dx: point.x - person.x,
+        dy: point.y - person.y,
+        lastX: person.x,
+        lastY: person.y
+      };
+      state.selectedId = person.id;
+      svg.setPointerCapture(event.pointerId);
+    }
+
+    function startResourceDrag(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      var owner = personById(event.currentTarget.dataset.ownerId);
+      var resource = resourceById(owner, event.currentTarget.dataset.resourceId);
+      var point = svgPoint(event);
+      dragging = {
+        kind: "resource",
+        ownerId: owner.id,
+        resourceId: resource.id,
+        dx: point.x - resource.x,
+        dy: point.y - resource.y
+      };
+      state.selectedId = owner.id;
+      svg.setPointerCapture(event.pointerId);
+    }
+
+    svg.addEventListener("pointermove", function(event) {
+      if (!dragging) return;
+      var point = svgPoint(event);
+
+      if (dragging.kind === "person") {
+        var person = personById(dragging.personId);
+        var nextX = clamp(point.x - dragging.dx, 70, 930);
+        var nextY = clamp(point.y - dragging.dy, 70, 650);
+        var moveX = nextX - dragging.lastX;
+        var moveY = nextY - dragging.lastY;
+        person.x = nextX;
+        person.y = nextY;
+        person.resources.forEach(function(resource) {
+          resource.x = clamp(resource.x + moveX, 50, 950);
+          resource.y = clamp(resource.y + moveY, 50, 670);
+        });
+        dragging.lastX = nextX;
+        dragging.lastY = nextY;
+      } else {
+        var owner = personById(dragging.ownerId);
+        var resource = resourceById(owner, dragging.resourceId);
+        resource.x = clamp(point.x - dragging.dx, 50, 950);
+        resource.y = clamp(point.y - dragging.dy, 50, 670);
+      }
+
+      renderMap();
+    });
+
+    svg.addEventListener("pointerup", function() {
+      if (!dragging) return;
+      dragging = null;
+      saveLocalState();
+      renderPeople();
+      renderSelected();
+      renderResources();
+    });
+
+    svg.addEventListener("pointercancel", function() {
+      dragging = null;
+    });
+
+    function addPerson() {
+      var nameInput = document.getElementById("newPersonName");
+      var name = nameInput.value.trim();
+      if (!name) {
+        showToast("이름 또는 기관명을 입력해주세요.");
+        nameInput.focus();
+        return;
+      }
+
+      var type = document.getElementById("newPersonType").value;
+      var relation = document.getElementById("newRelationType").value;
+      var client = state.people.find(function(person) { return person.type === "client"; }) || state.people[0];
+      var index = state.people.length;
+      var angle = -Math.PI / 2 + (index - 1) * 1.35;
+      var person = {
+        id: uid(),
+        name: name,
+        type: type,
+        note: "",
+        x: clamp(client.x + Math.cos(angle) * 260, 80, 920),
+        y: clamp(client.y + Math.sin(angle) * 210, 80, 640),
+        resources: []
+      };
+
+      state.people.push(person);
+      state.links.push({ id: uid(), from: client.id, to: person.id, type: relation });
+      state.selectedId = person.id;
+      nameInput.value = "";
+      render();
+    }
+
+    function addResource() {
+      var nameInput = document.getElementById("resourceName");
+      var name = nameInput.value.trim();
+      if (!name) {
+        showToast("기관명 또는 자원 이름을 입력해주세요.");
+        nameInput.focus();
+        return;
+      }
+
+      var person = selectedPerson();
+      var position = defaultResourcePosition(person, person.resources.length, person.resources.length + 1);
+      person.resources.push({
+        id: uid(),
+        type: document.getElementById("resourceType").value,
+        name: name,
+        memo: document.getElementById("resourceMemo").value.trim(),
+        x: position.x,
+        y: position.y
+      });
+
+      nameInput.value = "";
+      document.getElementById("resourceMemo").value = "";
+      render();
+    }
+
+    function handleConnectClick(personId) {
+      if (!connectStart) {
+        connectStart = personId;
+        state.selectedId = personId;
+        showToast("연결할 두 번째 인물이나 기관을 선택하세요.");
+        render();
+        return;
+      }
+
+      if (connectStart !== personId) {
+        upsertLink(connectStart, personId, "normal");
+        showToast("관계를 연결했습니다.");
+      }
+      connectStart = null;
+      connectMode = false;
+      state.selectedId = personId;
+      render();
+    }
+
+    function upsertLink(from, to, type) {
+      var existing = state.links.find(function(link) {
+        return (link.from === from && link.to === to) || (link.from === to && link.to === from);
+      });
+      if (existing) existing.type = type;
+      else state.links.push({ id: uid(), from: from, to: to, type: type });
+    }
+
+    function arrangeMap() {
+      var client = state.people.find(function(person) { return person.type === "client"; }) || state.people[0];
+      client.x = 500;
+      client.y = 360;
+      var others = state.people.filter(function(person) { return person.id !== client.id; });
+      others.forEach(function(person, index) {
+        var angle = -Math.PI / 2 + Math.PI * 2 * index / Math.max(1, others.length);
+        person.x = 500 + Math.cos(angle) * 285;
+        person.y = 360 + Math.sin(angle) * 230;
+      });
+      state.people.forEach(function(person) {
+        person.resources.forEach(function(resource, index) {
+          var position = defaultResourcePosition(person, index, person.resources.length);
+          resource.x = position.x;
+          resource.y = position.y;
+        });
+      });
+      render();
+    }
+
+    function deleteSelectedPerson() {
+      var person = selectedPerson();
+      if (person.type === "client") return;
+      state.people = state.people.filter(function(item) { return item.id !== person.id; });
+      state.links = state.links.filter(function(link) {
+        return link.from !== person.id && link.to !== person.id;
+      });
+      state.selectedId = state.people[0].id;
+      render();
+    }
+
+    function downloadJson() {
+      saveLocalState();
+      downloadBlob(
+        new Blob([JSON.stringify(state, null, 2)], { type: "application/json" }),
+        safeFilename(state.title || "생태도") + ".json"
+      );
+      showToast("생태도 파일을 저장했습니다.");
+    }
+
+    function exportPng() {
+      var clone = svg.cloneNode(true);
+      clone.setAttribute("width", "1600");
+      clone.setAttribute("height", "1152");
+      clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      var style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+      style.textContent = Array.from(document.styleSheets).map(function(sheet) {
+        try { return Array.from(sheet.cssRules).map(function(rule) { return rule.cssText; }).join("\n"); }
+        catch (error) { return ""; }
+      }).join("\n");
+      clone.insertBefore(style, clone.firstChild);
+      var serialized = new XMLSerializer().serializeToString(clone);
+      var svgBlob = new Blob([serialized], { type: "image/svg+xml;charset=utf-8" });
+      var url = URL.createObjectURL(svgBlob);
+      var image = new Image();
+      image.onload = function() {
+        var canvas = document.createElement("canvas");
+        canvas.width = 1600;
+        canvas.height = 1152;
+        var context = canvas.getContext("2d");
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(function(blob) {
+          if (blob) downloadBlob(blob, safeFilename(state.title || "생태도") + ".png");
+        }, "image/png");
+      };
+      image.src = url;
+    }
+
+    function loadJson(file) {
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          var next = normalizeState(JSON.parse(reader.result));
+          if (!next.people.length) throw new Error("invalid");
+          state = next;
+          render();
+          showToast("생태도 파일을 불러왔습니다.");
+        } catch (error) {
+          showToast("올바른 생태도 파일이 아닙니다.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function defaultResourcePosition(person, index, count) {
+      var baseAngle = -Math.PI / 2;
+      var spread = Math.min(Math.PI * 1.35, Math.max(.7, count * .52));
+      var angle = count <= 1
+        ? baseAngle
+        : baseAngle - spread / 2 + spread * index / Math.max(1, count - 1);
+      var distance = person.type === "client" ? 145 : 135;
+      return {
+        x: clamp(person.x + Math.cos(angle) * distance, 50, 950),
+        y: clamp(person.y + Math.sin(angle) * distance, 50, 670)
+      };
+    }
+
+    function curvedPath(x1, y1, x2, y2) {
+      var dx = x2 - x1;
+      var dy = y2 - y1;
+      var length = Math.hypot(dx, dy) || 1;
+      var curve = Math.min(45, length / 8);
+      var mx = (x1 + x2) / 2 - dy / length * curve;
+      var my = (y1 + y2) / 2 + dx / length * curve;
+      return "M " + x1 + " " + y1 + " Q " + mx + " " + my + " " + x2 + " " + y2;
+    }
+
+    function addLabel(group, text, y, className, maxChars) {
+      var lines = splitLabel(text, maxChars).slice(0, 2);
+      var label = makeSvg("text", {
+        y: y - (lines.length - 1) * 7,
+        class: className
+      });
+      lines.forEach(function(line, index) {
+        var tspan = makeSvg("tspan", { x: 0, dy: index === 0 ? 0 : 14 });
+        tspan.textContent = line;
+        label.appendChild(tspan);
+      });
+      group.appendChild(label);
+    }
+
+    function splitLabel(value, maxChars) {
+      var text = String(value || "");
+      if (text.length <= maxChars) return [text];
+      var words = text.split(/\s+/);
+      if (words.length > 1) {
+        var lines = [""];
+        words.forEach(function(word) {
+          var last = lines.length - 1;
+          if ((lines[last] + " " + word).trim().length <= maxChars) {
+            lines[last] = (lines[last] + " " + word).trim();
+          } else {
+            lines.push(word);
+          }
+        });
+        return lines.map(function(line) {
+          return line.length > maxChars ? line.slice(0, maxChars - 1) + "…" : line;
+        });
+      }
+      return [
+        text.slice(0, maxChars),
+        text.length > maxChars * 2 ? text.slice(maxChars, maxChars * 2 - 1) + "…" : text.slice(maxChars)
+      ];
+    }
+
+    function makeSvg(tag, attrs) {
+      var element = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      Object.keys(attrs).forEach(function(key) {
+        element.setAttribute(key, attrs[key]);
+      });
+      return element;
+    }
+
+    function svgPoint(event) {
+      var point = svg.createSVGPoint();
+      point.x = event.clientX;
+      point.y = event.clientY;
+      return point.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function personById(id) {
+      return state.people.find(function(person) { return person.id === id; });
+    }
+
+    function resourceById(person, id) {
+      return person.resources.find(function(resource) { return resource.id === id; });
+    }
+
+    function linkCount(id) {
+      return state.links.filter(function(link) {
+        return link.from === id || link.to === id;
+      }).length;
+    }
+
+    function nextRelation(type) {
+      var order = ["strong", "normal", "weak", "stress"];
+      return order[(order.indexOf(type) + 1) % order.length];
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function safeFilename(value) {
+      return String(value).replace(/[\\/:*?"<>|]/g, "_").trim() || "생태도";
+    }
+
+    function downloadBlob(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.click();
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(function() {
+        toast.classList.remove("show");
+      }, 1700);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function attr(value) {
+      return escapeHtml(value);
+    }
+
+    document.getElementById("mapTitle").addEventListener("input", function(event) {
+      state.title = event.target.value;
+      saveLocalState();
+    });
+
+    document.getElementById("clientName").addEventListener("input", function(event) {
+      var client = state.people.find(function(person) { return person.type === "client"; }) || state.people[0];
+      client.name = event.target.value || "Client";
+      renderPeople();
+      renderMap();
+      saveLocalState();
+    });
+
+    document.getElementById("selectedName").addEventListener("input", function(event) {
+      selectedPerson().name = event.target.value || "이름 없음";
+      renderPeople();
+      renderMap();
+      saveLocalState();
+    });
+
+    document.getElementById("selectedNote").addEventListener("input", function(event) {
+      selectedPerson().note = event.target.value;
+      saveLocalState();
+    });
+
+    document.getElementById("selectedType").addEventListener("change", function(event) {
+      selectedPerson().type = event.target.value;
+      render();
+    });
+
+    document.getElementById("addPerson").addEventListener("click", addPerson);
+    document.getElementById("newPersonName").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") addPerson();
+    });
+    document.getElementById("addResource").addEventListener("click", addResource);
+    document.getElementById("resourceName").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") addResource();
+    });
+    document.getElementById("deletePerson").addEventListener("click", deleteSelectedPerson);
+    document.getElementById("arrangeButton").addEventListener("click", arrangeMap);
+
+    document.getElementById("connectButton").addEventListener("click", function() {
+      connectMode = !connectMode;
+      connectStart = null;
+      document.getElementById("statusText").textContent = connectMode
+        ? "연결할 첫 번째 인물이나 기관을 선택하세요."
+        : "노드와 자원을 드래그하여 이동할 수 있습니다.";
+      render();
+    });
+
+    function clearState() {
+      state = initialState();
+      connectMode = false;
+      connectStart = null;
+      render();
+      showToast("새 생태도를 만들었습니다.");
+    }
+
+    document.getElementById("newButton").addEventListener("click", clearState);
+    document.getElementById("resetButton").addEventListener("click", clearState);
+    document.getElementById("saveButton").addEventListener("click", downloadJson);
+    document.getElementById("imageButton").addEventListener("click", exportPng);
+    document.getElementById("loadButton").addEventListener("click", function() {
+      document.getElementById("loadInput").click();
+    });
+    document.getElementById("loadInput").addEventListener("change", function(event) {
+      var file = event.target.files[0];
+      if (file) loadJson(file);
+      event.target.value = "";
+    });
+
+    render();
+  </script>
 </body>
 </html>
