@@ -422,6 +422,13 @@ select:focus {
   stroke-width: 7;
   filter: drop-shadow(0 0 2px rgba(52, 120, 229, .35));
 }
+.social-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 20;
+  pointer-events: stroke;
+  cursor: pointer;
+}
 .resource-link {
   fill: none;
   stroke: #8e9ba8;

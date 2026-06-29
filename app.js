@@ -38,6 +38,7 @@ var connectMode = false;
 var connectStart = null;
 var backgroundImageUrl = null;
 var exportInProgress = false;
+var lastRelationshipId = null;
 
 function uid() {
   return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random();
@@ -310,7 +311,7 @@ function render() {
   renderResources();
   renderMap();
   document.getElementById("connectButton").classList.toggle("active", connectMode);
-  document.getElementById("deleteLinkButton").disabled = !state.selectedLinkId;
+  document.getElementById("deleteLinkButton").disabled = state.links.length === 0;
   saveLocalState();
 }
 
@@ -443,7 +444,7 @@ function renderMap() {
       d: "M " + from.x + " " + from.y + " L " + to.x + " " + to.y,
       class: "social-line " + link.type + (state.selectedLinkId === link.id ? " selected" : "")
     });
-    path.addEventListener("click", function(event) {
+    function selectRelationship(event) {
       event.stopPropagation();
       if (state.selectedLinkId === link.id) {
         link.type = nextSocialType(link.type);
@@ -454,6 +455,7 @@ function renderMap() {
         return;
       }
       state.selectedLinkId = link.id;
+      lastRelationshipId = link.id;
       svg.querySelectorAll(".social-line").forEach(function(line) {
         line.classList.remove("selected");
       });
@@ -461,12 +463,22 @@ function renderMap() {
       document.getElementById("deleteLinkButton").disabled = false;
       showToast("관계선을 선택했습니다. 관계 삭제 버튼이나 Delete 키를 사용할 수 있습니다.");
       saveLocalState();
-    });
-    path.addEventListener("dblclick", function(event) {
+      svg.focus();
+    }
+    function removeRelationship(event) {
       event.stopPropagation();
       deleteLinkById(link.id);
-    });
+    }
+    path.addEventListener("click", selectRelationship);
+    path.addEventListener("dblclick", removeRelationship);
     svg.appendChild(path);
+    var hitPath = makeSvg("path", {
+      d: "M " + from.x + " " + from.y + " L " + to.x + " " + to.y,
+      class: "social-hit"
+    });
+    hitPath.addEventListener("click", selectRelationship);
+    hitPath.addEventListener("dblclick", removeRelationship);
+    svg.appendChild(hitPath);
   });
 
   state.people.forEach(function(person) {
@@ -924,7 +936,7 @@ function handleConnectClick(personId) {
   }
   if (connectStart !== personId) {
     upsertSocialLink(connectStart, personId, "normal");
-    showToast("사회적 관계를 연결했습니다.");
+    showToast("사회적 관계를 연결했습니다. Backspace를 누르면 바로 취소됩니다.");
   }
   connectStart = null;
   connectMode = false;
@@ -939,24 +951,30 @@ function upsertSocialLink(from, to, type) {
   if (existing) {
     existing.type = type;
     state.selectedLinkId = existing.id;
+    lastRelationshipId = existing.id;
   } else {
     var link = { id: uid(), from: from, to: to, type: type };
     state.links.push(link);
     state.selectedLinkId = link.id;
+    lastRelationshipId = link.id;
   }
+  svg.focus();
 }
 
 function deleteSelectedLink() {
-  if (!state.selectedLinkId) {
+  var targetId = state.selectedLinkId || lastRelationshipId ||
+    (state.links.length ? state.links[state.links.length - 1].id : null);
+  if (!targetId) {
     showToast("삭제할 관계선을 먼저 선택해주세요.");
     return;
   }
-  deleteLinkById(state.selectedLinkId);
+  deleteLinkById(targetId);
 }
 
 function deleteLinkById(linkId) {
   state.links = state.links.filter(function(link) { return link.id !== linkId; });
   state.selectedLinkId = null;
+  if (lastRelationshipId === linkId) lastRelationshipId = null;
   render();
   showToast("관계 연결을 삭제했습니다.");
 }
@@ -1497,6 +1515,7 @@ document.getElementById("loadInput").addEventListener("change", function(event) 
 });
 window.addEventListener("keydown", function(event) {
   var tag = document.activeElement && document.activeElement.tagName;
+  var isBackspace = event.key === "Backspace" || event.code === "Backspace" || event.keyCode === 8;
   if (event.key === "Escape") {
     closeQuickEditor();
     if (connectMode) {
@@ -1505,15 +1524,16 @@ window.addEventListener("keydown", function(event) {
       render();
     }
   }
-  if ((event.key === "Delete" || event.key === "Backspace") &&
+  if ((event.key === "Delete" || isBackspace) &&
       tag !== "INPUT" && tag !== "SELECT" && tag !== "TEXTAREA") {
     event.preventDefault();
+    event.stopPropagation();
     if (connectMode) {
       connectMode = false;
       connectStart = null;
       render();
       showToast("관계 연결을 취소했습니다.");
-    } else if (state.selectedLinkId) {
+    } else if (state.links.length) {
       deleteSelectedLink();
     }
   }
