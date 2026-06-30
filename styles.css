@@ -409,32 +409,25 @@ select:focus {
 }
 .social-line {
   fill: none;
-  stroke: #7c8a97;
-  stroke-width: 3;
+  stroke: #3b82f6;
+  stroke-width: 3.2;
   stroke-linecap: round;
-  cursor: pointer;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
-.social-line.strong { stroke: var(--green); stroke-width: 4; }
-.social-line.weak { stroke: var(--gold); stroke-width: 2.5; stroke-dasharray: 8 8; }
-.social-line.stress { stroke: var(--red); stroke-width: 3; stroke-dasharray: 3 7; }
-.social-line.selected {
-  stroke: var(--blue);
-  stroke-width: 7;
-  filter: drop-shadow(0 0 2px rgba(52, 120, 229, .35));
-}
-.social-hit {
-  fill: none;
-  stroke: transparent;
-  stroke-width: 20;
-  pointer-events: stroke;
-  cursor: pointer;
-}
+.social-line.good { stroke: #3b82f6; }
+.social-line.distant { stroke: #22a860; stroke-dasharray: 10 8; }
+.social-line.conflict { stroke: #9b52c7; stroke-width: 3; }
 .resource-link {
   fill: none;
-  stroke: #8e9ba8;
-  stroke-width: 2;
-  stroke-dasharray: 5 5;
+  stroke: #3b82f6;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
+.resource-link.good { stroke: #3b82f6; }
+.resource-link.distant { stroke: #22a860; stroke-dasharray: 9 7; }
+.resource-link.conflict { stroke: #9b52c7; stroke-width: 3; }
 
 .person-node,
 .resource-node,

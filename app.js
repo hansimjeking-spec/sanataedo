@@ -24,21 +24,25 @@ var resourceTypes = {
 };
 
 var socialTypes = {
-  strong: "강한 지지",
-  normal: "일반 관계",
-  weak: "약한 관계",
-  stress: "갈등/부담"
+  good: "좋은 관계",
+  distant: "소원한 관계",
+  conflict: "갈등 관계"
+};
+
+var directionTypes = {
+  out: "단방향 (인물→대상)",
+  in: "단방향 (대상→인물)",
+  both: "양방향"
 };
 
 var svg = document.getElementById("map");
 var toast = document.getElementById("toast");
 var quickEditor = document.getElementById("quickEditor");
 var dragging = null;
-var connectMode = false;
-var connectStart = null;
+var lastNodePress = { key: "", at: 0 };
 var backgroundImageUrl = null;
 var exportInProgress = false;
-var lastRelationshipId = null;
+var lastExportFinishedAt = 0;
 
 function uid() {
   return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random();
@@ -65,6 +69,7 @@ function initialState() {
         role: "parent",
         generation: -1,
         birthYear: "1940",
+        deathYear: "2010",
         deceased: true,
         x: 430,
         y: 170,
@@ -77,6 +82,7 @@ function initialState() {
         role: "parent",
         generation: -1,
         birthYear: "1945",
+        deathYear: "",
         deceased: false,
         x: 670,
         y: 170,
@@ -86,6 +92,8 @@ function initialState() {
             type: "care",
             name: "제천병원",
             memo: "정기 진료",
+            relationship: "good",
+            direction: "both",
             x: 900,
             y: 165,
             width: 150,
@@ -100,6 +108,7 @@ function initialState() {
         role: "sibling",
         generation: 0,
         birthYear: "1965",
+        deathYear: "",
         deceased: false,
         x: 300,
         y: 420,
@@ -112,6 +121,7 @@ function initialState() {
         role: "client",
         generation: 0,
         birthYear: "1967",
+        deathYear: "",
         deceased: false,
         x: 550,
         y: 420,
@@ -121,6 +131,8 @@ function initialState() {
             type: "care",
             name: "명지병원",
             memo: "진료와 건강관리",
+            relationship: "good",
+            direction: "both",
             x: 700,
             y: 610,
             width: 160,
@@ -135,6 +147,7 @@ function initialState() {
         role: "sibling",
         generation: 0,
         birthYear: "1970",
+        deathYear: "",
         deceased: false,
         x: 800,
         y: 420,
@@ -148,13 +161,17 @@ function initialState() {
         children: [sisterId, "client", brotherId]
       }
     ],
-    links: []
+    links: [
+      { id: uid(), from: "client", to: fatherId, type: "distant", direction: "in" },
+      { id: uid(), from: "client", to: motherId, type: "good", direction: "both" },
+      { id: uid(), from: "client", to: sisterId, type: "good", direction: "both" },
+      { id: uid(), from: "client", to: brotherId, type: "conflict", direction: "both" }
+    ]
   });
 }
 
 function normalizeState(next) {
   next = next || {};
-  var sourceVersion = Number(next.version) || 0;
   next.version = 4;
   next.title = next.title || "나의 생태도";
   next.people = Array.isArray(next.people) ? next.people : [];
@@ -166,7 +183,7 @@ function normalizeState(next) {
   if (!next.people.length) {
     next.people.push({
       id: "client",
-      name: "Client",
+      name: "클라이언트",
       gender: "female",
       role: "client",
       generation: 0,
@@ -191,6 +208,7 @@ function normalizeState(next) {
       : roles[person.role].generation;
     person.name = person.name || roles[person.role].label;
     person.birthYear = person.birthYear || "";
+    person.deathYear = person.deathYear || "";
     person.deceased = Boolean(person.deceased);
     person.x = Number.isFinite(person.x) ? person.x : 550;
     person.y = Number.isFinite(person.y) ? person.y : 400;
@@ -201,6 +219,8 @@ function normalizeState(next) {
       resource.type = resourceTypes[resource.type] ? resource.type : "info";
       resource.name = resource.name || "이름 없는 자원";
       resource.memo = resource.memo || "";
+      resource.relationship = normalizeRelationshipType(resource.relationship || resource.type);
+      resource.direction = directionTypes[resource.direction] ? resource.direction : "both";
       resource.width = clamp(Number(resource.width) || 150, 110, 300);
       resource.height = clamp(Number(resource.height) || 72, 56, 170);
       if (!Number.isFinite(resource.x) || !Number.isFinite(resource.y)) {
@@ -211,7 +231,30 @@ function normalizeState(next) {
     });
   });
 
-  if (sourceVersion < 4 && next.title === "우리 가족 생태도") {
+  next.links.forEach(function(link) {
+    link.id = link.id || uid();
+    link.type = normalizeRelationshipType(link.type);
+    link.direction = directionTypes[link.direction] ? link.direction : "both";
+    var normalizedClient = clientPerson(next);
+    if (normalizedClient && link.to === normalizedClient.id && link.from !== normalizedClient.id) {
+      var previousFrom = link.from;
+      link.from = link.to;
+      link.to = previousFrom;
+      if (link.direction === "out") link.direction = "in";
+      else if (link.direction === "in") link.direction = "out";
+    }
+  });
+  var linksByPair = {};
+  next.links.forEach(function(link) {
+    if (!personExists(link.from) || !personExists(link.to) || link.from === link.to) return;
+    var pairKey = [link.from, link.to].sort().join("::");
+    linksByPair[pairKey] = link;
+  });
+  next.links = Object.keys(linksByPair).map(function(key) {
+    return linksByPair[key];
+  });
+
+  if (next.title === "우리 가족 생태도") {
     var previousSampleClient = clientPerson(next);
     if (previousSampleClient && previousSampleClient.name === "권경자") {
       previousSampleClient.name = "클라이언트";
@@ -294,6 +337,36 @@ function selectedResource() {
   return findResourceInState(state, state.selectedResourceId);
 }
 
+function normalizeRelationshipType(type) {
+  var previousTypes = {
+    strong: "good",
+    normal: "good",
+    weak: "distant",
+    stress: "conflict",
+    emotional: "good",
+    care: "good",
+    money: "good",
+    info: "good",
+    place: "good",
+    risk: "conflict"
+  };
+  return socialTypes[type] ? type : (previousTypes[type] || "good");
+}
+
+function relationshipForPerson(personId) {
+  var client = clientPerson();
+  if (!client || personId === client.id) return null;
+  return state.links.find(function(link) {
+    return (link.from === client.id && link.to === personId) ||
+      (link.from === personId && link.to === client.id);
+  }) || null;
+}
+
+function personDateLabel(person) {
+  if (!person.deceased) return person.birthYear || "";
+  return (person.birthYear || "?") + "–" + (person.deathYear || "사망");
+}
+
 function fillSelect(select, source, value, excluded) {
   select.innerHTML = Object.keys(source)
     .filter(function(key) { return !excluded || excluded.indexOf(key) === -1; })
@@ -310,8 +383,6 @@ function render() {
   renderSelected();
   renderResources();
   renderMap();
-  document.getElementById("connectButton").classList.toggle("active", connectMode);
-  document.getElementById("deleteLinkButton").disabled = state.links.length === 0;
   saveLocalState();
 }
 
@@ -321,7 +392,11 @@ function renderForm() {
   document.getElementById("clientName").value = client.name;
   fillSelect(document.getElementById("newGender"), genders, "female");
   fillSelect(document.getElementById("newRole"), roles, "sibling", ["client"]);
+  fillSelect(document.getElementById("newRelationship"), socialTypes, "good");
+  fillSelect(document.getElementById("newDirection"), directionTypes, "both");
   fillSelect(document.getElementById("resourceType"), resourceTypes, "emotional");
+  fillSelect(document.getElementById("resourceRelationship"), socialTypes, "good");
+  fillSelect(document.getElementById("resourceDirection"), directionTypes, "both");
 }
 
 function renderPeople() {
@@ -329,7 +404,7 @@ function renderPeople() {
   document.getElementById("peopleCount").textContent = state.people.length;
   list.innerHTML = state.people.map(function(person) {
     var symbolClass = "person-symbol " + person.gender + (person.deceased ? " deceased" : "");
-    var year = person.birthYear ? " · " + person.birthYear : "";
+    var year = personDateLabel(person) ? " · " + personDateLabel(person) : "";
     return '<button class="person-row ' + (person.id === state.selectedId ? "active" : "") +
       '" type="button" data-person-id="' + attr(person.id) + '">' +
       '<i class="' + symbolClass + '"></i>' +
@@ -352,11 +427,17 @@ function renderSelected() {
   var person = selectedPerson();
   document.getElementById("selectedName").value = person.name;
   document.getElementById("selectedBirthYear").value = person.birthYear;
+  document.getElementById("selectedDeathYear").value = person.deathYear;
   document.getElementById("selectedDeceased").checked = person.deceased;
   fillSelect(document.getElementById("selectedGender"), genders, person.gender);
   fillSelect(document.getElementById("selectedRole"), roles, person.role);
   document.getElementById("selectedRole").disabled = person.role === "client";
   document.getElementById("deletePerson").style.visibility = person.role === "client" ? "hidden" : "visible";
+  var relationship = relationshipForPerson(person.id);
+  fillSelect(document.getElementById("selectedRelationship"), socialTypes, relationship ? relationship.type : "good");
+  fillSelect(document.getElementById("selectedDirection"), directionTypes, relationship ? relationship.direction : "both");
+  document.getElementById("selectedRelationshipField").style.display =
+    person.role === "client" ? "none" : "grid";
 }
 
 function renderResources() {
@@ -367,8 +448,6 @@ function renderResources() {
       '</strong><span>' + escapeHtml(resource.memo || "지원 내용 미입력") +
       " · " + Math.round(resource.width) + "×" + Math.round(resource.height) +
       '</span></div><div class="resource-card-actions">' +
-      '<button class="edit-resource" type="button" data-resource-edit="' + attr(resource.id) +
-      '">수정</button>' +
       '<button class="select-resource" type="button" data-resource-select="' + attr(resource.id) +
       '">크기</button><button class="delete-icon" type="button" title="자원 삭제" data-resource-delete="' +
       attr(resource.id) + '">×</button></div></div>';
@@ -405,11 +484,6 @@ function renderResources() {
       render();
     });
   });
-  list.querySelectorAll("[data-resource-edit]").forEach(function(button) {
-    button.addEventListener("click", function() {
-      openQuickEditor("resource", person.id, button.dataset.resourceEdit);
-    });
-  });
   list.querySelectorAll("[data-resource-delete]").forEach(function(button) {
     button.addEventListener("click", function() {
       person.resources = person.resources.filter(function(resource) {
@@ -423,6 +497,7 @@ function renderResources() {
 
 function renderMap() {
   svg.innerHTML = "";
+  appendRelationshipMarkers();
   if (backgroundImageUrl) {
     svg.appendChild(makeSvg("image", {
       href: backgroundImageUrl,
@@ -440,53 +515,23 @@ function renderMap() {
     var from = personById(link.from);
     var to = personById(link.to);
     if (!from || !to) return;
+    var endpoints = connectionEndpoints(from.x, from.y, to.x, to.y, 49, 49);
     var path = makeSvg("path", {
-      d: "M " + from.x + " " + from.y + " L " + to.x + " " + to.y,
-      class: "social-line " + link.type + (state.selectedLinkId === link.id ? " selected" : "")
+      d: relationshipPath(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, link.type),
+      class: "social-line " + link.type
     });
-    function selectRelationship(event) {
-      event.stopPropagation();
-      if (state.selectedLinkId === link.id) {
-        link.type = nextSocialType(link.type);
-        path.classList.remove("strong", "normal", "weak", "stress");
-        path.classList.add(link.type);
-        showToast("관계 유형: " + socialTypes[link.type] + " · 더블 클릭하면 삭제됩니다.");
-        saveLocalState();
-        return;
-      }
-      state.selectedLinkId = link.id;
-      lastRelationshipId = link.id;
-      svg.querySelectorAll(".social-line").forEach(function(line) {
-        line.classList.remove("selected");
-      });
-      path.classList.add("selected");
-      document.getElementById("deleteLinkButton").disabled = false;
-      showToast("관계선을 선택했습니다. 관계 삭제 버튼이나 Delete 키를 사용할 수 있습니다.");
-      saveLocalState();
-      svg.focus();
-    }
-    function removeRelationship(event) {
-      event.stopPropagation();
-      deleteLinkById(link.id);
-    }
-    path.addEventListener("click", selectRelationship);
-    path.addEventListener("dblclick", removeRelationship);
+    applyRelationshipDirection(path, link.type, link.direction);
     svg.appendChild(path);
-    var hitPath = makeSvg("path", {
-      d: "M " + from.x + " " + from.y + " L " + to.x + " " + to.y,
-      class: "social-hit"
-    });
-    hitPath.addEventListener("click", selectRelationship);
-    hitPath.addEventListener("dblclick", removeRelationship);
-    svg.appendChild(hitPath);
   });
 
   state.people.forEach(function(person) {
     person.resources.forEach(function(resource) {
-      svg.appendChild(makeSvg("path", {
-        d: resourceConnectionPath(person, resource),
-        class: "resource-link"
-      }));
+      var path = makeSvg("path", {
+        d: resourceConnectionPath(person, resource, resource.relationship),
+        class: "resource-link " + resource.relationship
+      });
+      applyRelationshipDirection(path, resource.relationship, resource.direction);
+      svg.appendChild(path);
     });
   });
 
@@ -496,6 +541,68 @@ function renderMap() {
       svg.appendChild(resourceNode(person, resource));
     });
   });
+}
+
+function appendRelationshipMarkers() {
+  var defs = makeSvg("defs", {});
+  [
+    { id: "good", color: "#3b82f6" },
+    { id: "distant", color: "#22a860" },
+    { id: "conflict", color: "#9b52c7" }
+  ].forEach(function(item) {
+    var marker = makeSvg("marker", {
+      id: "arrow-" + item.id,
+      viewBox: "0 0 10 10",
+      refX: 8,
+      refY: 5,
+      markerWidth: 8,
+      markerHeight: 8,
+      orient: "auto-start-reverse",
+      markerUnits: "userSpaceOnUse"
+    });
+    marker.appendChild(makeSvg("path", {
+      d: "M 0 0 L 10 5 L 0 10 z",
+      fill: item.color
+    }));
+    defs.appendChild(marker);
+  });
+  svg.appendChild(defs);
+}
+
+function applyRelationshipDirection(path, type, direction) {
+  var marker = "url(#arrow-" + normalizeRelationshipType(type) + ")";
+  if (direction === "in" || direction === "both") path.setAttribute("marker-start", marker);
+  if (direction === "out" || direction === "both") path.setAttribute("marker-end", marker);
+}
+
+function connectionEndpoints(x1, y1, x2, y2, startPadding, endPadding) {
+  var dx = x2 - x1;
+  var dy = y2 - y1;
+  var length = Math.hypot(dx, dy) || 1;
+  return {
+    x1: x1 + dx / length * startPadding,
+    y1: y1 + dy / length * startPadding,
+    x2: x2 - dx / length * endPadding,
+    y2: y2 - dy / length * endPadding
+  };
+}
+
+function relationshipPath(x1, y1, x2, y2, type) {
+  if (type !== "conflict") return "M " + x1 + " " + y1 + " L " + x2 + " " + y2;
+  var dx = x2 - x1;
+  var dy = y2 - y1;
+  var length = Math.hypot(dx, dy) || 1;
+  var segments = Math.max(6, Math.floor(length / 15));
+  var normalX = -dy / length;
+  var normalY = dx / length;
+  var path = "M " + x1 + " " + y1;
+  for (var index = 1; index < segments; index += 1) {
+    var ratio = index / segments;
+    var offset = (index % 2 === 0 ? -1 : 1) * 7;
+    path += " L " + (x1 + dx * ratio + normalX * offset) +
+      " " + (y1 + dy * ratio + normalY * offset);
+  }
+  return path + " L " + x2 + " " + y2;
 }
 
 function drawFamilyGroup(group) {
@@ -552,17 +659,8 @@ function personNode(person) {
   group.addEventListener("pointerdown", startPersonDrag);
   group.addEventListener("click", function(event) {
     event.stopPropagation();
-    if (connectMode) {
-      handleConnectClick(person.id);
-      return;
-    }
     if (event.detail > 1) return;
     selectDiagramItem(person.id, null, group);
-  });
-  group.addEventListener("dblclick", function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    openQuickEditor("person", person.id);
   });
   return group;
 }
@@ -608,12 +706,13 @@ function appendClientRing(group, gender) {
 }
 
 function addPersonLabel(group, person) {
-  var name = makeSvg("text", { class: "node-name", y: person.birthYear ? -2 : 5 });
+  var dates = personDateLabel(person);
+  var name = makeSvg("text", { class: "node-name", y: dates ? -2 : 5 });
   name.textContent = shortText(person.name, 8);
   group.appendChild(name);
-  if (person.birthYear) {
+  if (dates) {
     var year = makeSvg("text", { class: "node-year", y: 21 });
-    year.textContent = "(" + person.birthYear + ")";
+    year.textContent = "(" + dates + ")";
     group.appendChild(year);
   }
 }
@@ -655,11 +754,6 @@ function resourceNode(owner, resource) {
     if (event.detail > 1) return;
     selectDiagramItem(owner.id, resource.id, group);
   });
-  group.addEventListener("dblclick", function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    openQuickEditor("resource", owner.id, resource.id);
-  });
   return group;
 }
 
@@ -692,9 +786,16 @@ function addResourceLabel(group, resource) {
 }
 
 function startPersonDrag(event) {
-  if (connectMode) return;
   event.preventDefault();
   var person = personById(event.currentTarget.dataset.personId);
+  if (isSecondNodePress("person", person.id)) {
+    event.stopPropagation();
+    dragging = null;
+    state.selectedId = person.id;
+    state.selectedResourceId = null;
+    openQuickEditor("person", person.id);
+    return;
+  }
   var point = svgPoint(event);
   dragging = {
     kind: "person",
@@ -702,7 +803,8 @@ function startPersonDrag(event) {
     dx: point.x - person.x,
     dy: point.y - person.y,
     lastX: person.x,
-    lastY: person.y
+    lastY: person.y,
+    moved: false
   };
   state.selectedId = person.id;
   state.selectedResourceId = null;
@@ -714,13 +816,21 @@ function startResourceDrag(event) {
   event.stopPropagation();
   var owner = personById(event.currentTarget.dataset.ownerId);
   var resource = resourceById(owner, event.currentTarget.dataset.resourceId);
+  if (isSecondNodePress("resource", resource.id)) {
+    dragging = null;
+    state.selectedId = owner.id;
+    state.selectedResourceId = resource.id;
+    openQuickEditor("resource", owner.id, resource.id);
+    return;
+  }
   var point = svgPoint(event);
   dragging = {
     kind: "resource",
     ownerId: owner.id,
     resourceId: resource.id,
     dx: point.x - resource.x,
-    dy: point.y - resource.y
+    dy: point.y - resource.y,
+    moved: false
   };
   state.selectedId = owner.id;
   state.selectedResourceId = resource.id;
@@ -738,7 +848,8 @@ function startResourceResize(event) {
     ownerId: owner.id,
     resourceId: resource.id,
     left: resource.x - resource.width / 2,
-    top: resource.y - resource.height / 2
+    top: resource.y - resource.height / 2,
+    moved: false
   };
   state.selectedId = owner.id;
   state.selectedResourceId = resource.id;
@@ -747,6 +858,7 @@ function startResourceResize(event) {
 
 svg.addEventListener("pointermove", function(event) {
   if (!dragging) return;
+  dragging.moved = true;
   var point = svgPoint(event);
   if (dragging.kind === "person") movePerson(point);
   else if (dragging.kind === "resource") moveResource(point);
@@ -791,11 +903,23 @@ function resizeResource(point) {
 
 function finishDrag() {
   if (!dragging) return;
+  if (dragging.moved) lastNodePress = { key: "", at: 0 };
   dragging = null;
   saveLocalState();
   renderPeople();
   renderSelected();
   renderResources();
+}
+
+function isSecondNodePress(kind, id) {
+  var key = kind + ":" + id;
+  var now = Date.now();
+  if (lastNodePress.key === key && now - lastNodePress.at < 450) {
+    lastNodePress = { key: "", at: 0 };
+    return true;
+  }
+  lastNodePress = { key: key, at: now };
+  return false;
 }
 
 function selectDiagramItem(personId, resourceId, targetGroup) {
@@ -831,6 +955,7 @@ function addPerson() {
     role: role,
     generation: roles[role].generation,
     birthYear: document.getElementById("newBirthYear").value.trim(),
+    deathYear: document.getElementById("newDeathYear").value.trim(),
     deceased: document.getElementById("newDeceased").checked,
     x: 550,
     y: 400,
@@ -838,12 +963,19 @@ function addPerson() {
   };
   state.people.push(person);
   attachByRole(person, role);
+  upsertSocialLink(
+    clientPerson().id,
+    person.id,
+    document.getElementById("newRelationship").value,
+    document.getElementById("newDirection").value
+  );
   state.selectedId = person.id;
   state.selectedResourceId = null;
   input.value = "";
   document.getElementById("newBirthYear").value = "";
+  document.getElementById("newDeathYear").value = "";
   document.getElementById("newDeceased").checked = false;
-  arrangeMap();
+  layoutFamilyTree();
 }
 
 function attachByRole(person, role) {
@@ -885,8 +1017,6 @@ function attachByRole(person, role) {
     } else if (group.children.indexOf(person.id) === -1) {
       group.children.push(person.id);
     }
-  } else {
-    state.links.push({ id: uid(), from: client.id, to: person.id, type: "normal" });
   }
 }
 
@@ -896,7 +1026,7 @@ function changePersonRole(person, nextRole) {
   person.role = nextRole;
   person.generation = roles[nextRole].generation;
   attachByRole(person, nextRole);
-  arrangeMap();
+  layoutFamilyTree();
 }
 
 function addResource() {
@@ -914,6 +1044,8 @@ function addResource() {
     type: document.getElementById("resourceType").value,
     name: name,
     memo: document.getElementById("resourceMemo").value.trim(),
+    relationship: document.getElementById("resourceRelationship").value,
+    direction: document.getElementById("resourceDirection").value,
     x: position.x,
     y: position.y,
     width: 150,
@@ -926,57 +1058,25 @@ function addResource() {
   render();
 }
 
-function handleConnectClick(personId) {
-  if (!connectStart) {
-    connectStart = personId;
-    state.selectedId = personId;
-    showToast("사회적 관계를 연결할 두 번째 인물을 선택하세요.");
-    render();
-    return;
-  }
-  if (connectStart !== personId) {
-    upsertSocialLink(connectStart, personId, "normal");
-    showToast("사회적 관계를 연결했습니다. Backspace를 누르면 바로 취소됩니다.");
-  }
-  connectStart = null;
-  connectMode = false;
-  state.selectedId = personId;
-  render();
-}
-
-function upsertSocialLink(from, to, type) {
+function upsertSocialLink(from, to, type, direction) {
   var existing = state.links.find(function(link) {
     return (link.from === from && link.to === to) || (link.from === to && link.to === from);
   });
   if (existing) {
-    existing.type = type;
-    state.selectedLinkId = existing.id;
-    lastRelationshipId = existing.id;
+    existing.from = from;
+    existing.to = to;
+    existing.type = normalizeRelationshipType(type);
+    existing.direction = directionTypes[direction] ? direction : "both";
   } else {
-    var link = { id: uid(), from: from, to: to, type: type };
+    var link = {
+      id: uid(),
+      from: from,
+      to: to,
+      type: normalizeRelationshipType(type),
+      direction: directionTypes[direction] ? direction : "both"
+    };
     state.links.push(link);
-    state.selectedLinkId = link.id;
-    lastRelationshipId = link.id;
   }
-  svg.focus();
-}
-
-function deleteSelectedLink() {
-  var targetId = state.selectedLinkId || lastRelationshipId ||
-    (state.links.length ? state.links[state.links.length - 1].id : null);
-  if (!targetId) {
-    showToast("삭제할 관계선을 먼저 선택해주세요.");
-    return;
-  }
-  deleteLinkById(targetId);
-}
-
-function deleteLinkById(linkId) {
-  state.links = state.links.filter(function(link) { return link.id !== linkId; });
-  state.selectedLinkId = null;
-  if (lastRelationshipId === linkId) lastRelationshipId = null;
-  render();
-  showToast("관계 연결을 삭제했습니다.");
 }
 
 function openQuickEditor(kind, ownerId, itemId) {
@@ -996,19 +1096,41 @@ function openQuickEditor(kind, ownerId, itemId) {
       '<div class="field"><label for="quickRole">역할</label><select id="quickRole"></select></div></div>' +
       '<div class="row compact-row"><div class="field"><label for="quickBirthYear">출생연도</label>' +
       '<input id="quickBirthYear" value="' + attr(person.birthYear) + '"></div>' +
+      '<div class="field"><label for="quickDeathYear">사망연도</label>' +
+      '<input id="quickDeathYear" value="' + attr(person.deathYear) + '"></div></div>' +
       '<label class="check-field"><input id="quickDeceased" type="checkbox"' +
-      (person.deceased ? " checked" : "") + '><span>사망 표시</span></label></div>' +
+      (person.deceased ? " checked" : "") + '><span>사망 표시</span></label>' +
+      (person.role === "client" ? "" :
+        '<div class="row"><div class="field"><label for="quickRelationship">정서적 관계</label>' +
+        '<select id="quickRelationship"></select></div><div class="field">' +
+        '<label for="quickDirection">관계 방향</label><select id="quickDirection"></select></div></div>') +
       '<div class="editor-actions"><button class="btn" id="quickCancel" type="button">취소</button>' +
       '<button class="btn primary" id="quickSave" type="button">적용</button></div>';
     fillSelect(document.getElementById("quickGender"), genders, person.gender);
     fillSelect(document.getElementById("quickRole"), roles, person.role);
     document.getElementById("quickRole").disabled = person.role === "client";
+    var personRelationship = relationshipForPerson(person.id);
+    if (person.role !== "client") {
+      fillSelect(document.getElementById("quickRelationship"), socialTypes,
+        personRelationship ? personRelationship.type : "good");
+      fillSelect(document.getElementById("quickDirection"), directionTypes,
+        personRelationship ? personRelationship.direction : "both");
+    }
     document.getElementById("quickSave").addEventListener("click", function() {
       var nextRole = document.getElementById("quickRole").value;
       person.name = document.getElementById("quickName").value.trim() || "이름 없음";
       person.gender = document.getElementById("quickGender").value;
       person.birthYear = document.getElementById("quickBirthYear").value.trim();
+      person.deathYear = document.getElementById("quickDeathYear").value.trim();
       person.deceased = document.getElementById("quickDeceased").checked;
+      if (person.role !== "client") {
+        upsertSocialLink(
+          clientPerson().id,
+          person.id,
+          document.getElementById("quickRelationship").value,
+          document.getElementById("quickDirection").value
+        );
+      }
       closeQuickEditor();
       if (person.role !== "client" && person.role !== nextRole) changePersonRole(person, nextRole);
       else render();
@@ -1023,19 +1145,27 @@ function openQuickEditor(kind, ownerId, itemId) {
       '<input id="quickName" value="' + attr(resource.name) + '"></div>' +
       '<div class="field"><label for="quickMemo">지원 내용</label>' +
       '<input id="quickMemo" value="' + attr(resource.memo) + '" placeholder="예: 정기 진료, 주 1회 상담"></div>' +
-      '<div class="field"><label for="quickResourceType">자원 분류</label><select id="quickResourceType"></select></div>' +
+      '<div class="row"><div class="field"><label for="quickResourceType">자원 분류</label>' +
+      '<select id="quickResourceType"></select></div><div class="field">' +
+      '<label for="quickRelationship">관계</label><select id="quickRelationship"></select></div></div>' +
+      '<div class="field"><label for="quickDirection">관계 방향</label><select id="quickDirection"></select></div>' +
       '<div class="editor-actions"><button class="btn" id="quickCancel" type="button">취소</button>' +
       '<button class="btn primary" id="quickSave" type="button">적용</button></div>';
     fillSelect(document.getElementById("quickResourceType"), resourceTypes, resource.type);
+    fillSelect(document.getElementById("quickRelationship"), socialTypes, resource.relationship);
+    fillSelect(document.getElementById("quickDirection"), directionTypes, resource.direction);
     document.getElementById("quickSave").addEventListener("click", function() {
       resource.name = document.getElementById("quickName").value.trim() || "이름 없는 자원";
       resource.memo = document.getElementById("quickMemo").value.trim();
       resource.type = document.getElementById("quickResourceType").value;
+      resource.relationship = document.getElementById("quickRelationship").value;
+      resource.direction = document.getElementById("quickDirection").value;
       state.selectedId = owner.id;
       state.selectedResourceId = resource.id;
       closeQuickEditor();
       render();
     });
+    positionEditorNearResource(resource.id);
   }
   document.getElementById("quickCancel").addEventListener("click", closeQuickEditor);
   document.getElementById("quickName").focus();
@@ -1046,7 +1176,29 @@ function closeQuickEditor() {
   quickEditor.innerHTML = "";
 }
 
-function arrangeMap() {
+function positionEditorNearResource(resourceId) {
+  var target = Array.from(svg.querySelectorAll(".resource-node")).find(function(element) {
+    return element.dataset.resourceId === resourceId;
+  });
+  if (!target) return;
+  var stage = document.querySelector(".stage");
+  var stageBox = stage.getBoundingClientRect();
+  var targetBox = target.getBoundingClientRect();
+  var width = quickEditor.offsetWidth || 330;
+  var height = quickEditor.offsetHeight || 360;
+  var left = targetBox.right - stageBox.left + 10;
+  if (left + width > stageBox.width - 10) {
+    left = targetBox.left - stageBox.left - width - 10;
+  }
+  quickEditor.style.transform = "none";
+  quickEditor.style.left = Math.max(10, left) + "px";
+  quickEditor.style.top = Math.max(
+    10,
+    Math.min(targetBox.top - stageBox.top, stageBox.height - height - 10)
+  ) + "px";
+}
+
+function layoutFamilyTree() {
   var generations = {};
   state.people.forEach(function(person) {
     var key = String(person.generation);
@@ -1109,7 +1261,10 @@ function downloadJson() {
 }
 
 function exportPng(embedState) {
-  if (exportInProgress) return;
+  if (exportInProgress || Date.now() - lastExportFinishedAt < 5000) {
+    showToast("PNG 저장이 이미 처리되었습니다.");
+    return;
+  }
   exportInProgress = true;
   document.getElementById("saveButton").disabled = true;
   var clone = svg.cloneNode(true);
@@ -1149,14 +1304,20 @@ function exportPng(embedState) {
         showToast("PNG 저장 중 오류가 발생했습니다.");
       } finally {
         exportInProgress = false;
-        document.getElementById("saveButton").disabled = false;
+        lastExportFinishedAt = Date.now();
+        setTimeout(function() {
+          document.getElementById("saveButton").disabled = false;
+        }, 2000);
       }
     }, "image/png");
   };
   image.onerror = function() {
     URL.revokeObjectURL(url);
     exportInProgress = false;
-    document.getElementById("saveButton").disabled = false;
+    lastExportFinishedAt = Date.now();
+    setTimeout(function() {
+      document.getElementById("saveButton").disabled = false;
+    }, 2000);
     showToast("PNG 저장 중 오류가 발생했습니다.");
   };
   image.src = url;
@@ -1275,6 +1436,8 @@ function loadJson(file) {
   reader.onload = function() {
     try {
       state = normalizeState(JSON.parse(reader.result));
+      backgroundImageUrl = null;
+      closeQuickEditor();
       render();
       showToast("생태도 파일을 불러왔습니다.");
     } catch (error) {
@@ -1285,18 +1448,22 @@ function loadJson(file) {
 }
 
 async function loadSelectedFile(file) {
-  var isJson = file.type === "application/json" || file.name.toLowerCase().endsWith(".json");
+  var lowerName = file.name.toLowerCase();
+  var isJson = file.type === "application/json" || lowerName.endsWith(".json");
+  var isPng = file.type === "image/png" || lowerName.endsWith(".png");
+  var isImage = file.type.indexOf("image/") === 0 || /\.(png|jpe?g)$/i.test(lowerName);
   if (isJson) {
     loadJson(file);
     return;
   }
 
-  if (file.type === "image/png" || file.name.toLowerCase().endsWith(".png")) {
+  if (isPng) {
     try {
       var embeddedState = await extractStateFromPng(file);
       if (embeddedState) {
         state = normalizeState(embeddedState);
         backgroundImageUrl = null;
+        closeQuickEditor();
         render();
         showToast("편집용 PNG에서 생태도 데이터를 복원했습니다.");
         return;
@@ -1306,7 +1473,7 @@ async function loadSelectedFile(file) {
     }
   }
 
-  if (file.type.indexOf("image/") === 0) {
+  if (isImage) {
     var reader = new FileReader();
     reader.onload = function() {
       backgroundImageUrl = reader.result;
@@ -1321,8 +1488,6 @@ async function loadSelectedFile(file) {
 
 function clearState() {
   state = initialState();
-  connectMode = false;
-  connectStart = null;
   backgroundImageUrl = null;
   closeQuickEditor();
   render();
@@ -1339,9 +1504,12 @@ function defaultResourcePosition(person, index) {
   };
 }
 
-function resourceConnectionPath(person, resource) {
+function resourceConnectionPath(person, resource, relationship) {
   var dx = resource.x - person.x;
   var dy = resource.y - person.y;
+  if (Math.abs(dx) < .001 && Math.abs(dy) < .001) {
+    return "M " + person.x + " " + person.y;
+  }
   var length = Math.hypot(dx, dy) || 1;
   var personX = person.x + dx / length * 48;
   var personY = person.y + dy / length * 48;
@@ -1351,7 +1519,7 @@ function resourceConnectionPath(person, resource) {
   );
   var resourceX = resource.x - dx * scale;
   var resourceY = resource.y - dy * scale;
-  return "M " + personX + " " + personY + " L " + resourceX + " " + resourceY;
+  return relationshipPath(personX, personY, resourceX, resourceY, relationship);
 }
 
 function splitLabel(value, maxChars) {
@@ -1408,11 +1576,6 @@ function findResourceInState(source, id) {
   return null;
 }
 
-function nextSocialType(type) {
-  var order = ["strong", "normal", "weak", "stress"];
-  return order[(order.indexOf(type) + 1) % order.length];
-}
-
 function idOf(item) { return item.id; }
 function byX(a, b) { return a.x - b.x; }
 function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
@@ -1452,7 +1615,7 @@ document.getElementById("mapTitle").addEventListener("input", function(event) {
   saveLocalState();
 });
 document.getElementById("clientName").addEventListener("input", function(event) {
-  clientPerson().name = event.target.value || "Client";
+  clientPerson().name = event.target.value || "클라이언트";
   renderPeople();
   renderMap();
   saveLocalState();
@@ -1476,8 +1639,38 @@ document.getElementById("selectedBirthYear").addEventListener("input", function(
   renderMap();
   saveLocalState();
 });
+document.getElementById("selectedDeathYear").addEventListener("input", function(event) {
+  selectedPerson().deathYear = event.target.value.trim();
+  renderPeople();
+  renderMap();
+  saveLocalState();
+});
 document.getElementById("selectedDeceased").addEventListener("change", function(event) {
   selectedPerson().deceased = event.target.checked;
+  render();
+});
+document.getElementById("selectedRelationship").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  if (person.role === "client") return;
+  var relationship = relationshipForPerson(person.id);
+  upsertSocialLink(
+    clientPerson().id,
+    person.id,
+    event.target.value,
+    relationship ? relationship.direction : "both"
+  );
+  render();
+});
+document.getElementById("selectedDirection").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  if (person.role === "client") return;
+  var relationship = relationshipForPerson(person.id);
+  upsertSocialLink(
+    clientPerson().id,
+    person.id,
+    relationship ? relationship.type : "good",
+    event.target.value
+  );
   render();
 });
 document.getElementById("addPerson").addEventListener("click", addPerson);
@@ -1489,22 +1682,11 @@ document.getElementById("resourceName").addEventListener("keydown", function(eve
   if (event.key === "Enter") addResource();
 });
 document.getElementById("deletePerson").addEventListener("click", deleteSelectedPerson);
-document.getElementById("arrangeButton").addEventListener("click", arrangeMap);
-document.getElementById("connectButton").addEventListener("click", function() {
-  connectMode = !connectMode;
-  connectStart = null;
-  state.selectedLinkId = null;
-  document.getElementById("statusText").textContent = connectMode
-    ? "사회적 관계를 연결할 첫 번째 인물을 선택하세요."
-    : "인물과 자원은 이동할 수 있고, 자원 오른쪽 아래 손잡이로 크기를 조절할 수 있습니다.";
-  render();
-});
 document.getElementById("newButton").addEventListener("click", clearState);
 document.getElementById("resetButton").addEventListener("click", clearState);
 document.getElementById("saveButton").addEventListener("click", function() {
   exportPng(true);
 });
-document.getElementById("deleteLinkButton").addEventListener("click", deleteSelectedLink);
 document.getElementById("loadButton").addEventListener("click", function() {
   document.getElementById("loadInput").click();
 });
@@ -1514,28 +1696,8 @@ document.getElementById("loadInput").addEventListener("change", function(event) 
   event.target.value = "";
 });
 window.addEventListener("keydown", function(event) {
-  var tag = document.activeElement && document.activeElement.tagName;
-  var isBackspace = event.key === "Backspace" || event.code === "Backspace" || event.keyCode === 8;
   if (event.key === "Escape") {
     closeQuickEditor();
-    if (connectMode) {
-      connectMode = false;
-      connectStart = null;
-      render();
-    }
-  }
-  if ((event.key === "Delete" || isBackspace) &&
-      tag !== "INPUT" && tag !== "SELECT" && tag !== "TEXTAREA") {
-    event.preventDefault();
-    event.stopPropagation();
-    if (connectMode) {
-      connectMode = false;
-      connectStart = null;
-      render();
-      showToast("관계 연결을 취소했습니다.");
-    } else if (state.links.length) {
-      deleteSelectedLink();
-    }
   }
 }, true);
 

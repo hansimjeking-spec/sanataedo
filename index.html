@@ -39,16 +39,30 @@
             <select id="newRole"></select>
           </div>
         </div>
+        <div class="row">
+          <div class="field">
+            <label for="newRelationship">정서적 관계</label>
+            <select id="newRelationship"></select>
+          </div>
+          <div class="field">
+            <label for="newDirection">관계 방향</label>
+            <select id="newDirection"></select>
+          </div>
+        </div>
         <div class="row compact-row">
           <div class="field">
             <label for="newBirthYear">출생연도</label>
             <input id="newBirthYear" inputmode="numeric" placeholder="예: 1967">
           </div>
-          <label class="check-field">
-            <input id="newDeceased" type="checkbox">
-            <span>사망 표시</span>
-          </label>
+          <div class="field">
+            <label for="newDeathYear">사망연도</label>
+            <input id="newDeathYear" inputmode="numeric" placeholder="예: 2020">
+          </div>
         </div>
+        <label class="check-field">
+          <input id="newDeceased" type="checkbox">
+          <span>사망 표시</span>
+        </label>
         <button class="btn primary full" id="addPerson">가족 구성원 추가</button>
       </section>
 
@@ -85,10 +99,24 @@
               <label for="selectedBirthYear">출생연도</label>
               <input id="selectedBirthYear" inputmode="numeric">
             </div>
-            <label class="check-field">
-              <input id="selectedDeceased" type="checkbox">
-              <span>사망 표시</span>
-            </label>
+            <div class="field">
+              <label for="selectedDeathYear">사망연도</label>
+              <input id="selectedDeathYear" inputmode="numeric">
+            </div>
+          </div>
+          <label class="check-field">
+            <input id="selectedDeceased" type="checkbox">
+            <span>사망 표시</span>
+          </label>
+          <div class="row" id="selectedRelationshipField">
+            <div class="field">
+              <label for="selectedRelationship">정서적 관계</label>
+              <select id="selectedRelationship"></select>
+            </div>
+            <div class="field">
+              <label for="selectedDirection">관계 방향</label>
+              <select id="selectedDirection"></select>
+            </div>
           </div>
         </div>
       </section>
@@ -105,9 +133,17 @@
             <select id="resourceType"></select>
           </div>
           <div class="field">
-            <label for="resourceMemo">지원 내용</label>
-            <input id="resourceMemo" placeholder="예: 정기 진료">
+            <label for="resourceRelationship">자원과의 관계</label>
+            <select id="resourceRelationship"></select>
           </div>
+        </div>
+        <div class="field">
+          <label for="resourceDirection">관계 방향</label>
+          <select id="resourceDirection"></select>
+        </div>
+        <div class="field">
+          <label for="resourceMemo">지원 내용</label>
+          <input id="resourceMemo" placeholder="예: 정기 진료">
         </div>
         <button class="btn primary full" id="addResource">자원 추가</button>
         <div class="resource-list" id="resourceList"></div>
@@ -124,9 +160,6 @@
       <div class="toolbar">
         <button class="btn" id="newButton">새로 만들기</button>
         <button class="btn primary" id="saveButton">PNG 저장</button>
-        <button class="btn" id="connectButton">관계 연결</button>
-        <button class="btn danger" id="deleteLinkButton" disabled>관계 삭제</button>
-        <button class="btn" id="arrangeButton">가계도 정렬</button>
         <span class="toolbar-spacer"></span>
       </div>
 
