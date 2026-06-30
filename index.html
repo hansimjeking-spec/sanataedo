@@ -49,6 +49,16 @@
             <select id="newDirection"></select>
           </div>
         </div>
+        <div class="row">
+          <div class="field" id="newCoupleStatusField">
+            <label for="newCoupleStatus">부부/파트너 상태</label>
+            <select id="newCoupleStatus"></select>
+          </div>
+          <div class="field" id="newChildTypeField">
+            <label for="newChildType">부모-자녀 유형</label>
+            <select id="newChildType"></select>
+          </div>
+        </div>
         <div class="row compact-row">
           <div class="field">
             <label for="newBirthYear">출생연도</label>
@@ -72,6 +82,19 @@
           <span class="count" id="peopleCount">0</span>
         </h2>
         <div class="people-list" id="peopleList"></div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">
+          <span>동거가족</span>
+          <span class="count" id="householdCount">0</span>
+        </h2>
+        <div class="household-actions">
+          <button class="btn primary" id="startHousehold" type="button">동거가족 선택</button>
+          <button class="btn primary" id="saveHousehold" type="button" hidden>선택 완료</button>
+          <button class="btn" id="cancelHousehold" type="button" hidden>취소</button>
+        </div>
+        <div class="household-list" id="householdList"></div>
       </section>
 
       <section class="section">
@@ -116,6 +139,16 @@
             <div class="field">
               <label for="selectedDirection">관계 방향</label>
               <select id="selectedDirection"></select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" id="selectedCoupleStatusField">
+              <label for="selectedCoupleStatus">부부/파트너 상태</label>
+              <select id="selectedCoupleStatus"></select>
+            </div>
+            <div class="field" id="selectedChildTypeField">
+              <label for="selectedChildType">부모-자녀 유형</label>
+              <select id="selectedChildType"></select>
             </div>
           </div>
         </div>
@@ -179,6 +212,10 @@
           <span class="legend-symbol square-symbol"></span>남성
           <span class="legend-symbol circle-symbol"></span>여성
           <span class="legend-symbol resource-symbol"></span>자원
+          <span class="legend-line good-line"></span>좋은 관계
+          <span class="legend-line distant-line"></span>소원
+          <span class="legend-line conflict-line"></span>갈등
+          <span class="legend-household"></span>동거가족
         </span>
       </footer>
     </section>

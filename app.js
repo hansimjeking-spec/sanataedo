@@ -35,11 +35,26 @@ var directionTypes = {
   both: "양방향"
 };
 
+var coupleStatuses = {
+  married: "혼인",
+  cohabiting: "비혼 동거",
+  separated: "별거",
+  divorced: "이혼"
+};
+
+var childTypes = {
+  biological: "친생",
+  adopted: "입양",
+  foster: "위탁",
+  step: "의붓"
+};
+
 var svg = document.getElementById("map");
 var toast = document.getElementById("toast");
 var quickEditor = document.getElementById("quickEditor");
 var dragging = null;
 var lastNodePress = { key: "", at: 0 };
+var householdDraft = null;
 var backgroundImageUrl = null;
 var exportInProgress = false;
 var lastExportFinishedAt = 0;
@@ -56,7 +71,7 @@ function initialState() {
   var originFamilyId = uid();
 
   return normalizeState({
-    version: 4,
+    version: 5,
     title: "우리 가족 생태도",
     selectedId: "client",
     selectedResourceId: null,
@@ -158,9 +173,14 @@ function initialState() {
       {
         id: originFamilyId,
         parents: [fatherId, motherId],
-        children: [sisterId, "client", brotherId]
+        children: [sisterId, "client", brotherId],
+        status: "married",
+        childTypes: {
+          client: "biological"
+        }
       }
     ],
+    households: [],
     links: [
       { id: uid(), from: "client", to: fatherId, type: "distant", direction: "in" },
       { id: uid(), from: "client", to: motherId, type: "good", direction: "both" },
@@ -172,13 +192,14 @@ function initialState() {
 
 function normalizeState(next) {
   next = next || {};
-  next.version = 4;
+  next.version = 5;
   next.title = next.title || "나의 생태도";
   next.people = Array.isArray(next.people) ? next.people : [];
   next.links = Array.isArray(next.links) ? next.links : [];
   next.familyGroups = Array.isArray(next.familyGroups)
     ? next.familyGroups
     : (Array.isArray(next.families) ? next.families : []);
+  next.households = Array.isArray(next.households) ? next.households : [];
 
   if (!next.people.length) {
     next.people.push({
@@ -210,6 +231,8 @@ function normalizeState(next) {
     person.birthYear = person.birthYear || "";
     person.deathYear = person.deathYear || "";
     person.deceased = Boolean(person.deceased);
+    person.coupleStatus = coupleStatuses[person.coupleStatus] ? person.coupleStatus : "married";
+    person.childType = childTypes[person.childType] ? person.childType : "biological";
     person.x = Number.isFinite(person.x) ? person.x : 550;
     person.y = Number.isFinite(person.y) ? person.y : 400;
     person.resources = Array.isArray(person.resources) ? person.resources : [];
@@ -262,16 +285,37 @@ function normalizeState(next) {
   }
 
   next.familyGroups = next.familyGroups.map(function(group) {
+    var normalizedChildren = Array.isArray(group.children) ? group.children.filter(personExists) : [];
+    var normalizedChildTypes = {};
+    normalizedChildren.forEach(function(childId) {
+      normalizedChildTypes[childId] = childTypes[group.childTypes && group.childTypes[childId]]
+        ? group.childTypes[childId]
+        : "biological";
+    });
     return {
       id: group.id || uid(),
       parents: Array.isArray(group.parents) ? group.parents.filter(personExists) : [],
-      children: Array.isArray(group.children) ? group.children.filter(personExists) : []
+      children: normalizedChildren,
+      status: coupleStatuses[group.status] ? group.status : "married",
+      childTypes: normalizedChildTypes
     };
   }).filter(function(group) {
     return group.parents.length || group.children.length > 1;
   });
 
   if (!next.familyGroups.length) inferFamilyGroups(next);
+
+  next.households = next.households.map(function(household, index) {
+    return {
+      id: household.id || uid(),
+      name: household.name || "동거가족 " + (index + 1),
+      memberIds: Array.isArray(household.memberIds)
+        ? household.memberIds.filter(personExists).filter(uniqueId)
+        : []
+    };
+  }).filter(function(household) {
+    return household.memberIds.length >= 2;
+  });
 
   if (!next.people.some(function(person) { return person.id === next.selectedId; })) {
     next.selectedId = clientPerson(next).id;
@@ -285,6 +329,9 @@ function normalizeState(next) {
   function personExists(id) {
     return next.people.some(function(person) { return person.id === id; });
   }
+  function uniqueId(id, index, values) {
+    return values.indexOf(id) === index;
+  }
 }
 
 function inferFamilyGroups(next) {
@@ -294,18 +341,30 @@ function inferFamilyGroups(next) {
   var spouses = next.people.filter(function(person) { return person.role === "spouse"; });
   var children = next.people.filter(function(person) { return person.role === "child"; });
   if (parents.length || siblings.length) {
+    var originChildren = [client.id].concat(siblings.map(idOf));
     next.familyGroups.push({
       id: uid(),
       parents: parents.slice(0, 2).map(idOf),
-      children: [client.id].concat(siblings.map(idOf))
+      children: originChildren,
+      status: "married",
+      childTypes: relationshipTypeMap(originChildren, "biological")
     });
   }
   if (spouses.length || children.length) {
+    var descendantIds = children.map(idOf);
     next.familyGroups.push({
       id: uid(),
       parents: [client.id].concat(spouses.slice(0, 1).map(idOf)),
-      children: children.map(idOf)
+      children: descendantIds,
+      status: "married",
+      childTypes: relationshipTypeMap(descendantIds, "biological")
     });
+  }
+
+  function relationshipTypeMap(ids, type) {
+    var result = {};
+    ids.forEach(function(id) { result[id] = type; });
+    return result;
   }
 }
 
@@ -335,6 +394,18 @@ function selectedPerson() {
 
 function selectedResource() {
   return findResourceInState(state, state.selectedResourceId);
+}
+
+function coupleGroupForPerson(personId) {
+  return state.familyGroups.find(function(group) {
+    return group.parents.length >= 2 && group.parents.indexOf(personId) !== -1;
+  }) || null;
+}
+
+function childGroupForPerson(personId) {
+  return state.familyGroups.find(function(group) {
+    return group.children.indexOf(personId) !== -1;
+  }) || null;
 }
 
 function normalizeRelationshipType(type) {
@@ -380,6 +451,7 @@ function fillSelect(select, source, value, excluded) {
 function render() {
   renderForm();
   renderPeople();
+  renderHouseholds();
   renderSelected();
   renderResources();
   renderMap();
@@ -394,9 +466,20 @@ function renderForm() {
   fillSelect(document.getElementById("newRole"), roles, "sibling", ["client"]);
   fillSelect(document.getElementById("newRelationship"), socialTypes, "good");
   fillSelect(document.getElementById("newDirection"), directionTypes, "both");
+  fillSelect(document.getElementById("newCoupleStatus"), coupleStatuses, "married");
+  fillSelect(document.getElementById("newChildType"), childTypes, "biological");
   fillSelect(document.getElementById("resourceType"), resourceTypes, "emotional");
   fillSelect(document.getElementById("resourceRelationship"), socialTypes, "good");
   fillSelect(document.getElementById("resourceDirection"), directionTypes, "both");
+  updateNewFamilyFields();
+}
+
+function updateNewFamilyFields() {
+  var role = document.getElementById("newRole").value;
+  document.getElementById("newCoupleStatusField").style.display =
+    role === "parent" || role === "spouse" ? "grid" : "none";
+  document.getElementById("newChildTypeField").style.display =
+    role === "sibling" || role === "child" ? "grid" : "none";
 }
 
 function renderPeople() {
@@ -405,7 +488,9 @@ function renderPeople() {
   list.innerHTML = state.people.map(function(person) {
     var symbolClass = "person-symbol " + person.gender + (person.deceased ? " deceased" : "");
     var year = personDateLabel(person) ? " · " + personDateLabel(person) : "";
-    return '<button class="person-row ' + (person.id === state.selectedId ? "active" : "") +
+    var draftSelected = householdDraft && householdDraft.memberIds.indexOf(person.id) !== -1;
+    return '<button class="person-row ' + (person.id === state.selectedId ? "active " : "") +
+      (draftSelected ? "household-pick" : "") +
       '" type="button" data-person-id="' + attr(person.id) + '">' +
       '<i class="' + symbolClass + '"></i>' +
       '<span class="person-main"><span class="person-name">' + escapeHtml(person.name) + '</span>' +
@@ -416,8 +501,46 @@ function renderPeople() {
 
   list.querySelectorAll("[data-person-id]").forEach(function(button) {
     button.addEventListener("click", function() {
+      if (householdDraft) {
+        toggleHouseholdMember(button.dataset.personId);
+        return;
+      }
       state.selectedId = button.dataset.personId;
       state.selectedResourceId = null;
+      render();
+    });
+  });
+}
+
+function renderHouseholds() {
+  var list = document.getElementById("householdList");
+  document.getElementById("householdCount").textContent = state.households.length;
+  document.getElementById("startHousehold").hidden = Boolean(householdDraft);
+  document.getElementById("saveHousehold").hidden = !householdDraft;
+  document.getElementById("cancelHousehold").hidden = !householdDraft;
+  list.innerHTML = state.households.length ? state.households.map(function(household, index) {
+    var names = household.memberIds.map(personById).filter(Boolean).map(function(person) {
+      return person.name;
+    }).join(", ");
+    return '<div class="household-card"><div><strong>' +
+      escapeHtml(household.name || "동거가족 " + (index + 1)) +
+      '</strong><span>' + escapeHtml(names) + '</span></div>' +
+      '<div class="household-card-actions"><button class="select-resource" type="button" ' +
+      'data-household-edit="' + attr(household.id) + '">수정</button>' +
+      '<button class="delete-icon" type="button" title="동거가족 삭제" data-household-delete="' +
+      attr(household.id) + '">×</button></div></div>';
+  }).join("") : '<div class="empty">등록된 동거가족이 없습니다.</div>';
+
+  list.querySelectorAll("[data-household-edit]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      startHouseholdDraft(button.dataset.householdEdit);
+    });
+  });
+  list.querySelectorAll("[data-household-delete]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      state.households = state.households.filter(function(household) {
+        return household.id !== button.dataset.householdDelete;
+      });
       render();
     });
   });
@@ -438,6 +561,20 @@ function renderSelected() {
   fillSelect(document.getElementById("selectedDirection"), directionTypes, relationship ? relationship.direction : "both");
   document.getElementById("selectedRelationshipField").style.display =
     person.role === "client" ? "none" : "grid";
+  var coupleGroup = coupleGroupForPerson(person.id);
+  var childGroup = childGroupForPerson(person.id);
+  fillSelect(
+    document.getElementById("selectedCoupleStatus"),
+    coupleStatuses,
+    coupleGroup ? coupleGroup.status : "married"
+  );
+  fillSelect(
+    document.getElementById("selectedChildType"),
+    childTypes,
+    childGroup && childGroup.childTypes ? childGroup.childTypes[person.id] : "biological"
+  );
+  document.getElementById("selectedCoupleStatusField").style.display = coupleGroup ? "grid" : "none";
+  document.getElementById("selectedChildTypeField").style.display = childGroup ? "grid" : "none";
 }
 
 function renderResources() {
@@ -509,6 +646,13 @@ function renderMap() {
       preserveAspectRatio: "xMidYMid meet"
     }));
   }
+  state.households.forEach(function(household) {
+    if (householdDraft && householdDraft.id === household.id) return;
+    drawHouseholdBoundary(household.memberIds, false);
+  });
+  if (householdDraft && householdDraft.memberIds.length) {
+    drawHouseholdBoundary(householdDraft.memberIds, true);
+  }
   state.familyGroups.forEach(drawFamilyGroup);
 
   state.links.forEach(function(link) {
@@ -541,6 +685,24 @@ function renderMap() {
       svg.appendChild(resourceNode(person, resource));
     });
   });
+}
+
+function drawHouseholdBoundary(memberIds, draft) {
+  var members = memberIds.map(personById).filter(Boolean);
+  if (!members.length) return;
+  var xs = members.map(function(person) { return person.x; });
+  var ys = members.map(function(person) { return person.y; });
+  var minX = Math.min.apply(null, xs);
+  var maxX = Math.max.apply(null, xs);
+  var minY = Math.min.apply(null, ys);
+  var maxY = Math.max.apply(null, ys);
+  svg.appendChild(makeSvg("ellipse", {
+    class: "household-boundary" + (draft ? " draft" : ""),
+    cx: (minX + maxX) / 2,
+    cy: (minY + maxY) / 2,
+    rx: Math.max(78, (maxX - minX) / 2 + 78),
+    ry: Math.max(72, (maxY - minY) / 2 + 72)
+  }));
 }
 
 function appendRelationshipMarkers() {
@@ -619,10 +781,11 @@ function drawFamilyGroup(group) {
     var rightEdge = right.x - 46;
     svg.appendChild(makeSvg("path", {
       d: "M " + leftEdge + " " + left.y + " H " + rightEdge,
-      class: "family-line"
+      class: "family-line couple " + group.status
     }));
     startX = (leftEdge + rightEdge) / 2;
     startY = (left.y + right.y) / 2;
+    appendCoupleStatusMarks(startX, startY, group.status);
   } else {
     startX = parents[0].x;
     startY = parents[0].y + 46;
@@ -635,16 +798,37 @@ function drawFamilyGroup(group) {
   var lastX = children[children.length - 1].x;
   var path = "M " + startX + " " + startY + " V " + branchY;
   if (children.length > 1) path += " M " + firstX + " " + branchY + " H " + lastX;
-  children.forEach(function(child) {
-    path += " M " + child.x + " " + branchY + " V " + (child.y - 48);
-  });
   svg.appendChild(makeSvg("path", { d: path, class: "family-line" }));
+  children.forEach(function(child) {
+    var childType = group.childTypes && childTypes[group.childTypes[child.id]]
+      ? group.childTypes[child.id]
+      : "biological";
+    svg.appendChild(makeSvg("path", {
+      d: "M " + child.x + " " + branchY + " V " + (child.y - 48),
+      class: "family-line child " + childType
+    }));
+  });
+}
+
+function appendCoupleStatusMarks(x, y, status) {
+  var markCount = status === "divorced" ? 2 : (status === "separated" ? 1 : 0);
+  for (var index = 0; index < markCount; index += 1) {
+    var offset = markCount === 2 ? (index === 0 ? -5 : 5) : 0;
+    svg.appendChild(makeSvg("line", {
+      class: "couple-status-mark",
+      x1: x + offset - 6,
+      y1: y + 10,
+      x2: x + offset + 6,
+      y2: y - 10
+    }));
+  }
 }
 
 function personNode(person) {
   var group = makeSvg("g", {
     class: "person-node " + (person.role === "client" ? "client " : "") +
-      (person.id === state.selectedId ? "selected" : ""),
+      (person.id === state.selectedId ? "selected " : "") +
+      (householdDraft && householdDraft.memberIds.indexOf(person.id) !== -1 ? "household-pick" : ""),
     transform: "translate(" + person.x + " " + person.y + ")"
   });
   group.dataset.personId = person.id;
@@ -659,6 +843,7 @@ function personNode(person) {
   group.addEventListener("pointerdown", startPersonDrag);
   group.addEventListener("click", function(event) {
     event.stopPropagation();
+    if (householdDraft) return;
     if (event.detail > 1) return;
     selectDiagramItem(person.id, null, group);
   });
@@ -788,6 +973,11 @@ function addResourceLabel(group, resource) {
 function startPersonDrag(event) {
   event.preventDefault();
   var person = personById(event.currentTarget.dataset.personId);
+  if (householdDraft) {
+    event.stopPropagation();
+    toggleHouseholdMember(person.id);
+    return;
+  }
   if (isSecondNodePress("person", person.id)) {
     event.stopPropagation();
     dragging = null;
@@ -922,6 +1112,70 @@ function isSecondNodePress(kind, id) {
   return false;
 }
 
+function startHouseholdDraft(householdId) {
+  var existing = state.households.find(function(household) {
+    return household.id === householdId;
+  });
+  householdDraft = {
+    id: existing ? existing.id : null,
+    name: existing ? existing.name : "동거가족 " + (state.households.length + 1),
+    memberIds: existing ? existing.memberIds.slice() : []
+  };
+  closeQuickEditor();
+  renderPeople();
+  renderHouseholds();
+  renderMap();
+  updateHouseholdStatus();
+}
+
+function toggleHouseholdMember(personId) {
+  if (!householdDraft) return;
+  var index = householdDraft.memberIds.indexOf(personId);
+  if (index === -1) householdDraft.memberIds.push(personId);
+  else householdDraft.memberIds.splice(index, 1);
+  renderPeople();
+  renderHouseholds();
+  renderMap();
+  updateHouseholdStatus();
+}
+
+function saveHouseholdDraft() {
+  if (!householdDraft || householdDraft.memberIds.length < 2) {
+    showToast("동거가족을 두 명 이상 선택해주세요.");
+    return;
+  }
+  var existing = state.households.find(function(household) {
+    return household.id === householdDraft.id;
+  });
+  if (existing) {
+    existing.memberIds = householdDraft.memberIds.slice();
+  } else {
+    state.households.push({
+      id: uid(),
+      name: householdDraft.name,
+      memberIds: householdDraft.memberIds.slice()
+    });
+  }
+  householdDraft = null;
+  render();
+  document.getElementById("statusText").textContent =
+    "인물과 자원은 이동할 수 있고, 자원 오른쪽 아래 손잡이로 크기를 조절할 수 있습니다.";
+}
+
+function cancelHouseholdDraft() {
+  householdDraft = null;
+  renderPeople();
+  renderHouseholds();
+  renderMap();
+  document.getElementById("statusText").textContent =
+    "인물과 자원은 이동할 수 있고, 자원 오른쪽 아래 손잡이로 크기를 조절할 수 있습니다.";
+}
+
+function updateHouseholdStatus() {
+  document.getElementById("statusText").textContent =
+    "동거가족 선택 중 · " + householdDraft.memberIds.length + "명";
+}
+
 function selectDiagramItem(personId, resourceId, targetGroup) {
   state.selectedId = personId;
   state.selectedResourceId = resourceId;
@@ -957,6 +1211,8 @@ function addPerson() {
     birthYear: document.getElementById("newBirthYear").value.trim(),
     deathYear: document.getElementById("newDeathYear").value.trim(),
     deceased: document.getElementById("newDeceased").checked,
+    coupleStatus: document.getElementById("newCoupleStatus").value,
+    childType: document.getElementById("newChildType").value,
     x: 550,
     y: 400,
     resources: []
@@ -986,36 +1242,64 @@ function attachByRole(person, role) {
       return item.children.indexOf(client.id) !== -1;
     });
     if (!group) {
-      group = { id: uid(), parents: [], children: [client.id] };
+      group = {
+        id: uid(),
+        parents: [],
+        children: [client.id],
+        status: "married",
+        childTypes: {}
+      };
+      group.childTypes[client.id] = "biological";
       state.familyGroups.push(group);
     }
     if (role === "parent") {
-      if (group.parents.length < 2) group.parents.push(person.id);
-      else state.familyGroups.push({
-        id: uid(),
-        parents: [person.id],
-        children: [client.id]
-      });
+      if (group.parents.length < 2) {
+        group.parents.push(person.id);
+        if (group.parents.length === 2) group.status = person.coupleStatus;
+      } else {
+        var additionalOriginGroup = {
+          id: uid(),
+          parents: [person.id],
+          children: [client.id],
+          status: person.coupleStatus,
+          childTypes: {}
+        };
+        additionalOriginGroup.childTypes[client.id] = "biological";
+        state.familyGroups.push(additionalOriginGroup);
+      }
     } else if (group.children.indexOf(person.id) === -1) {
       group.children.push(person.id);
+      group.childTypes[person.id] = person.childType;
     }
   } else if (role === "spouse" || role === "child") {
     group = state.familyGroups.find(function(item) {
       return item.parents.indexOf(client.id) !== -1;
     });
     if (!group) {
-      group = { id: uid(), parents: [client.id], children: [] };
+      group = {
+        id: uid(),
+        parents: [client.id],
+        children: [],
+        status: "married",
+        childTypes: {}
+      };
       state.familyGroups.push(group);
     }
     if (role === "spouse") {
-      if (group.parents.length < 2) group.parents.push(person.id);
+      if (group.parents.length < 2) {
+        group.parents.push(person.id);
+        group.status = person.coupleStatus;
+      }
       else state.familyGroups.push({
         id: uid(),
         parents: [client.id, person.id],
-        children: []
+        children: [],
+        status: person.coupleStatus,
+        childTypes: {}
       });
     } else if (group.children.indexOf(person.id) === -1) {
       group.children.push(person.id);
+      group.childTypes[person.id] = person.childType;
     }
   }
 }
@@ -1089,6 +1373,8 @@ function openQuickEditor(kind, ownerId, itemId) {
   if (kind === "person") {
     var person = personById(ownerId);
     if (!person) return closeQuickEditor();
+    var quickCoupleGroup = coupleGroupForPerson(person.id);
+    var quickChildGroup = childGroupForPerson(person.id);
     quickEditor.innerHTML =
       '<h3>인물 바로 수정</h3>' +
       '<div class="field"><label for="quickName">이름</label><input id="quickName" value="' + attr(person.name) + '"></div>' +
@@ -1104,6 +1390,12 @@ function openQuickEditor(kind, ownerId, itemId) {
         '<div class="row"><div class="field"><label for="quickRelationship">정서적 관계</label>' +
         '<select id="quickRelationship"></select></div><div class="field">' +
         '<label for="quickDirection">관계 방향</label><select id="quickDirection"></select></div></div>') +
+      (quickCoupleGroup ?
+        '<div class="field"><label for="quickCoupleStatus">부부/파트너 상태</label>' +
+        '<select id="quickCoupleStatus"></select></div>' : "") +
+      (quickChildGroup ?
+        '<div class="field"><label for="quickChildType">부모-자녀 유형</label>' +
+        '<select id="quickChildType"></select></div>' : "") +
       '<div class="editor-actions"><button class="btn" id="quickCancel" type="button">취소</button>' +
       '<button class="btn primary" id="quickSave" type="button">적용</button></div>';
     fillSelect(document.getElementById("quickGender"), genders, person.gender);
@@ -1116,6 +1408,16 @@ function openQuickEditor(kind, ownerId, itemId) {
       fillSelect(document.getElementById("quickDirection"), directionTypes,
         personRelationship ? personRelationship.direction : "both");
     }
+    if (quickCoupleGroup) {
+      fillSelect(document.getElementById("quickCoupleStatus"), coupleStatuses, quickCoupleGroup.status);
+    }
+    if (quickChildGroup) {
+      fillSelect(
+        document.getElementById("quickChildType"),
+        childTypes,
+        quickChildGroup.childTypes[person.id] || "biological"
+      );
+    }
     document.getElementById("quickSave").addEventListener("click", function() {
       var nextRole = document.getElementById("quickRole").value;
       person.name = document.getElementById("quickName").value.trim() || "이름 없음";
@@ -1123,6 +1425,14 @@ function openQuickEditor(kind, ownerId, itemId) {
       person.birthYear = document.getElementById("quickBirthYear").value.trim();
       person.deathYear = document.getElementById("quickDeathYear").value.trim();
       person.deceased = document.getElementById("quickDeceased").checked;
+      if (quickCoupleGroup) {
+        quickCoupleGroup.status = document.getElementById("quickCoupleStatus").value;
+        person.coupleStatus = quickCoupleGroup.status;
+      }
+      if (quickChildGroup) {
+        quickChildGroup.childTypes[person.id] = document.getElementById("quickChildType").value;
+        person.childType = quickChildGroup.childTypes[person.id];
+      }
       if (person.role !== "client") {
         upsertSocialLink(
           clientPerson().id,
@@ -1236,6 +1546,12 @@ function deleteSelectedPerson() {
     return link.from !== person.id && link.to !== person.id;
   });
   removeFromFamilies(person.id);
+  state.households = state.households.map(function(household) {
+    household.memberIds = household.memberIds.filter(function(id) { return id !== person.id; });
+    return household;
+  }).filter(function(household) {
+    return household.memberIds.length >= 2;
+  });
   state.selectedId = clientPerson().id;
   state.selectedResourceId = null;
   render();
@@ -1245,6 +1561,7 @@ function removeFromFamilies(personId) {
   state.familyGroups.forEach(function(group) {
     group.parents = group.parents.filter(function(id) { return id !== personId; });
     group.children = group.children.filter(function(id) { return id !== personId; });
+    if (group.childTypes) delete group.childTypes[personId];
   });
   state.familyGroups = state.familyGroups.filter(function(group) {
     return group.parents.length || group.children.length > 1;
@@ -1437,6 +1754,7 @@ function loadJson(file) {
     try {
       state = normalizeState(JSON.parse(reader.result));
       backgroundImageUrl = null;
+      householdDraft = null;
       closeQuickEditor();
       render();
       showToast("생태도 파일을 불러왔습니다.");
@@ -1463,6 +1781,7 @@ async function loadSelectedFile(file) {
       if (embeddedState) {
         state = normalizeState(embeddedState);
         backgroundImageUrl = null;
+        householdDraft = null;
         closeQuickEditor();
         render();
         showToast("편집용 PNG에서 생태도 데이터를 복원했습니다.");
@@ -1488,6 +1807,7 @@ async function loadSelectedFile(file) {
 
 function clearState() {
   state = initialState();
+  householdDraft = null;
   backgroundImageUrl = null;
   closeQuickEditor();
   render();
@@ -1673,7 +1993,23 @@ document.getElementById("selectedDirection").addEventListener("change", function
   );
   render();
 });
+document.getElementById("selectedCoupleStatus").addEventListener("change", function(event) {
+  var group = coupleGroupForPerson(selectedPerson().id);
+  if (!group) return;
+  group.status = event.target.value;
+  selectedPerson().coupleStatus = event.target.value;
+  render();
+});
+document.getElementById("selectedChildType").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  var group = childGroupForPerson(person.id);
+  if (!group) return;
+  group.childTypes[person.id] = event.target.value;
+  person.childType = event.target.value;
+  render();
+});
 document.getElementById("addPerson").addEventListener("click", addPerson);
+document.getElementById("newRole").addEventListener("change", updateNewFamilyFields);
 document.getElementById("newPersonName").addEventListener("keydown", function(event) {
   if (event.key === "Enter") addPerson();
 });
@@ -1682,6 +2018,11 @@ document.getElementById("resourceName").addEventListener("keydown", function(eve
   if (event.key === "Enter") addResource();
 });
 document.getElementById("deletePerson").addEventListener("click", deleteSelectedPerson);
+document.getElementById("startHousehold").addEventListener("click", function() {
+  startHouseholdDraft(null);
+});
+document.getElementById("saveHousehold").addEventListener("click", saveHouseholdDraft);
+document.getElementById("cancelHousehold").addEventListener("click", cancelHouseholdDraft);
 document.getElementById("newButton").addEventListener("click", clearState);
 document.getElementById("resetButton").addEventListener("click", clearState);
 document.getElementById("saveButton").addEventListener("click", function() {
@@ -1698,6 +2039,7 @@ document.getElementById("loadInput").addEventListener("change", function(event) 
 window.addEventListener("keydown", function(event) {
   if (event.key === "Escape") {
     closeQuickEditor();
+    if (householdDraft) cancelHouseholdDraft();
   }
 }, true);
 

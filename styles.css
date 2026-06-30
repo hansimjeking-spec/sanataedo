@@ -151,11 +151,13 @@ select:focus {
 }
 
 .people-list,
-.resource-list {
+.resource-list,
+.household-list {
   display: grid;
   gap: 6px;
 }
 .resource-list { margin-top: 8px; }
+.household-list { margin-top: 8px; }
 
 .person-row {
   width: 100%;
@@ -175,6 +177,10 @@ select:focus {
 .person-row.active {
   border-color: var(--blue);
   background: var(--blue-soft);
+}
+.person-row.household-pick {
+  border-color: var(--green);
+  box-shadow: inset 3px 0 0 var(--green);
 }
 .person-symbol {
   width: 19px;
@@ -329,6 +335,40 @@ select:focus {
   gap: 8px;
   margin-top: 10px;
 }
+.household-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+}
+.household-actions #startHousehold { grid-column: 1 / -1; }
+.household-card {
+  min-height: 40px;
+  padding: 7px 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px dashed #747d88;
+  border-radius: 5px;
+}
+.household-card strong {
+  display: block;
+  font-size: 12px;
+}
+.household-card span {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.household-card-actions {
+  display: flex;
+  gap: 4px;
+}
 
 .workspace {
   display: grid;
@@ -399,6 +439,30 @@ select:focus {
   border-color: var(--green);
   border-radius: 2px;
 }
+.legend-line {
+  width: 22px;
+  height: 10px;
+  display: inline-block;
+  border-top: 2px solid #3b82f6;
+}
+.legend-line.distant-line {
+  border-color: #22a860;
+  border-top-style: dashed;
+}
+.legend-line.conflict-line {
+  height: 8px;
+  border: 0;
+  background:
+    linear-gradient(135deg, transparent 42%, #9b52c7 43% 57%, transparent 58%) 0 0 / 8px 8px,
+    linear-gradient(45deg, transparent 42%, #9b52c7 43% 57%, transparent 58%) 4px 0 / 8px 8px;
+}
+.legend-household {
+  width: 22px;
+  height: 13px;
+  display: inline-block;
+  border: 1.5px dashed #68717c;
+  border-radius: 50%;
+}
 
 .family-line {
   fill: none;
@@ -406,6 +470,26 @@ select:focus {
   stroke-width: 2.3;
   stroke-linecap: square;
   stroke-linejoin: miter;
+}
+.family-line.couple.cohabiting { stroke-dasharray: 7 6; }
+.family-line.child.adopted { stroke: #3978c5; stroke-dasharray: 8 6; }
+.family-line.child.foster { stroke: #27895a; stroke-dasharray: 2 6; stroke-linecap: round; }
+.family-line.child.step { stroke: #7b838d; stroke-dasharray: 10 5 2 5; }
+.couple-status-mark {
+  stroke: #555d67;
+  stroke-width: 2.3;
+}
+.household-boundary {
+  fill: rgba(84, 96, 110, .025);
+  stroke: #68717c;
+  stroke-width: 2;
+  stroke-dasharray: 6 7;
+  pointer-events: none;
+}
+.household-boundary.draft {
+  fill: rgba(35, 151, 90, .035);
+  stroke: var(--green);
+  stroke-width: 2.5;
 }
 .social-line {
   fill: none;
@@ -455,6 +539,10 @@ select:focus {
   opacity: 0;
 }
 .person-node.selected .select-ring { opacity: 1; }
+.person-node.household-pick .select-ring {
+  stroke: rgba(35, 151, 90, .35);
+  opacity: 1;
+}
 .person-node text {
   fill: #20242a;
   text-anchor: middle;
