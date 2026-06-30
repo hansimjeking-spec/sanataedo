@@ -29,6 +29,13 @@ var socialTypes = {
   conflict: "갈등 관계"
 };
 
+var directedSocialTypes = {
+  none: "관계 없음",
+  good: "좋은 관계",
+  distant: "소원한 관계",
+  conflict: "갈등 관계"
+};
+
 var directionTypes = {
   out: "단방향 (인물→대상)",
   in: "단방향 (대상→인물)",
@@ -71,7 +78,7 @@ function initialState() {
   var originFamilyId = uid();
 
   return normalizeState({
-    version: 5,
+    version: 6,
     title: "우리 가족 생태도",
     selectedId: "client",
     selectedResourceId: null,
@@ -182,17 +189,17 @@ function initialState() {
     ],
     households: [],
     links: [
-      { id: uid(), from: "client", to: fatherId, type: "distant", direction: "in" },
-      { id: uid(), from: "client", to: motherId, type: "good", direction: "both" },
-      { id: uid(), from: "client", to: sisterId, type: "good", direction: "both" },
-      { id: uid(), from: "client", to: brotherId, type: "conflict", direction: "both" }
+      { id: uid(), from: "client", to: fatherId, outType: "none", inType: "distant" },
+      { id: uid(), from: "client", to: motherId, outType: "good", inType: "good" },
+      { id: uid(), from: "client", to: sisterId, outType: "good", inType: "good" },
+      { id: uid(), from: "client", to: brotherId, outType: "conflict", inType: "conflict" }
     ]
   });
 }
 
 function normalizeState(next) {
   next = next || {};
-  next.version = 5;
+  next.version = 6;
   next.title = next.title || "나의 생태도";
   next.people = Array.isArray(next.people) ? next.people : [];
   next.links = Array.isArray(next.links) ? next.links : [];
@@ -256,20 +263,31 @@ function normalizeState(next) {
 
   next.links.forEach(function(link) {
     link.id = link.id || uid();
-    link.type = normalizeRelationshipType(link.type);
-    link.direction = directionTypes[link.direction] ? link.direction : "both";
+    if (link.outType == null && link.inType == null) {
+      var legacyType = normalizeRelationshipType(link.type);
+      var legacyDirection = directionTypes[link.direction] ? link.direction : "both";
+      link.outType = legacyDirection === "in" ? "none" : legacyType;
+      link.inType = legacyDirection === "out" ? "none" : legacyType;
+    } else {
+      link.outType = normalizeDirectedRelationshipType(link.outType);
+      link.inType = normalizeDirectedRelationshipType(link.inType);
+    }
     var normalizedClient = clientPerson(next);
     if (normalizedClient && link.to === normalizedClient.id && link.from !== normalizedClient.id) {
       var previousFrom = link.from;
       link.from = link.to;
       link.to = previousFrom;
-      if (link.direction === "out") link.direction = "in";
-      else if (link.direction === "in") link.direction = "out";
+      var previousOutType = link.outType;
+      link.outType = link.inType;
+      link.inType = previousOutType;
     }
+    delete link.type;
+    delete link.direction;
   });
   var linksByPair = {};
   next.links.forEach(function(link) {
     if (!personExists(link.from) || !personExists(link.to) || link.from === link.to) return;
+    if (link.outType === "none" && link.inType === "none") return;
     var pairKey = [link.from, link.to].sort().join("::");
     linksByPair[pairKey] = link;
   });
@@ -424,6 +442,10 @@ function normalizeRelationshipType(type) {
   return socialTypes[type] ? type : (previousTypes[type] || "good");
 }
 
+function normalizeDirectedRelationshipType(type) {
+  return type == null || type === "none" ? "none" : normalizeRelationshipType(type);
+}
+
 function relationshipForPerson(personId) {
   var client = clientPerson();
   if (!client || personId === client.id) return null;
@@ -464,8 +486,8 @@ function renderForm() {
   document.getElementById("clientName").value = client.name;
   fillSelect(document.getElementById("newGender"), genders, "female");
   fillSelect(document.getElementById("newRole"), roles, "sibling", ["client"]);
-  fillSelect(document.getElementById("newRelationship"), socialTypes, "good");
-  fillSelect(document.getElementById("newDirection"), directionTypes, "both");
+  fillSelect(document.getElementById("newOutgoingRelationship"), directedSocialTypes, "good");
+  fillSelect(document.getElementById("newIncomingRelationship"), directedSocialTypes, "good");
   fillSelect(document.getElementById("newCoupleStatus"), coupleStatuses, "married");
   fillSelect(document.getElementById("newChildType"), childTypes, "biological");
   fillSelect(document.getElementById("resourceType"), resourceTypes, "emotional");
@@ -557,8 +579,16 @@ function renderSelected() {
   document.getElementById("selectedRole").disabled = person.role === "client";
   document.getElementById("deletePerson").style.visibility = person.role === "client" ? "hidden" : "visible";
   var relationship = relationshipForPerson(person.id);
-  fillSelect(document.getElementById("selectedRelationship"), socialTypes, relationship ? relationship.type : "good");
-  fillSelect(document.getElementById("selectedDirection"), directionTypes, relationship ? relationship.direction : "both");
+  fillSelect(
+    document.getElementById("selectedOutgoingRelationship"),
+    directedSocialTypes,
+    relationship ? relationship.outType : "none"
+  );
+  fillSelect(
+    document.getElementById("selectedIncomingRelationship"),
+    directedSocialTypes,
+    relationship ? relationship.inType : "none"
+  );
   document.getElementById("selectedRelationshipField").style.display =
     person.role === "client" ? "none" : "grid";
   var coupleGroup = coupleGroupForPerson(person.id);
@@ -659,13 +689,7 @@ function renderMap() {
     var from = personById(link.from);
     var to = personById(link.to);
     if (!from || !to) return;
-    var endpoints = connectionEndpoints(from.x, from.y, to.x, to.y, 49, 49);
-    var path = makeSvg("path", {
-      d: relationshipPath(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, link.type),
-      class: "social-line " + link.type
-    });
-    applyRelationshipDirection(path, link.type, link.direction);
-    svg.appendChild(path);
+    drawDirectedSocialLink(link, from, to);
   });
 
   state.people.forEach(function(person) {
@@ -685,6 +709,47 @@ function renderMap() {
       svg.appendChild(resourceNode(person, resource));
     });
   });
+}
+
+function drawDirectedSocialLink(link, from, to) {
+  var outType = normalizeDirectedRelationshipType(link.outType);
+  var inType = normalizeDirectedRelationshipType(link.inType);
+  var endpoints = connectionEndpoints(from.x, from.y, to.x, to.y, 49, 49);
+  if (outType !== "none" && outType === inType) {
+    appendSocialPath(endpoints, outType, "both");
+    return;
+  }
+  var hasTwoLines = outType !== "none" && inType !== "none";
+  if (outType !== "none") {
+    appendSocialPath(offsetConnectionEndpoints(endpoints, hasTwoLines ? 6 : 0), outType, "out");
+  }
+  if (inType !== "none") {
+    appendSocialPath(offsetConnectionEndpoints(endpoints, hasTwoLines ? -6 : 0), inType, "in");
+  }
+}
+
+function appendSocialPath(endpoints, type, direction) {
+  var path = makeSvg("path", {
+    d: relationshipPath(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, type),
+    class: "social-line " + type
+  });
+  applyRelationshipDirection(path, type, direction);
+  svg.appendChild(path);
+}
+
+function offsetConnectionEndpoints(endpoints, offset) {
+  if (!offset) return endpoints;
+  var dx = endpoints.x2 - endpoints.x1;
+  var dy = endpoints.y2 - endpoints.y1;
+  var length = Math.hypot(dx, dy) || 1;
+  var offsetX = -dy / length * offset;
+  var offsetY = dx / length * offset;
+  return {
+    x1: endpoints.x1 + offsetX,
+    y1: endpoints.y1 + offsetY,
+    x2: endpoints.x2 + offsetX,
+    y2: endpoints.y2 + offsetY
+  };
 }
 
 function drawHouseholdBoundary(memberIds, draft) {
@@ -1222,8 +1287,8 @@ function addPerson() {
   upsertSocialLink(
     clientPerson().id,
     person.id,
-    document.getElementById("newRelationship").value,
-    document.getElementById("newDirection").value
+    document.getElementById("newOutgoingRelationship").value,
+    document.getElementById("newIncomingRelationship").value
   );
   state.selectedId = person.id;
   state.selectedResourceId = null;
@@ -1342,22 +1407,30 @@ function addResource() {
   render();
 }
 
-function upsertSocialLink(from, to, type, direction) {
+function upsertSocialLink(from, to, outType, inType) {
+  outType = normalizeDirectedRelationshipType(outType);
+  inType = normalizeDirectedRelationshipType(inType);
   var existing = state.links.find(function(link) {
     return (link.from === from && link.to === to) || (link.from === to && link.to === from);
   });
+  if (outType === "none" && inType === "none") {
+    if (existing) {
+      state.links = state.links.filter(function(link) { return link.id !== existing.id; });
+    }
+    return;
+  }
   if (existing) {
     existing.from = from;
     existing.to = to;
-    existing.type = normalizeRelationshipType(type);
-    existing.direction = directionTypes[direction] ? direction : "both";
+    existing.outType = outType;
+    existing.inType = inType;
   } else {
     var link = {
       id: uid(),
       from: from,
       to: to,
-      type: normalizeRelationshipType(type),
-      direction: directionTypes[direction] ? direction : "both"
+      outType: outType,
+      inType: inType
     };
     state.links.push(link);
   }
@@ -1387,9 +1460,10 @@ function openQuickEditor(kind, ownerId, itemId) {
       '<label class="check-field"><input id="quickDeceased" type="checkbox"' +
       (person.deceased ? " checked" : "") + '><span>사망 표시</span></label>' +
       (person.role === "client" ? "" :
-        '<div class="row"><div class="field"><label for="quickRelationship">정서적 관계</label>' +
-        '<select id="quickRelationship"></select></div><div class="field">' +
-        '<label for="quickDirection">관계 방향</label><select id="quickDirection"></select></div></div>') +
+        '<div class="row"><div class="field"><label for="quickOutgoingRelationship">클라이언트 → 대상</label>' +
+        '<select id="quickOutgoingRelationship"></select></div><div class="field">' +
+        '<label for="quickIncomingRelationship">대상 → 클라이언트</label>' +
+        '<select id="quickIncomingRelationship"></select></div></div>') +
       (quickCoupleGroup ?
         '<div class="field"><label for="quickCoupleStatus">부부/파트너 상태</label>' +
         '<select id="quickCoupleStatus"></select></div>' : "") +
@@ -1403,10 +1477,16 @@ function openQuickEditor(kind, ownerId, itemId) {
     document.getElementById("quickRole").disabled = person.role === "client";
     var personRelationship = relationshipForPerson(person.id);
     if (person.role !== "client") {
-      fillSelect(document.getElementById("quickRelationship"), socialTypes,
-        personRelationship ? personRelationship.type : "good");
-      fillSelect(document.getElementById("quickDirection"), directionTypes,
-        personRelationship ? personRelationship.direction : "both");
+      fillSelect(
+        document.getElementById("quickOutgoingRelationship"),
+        directedSocialTypes,
+        personRelationship ? personRelationship.outType : "none"
+      );
+      fillSelect(
+        document.getElementById("quickIncomingRelationship"),
+        directedSocialTypes,
+        personRelationship ? personRelationship.inType : "none"
+      );
     }
     if (quickCoupleGroup) {
       fillSelect(document.getElementById("quickCoupleStatus"), coupleStatuses, quickCoupleGroup.status);
@@ -1437,8 +1517,8 @@ function openQuickEditor(kind, ownerId, itemId) {
         upsertSocialLink(
           clientPerson().id,
           person.id,
-          document.getElementById("quickRelationship").value,
-          document.getElementById("quickDirection").value
+          document.getElementById("quickOutgoingRelationship").value,
+          document.getElementById("quickIncomingRelationship").value
         );
       }
       closeQuickEditor();
@@ -1969,7 +2049,7 @@ document.getElementById("selectedDeceased").addEventListener("change", function(
   selectedPerson().deceased = event.target.checked;
   render();
 });
-document.getElementById("selectedRelationship").addEventListener("change", function(event) {
+document.getElementById("selectedOutgoingRelationship").addEventListener("change", function(event) {
   var person = selectedPerson();
   if (person.role === "client") return;
   var relationship = relationshipForPerson(person.id);
@@ -1977,18 +2057,18 @@ document.getElementById("selectedRelationship").addEventListener("change", funct
     clientPerson().id,
     person.id,
     event.target.value,
-    relationship ? relationship.direction : "both"
+    relationship ? relationship.inType : "none"
   );
   render();
 });
-document.getElementById("selectedDirection").addEventListener("change", function(event) {
+document.getElementById("selectedIncomingRelationship").addEventListener("change", function(event) {
   var person = selectedPerson();
   if (person.role === "client") return;
   var relationship = relationshipForPerson(person.id);
   upsertSocialLink(
     clientPerson().id,
     person.id,
-    relationship ? relationship.type : "good",
+    relationship ? relationship.outType : "none",
     event.target.value
   );
   render();
