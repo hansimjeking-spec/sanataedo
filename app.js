@@ -921,12 +921,24 @@ function drawFamilyGroup(group) {
   }
 
   if (!children.length) return;
+  if (children.length === 1) {
+    var onlyChild = children[0];
+    var onlyChildType = group.childTypes && childTypes[group.childTypes[onlyChild.id]]
+      ? group.childTypes[onlyChild.id]
+      : "biological";
+    svg.appendChild(makeSvg("path", {
+      d: singleChildFamilyPath(parents, startX, startY, onlyChild),
+      class: "family-line child " + onlyChildType
+    }));
+    return;
+  }
   var childTop = Math.min.apply(null, children.map(function(child) { return child.y - 48; }));
   var branchY = Math.max(startY + 45, childTop - 72);
   var firstX = children[0].x;
   var lastX = children[children.length - 1].x;
   var path = "M " + startX + " " + startY + " V " + branchY;
-  if (children.length > 1) path += " M " + firstX + " " + branchY + " H " + lastX;
+  path += " M " + Math.min(startX, firstX) + " " + branchY +
+    " H " + Math.max(startX, lastX);
   svg.appendChild(makeSvg("path", { d: path, class: "family-line" }));
   children.forEach(function(child) {
     var childType = group.childTypes && childTypes[group.childTypes[child.id]]
@@ -937,6 +949,33 @@ function drawFamilyGroup(group) {
       class: "family-line child " + childType
     }));
   });
+}
+
+function singleChildFamilyPath(parents, startX, startY, child) {
+  var sourceX = startX;
+  var sourceY = startY;
+  var sourcePadding = 0;
+  if (parents.length === 1) {
+    sourceX = parents[0].x;
+    sourceY = parents[0].y;
+    sourcePadding = 46;
+  }
+  var dx = child.x - sourceX;
+  var dy = child.y - sourceY;
+  if (Math.abs(dy) >= 110) {
+    var verticalDirection = dy >= 0 ? 1 : -1;
+    var sourceEdgeY = sourceY + verticalDirection * sourcePadding;
+    var childEdgeY = child.y - verticalDirection * 48;
+    var middleY = (sourceEdgeY + childEdgeY) / 2;
+    return "M " + sourceX + " " + sourceEdgeY +
+      " V " + middleY + " H " + child.x + " V " + childEdgeY;
+  }
+  var horizontalDirection = dx >= 0 ? 1 : -1;
+  var sourceEdgeX = sourceX + horizontalDirection * sourcePadding;
+  var childEdgeX = child.x - horizontalDirection * 48;
+  var middleX = (sourceEdgeX + childEdgeX) / 2;
+  return "M " + sourceEdgeX + " " + sourceY +
+    " H " + middleX + " V " + child.y + " H " + childEdgeX;
 }
 
 function appendCoupleStatusMarks(x, y, status) {
