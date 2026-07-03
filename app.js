@@ -63,6 +63,7 @@ var quickEditor = document.getElementById("quickEditor");
 var dragging = null;
 var lastNodePress = { key: "", at: 0 };
 var householdDraft = null;
+var undoStack = [];
 var backgroundImageUrl = null;
 var exportInProgress = false;
 var lastExportFinishedAt = 0;
@@ -428,6 +429,33 @@ function saveLocalState() {
   localStorage.setItem("ecomap-genogram-state-v3", JSON.stringify(state));
 }
 
+function createUndoSnapshot() {
+  return {
+    stateJson: JSON.stringify(state),
+    backgroundImageUrl: backgroundImageUrl
+  };
+}
+
+function rememberUndo(snapshot) {
+  undoStack.push(snapshot || createUndoSnapshot());
+  if (undoStack.length > 50) undoStack.shift();
+}
+
+function undoLastAction() {
+  if (!undoStack.length) {
+    showToast("되돌릴 작업이 없습니다.");
+    return;
+  }
+  var snapshot = undoStack.pop();
+  state = normalizeState(JSON.parse(snapshot.stateJson));
+  backgroundImageUrl = snapshot.backgroundImageUrl;
+  householdDraft = null;
+  dragging = null;
+  closeQuickEditor();
+  render();
+  showToast("이전 작업으로 되돌렸습니다.");
+}
+
 function clientPerson(source) {
   source = source || state;
   return source.people.find(function(person) { return person.role === "client"; }) || source.people[0];
@@ -614,6 +642,7 @@ function renderHouseholds() {
   });
   list.querySelectorAll("[data-household-delete]").forEach(function(button) {
     button.addEventListener("click", function() {
+      rememberUndo();
       state.households = state.households.filter(function(household) {
         return household.id !== button.dataset.householdDelete;
       });
@@ -686,6 +715,13 @@ function renderResources() {
 
   var active = selectedResource();
   if (active && active.owner.id === person.id) {
+    var sizeUndoSnapshot = createUndoSnapshot();
+    var sizeUndoCaptured = false;
+    function captureSizeUndo() {
+      if (sizeUndoCaptured) return;
+      rememberUndo(sizeUndoSnapshot);
+      sizeUndoCaptured = true;
+    }
     list.insertAdjacentHTML("beforeend",
       '<div class="size-editor"><strong>' + escapeHtml(active.resource.name) + " 크기 조절</strong>" +
       '<label class="range-row"><span>가로</span><input id="resourceWidth" type="range" min="110" max="300" value="' +
@@ -696,12 +732,14 @@ function renderResources() {
       Math.round(active.resource.height) + "</output></label></div>");
 
     document.getElementById("resourceWidth").addEventListener("input", function(event) {
+      captureSizeUndo();
       active.resource.width = Number(event.target.value);
       document.getElementById("resourceWidthValue").textContent = event.target.value;
       renderMap();
       saveLocalState();
     });
     document.getElementById("resourceHeight").addEventListener("input", function(event) {
+      captureSizeUndo();
       active.resource.height = Number(event.target.value);
       document.getElementById("resourceHeightValue").textContent = event.target.value;
       renderMap();
@@ -717,6 +755,7 @@ function renderResources() {
   });
   list.querySelectorAll("[data-resource-delete]").forEach(function(button) {
     button.addEventListener("click", function() {
+      rememberUndo();
       person.resources = person.resources.filter(function(resource) {
         return resource.id !== button.dataset.resourceDelete;
       });
@@ -1162,7 +1201,8 @@ function startPersonDrag(event) {
     dy: point.y - person.y,
     lastX: person.x,
     lastY: person.y,
-    moved: false
+    moved: false,
+    undoSnapshot: createUndoSnapshot()
   };
   state.selectedId = person.id;
   state.selectedResourceId = null;
@@ -1188,7 +1228,8 @@ function startResourceDrag(event) {
     resourceId: resource.id,
     dx: point.x - resource.x,
     dy: point.y - resource.y,
-    moved: false
+    moved: false,
+    undoSnapshot: createUndoSnapshot()
   };
   state.selectedId = owner.id;
   state.selectedResourceId = resource.id;
@@ -1207,7 +1248,8 @@ function startResourceResize(event) {
     resourceId: resource.id,
     left: resource.x - resource.width / 2,
     top: resource.y - resource.height / 2,
-    moved: false
+    moved: false,
+    undoSnapshot: createUndoSnapshot()
   };
   state.selectedId = owner.id;
   state.selectedResourceId = resource.id;
@@ -1230,17 +1272,46 @@ svg.addEventListener("pointercancel", finishDrag);
 function movePerson(point) {
   var person = personById(dragging.personId);
   var nextX = clamp(point.x - dragging.dx, 70, 1030);
-  var nextY = clamp(point.y - dragging.dy, 70, 690);
-  var moveX = nextX - dragging.lastX;
-  var moveY = nextY - dragging.lastY;
-  person.x = nextX;
-  person.y = nextY;
-  person.resources.forEach(function(resource) {
-    resource.x = clamp(resource.x + moveX, 60, 1040);
-    resource.y = clamp(resource.y + moveY, 50, 710);
+  var nextY = clamp(point.y - dragging.dy, 70, 710);
+  var linkedPeople = linkedFamilyMovePeople(person);
+  var requestedX = nextX - dragging.lastX;
+  var requestedY = nextY - dragging.lastY;
+  var minMoveX = Math.max.apply(null, linkedPeople.map(function(item) { return 70 - item.x; }));
+  var maxMoveX = Math.min.apply(null, linkedPeople.map(function(item) { return 1030 - item.x; }));
+  var minMoveY = Math.max.apply(null, linkedPeople.map(function(item) { return 70 - item.y; }));
+  var maxMoveY = Math.min.apply(null, linkedPeople.map(function(item) { return 710 - item.y; }));
+  var moveX = clamp(requestedX, minMoveX, maxMoveX);
+  var moveY = clamp(requestedY, minMoveY, maxMoveY);
+  linkedPeople.forEach(function(item) {
+    item.x += moveX;
+    item.y += moveY;
+    item.resources.forEach(function(resource) {
+      resource.x = clamp(resource.x + moveX, 60, 1040);
+      resource.y = clamp(resource.y + moveY, 50, 710);
+    });
   });
-  dragging.lastX = nextX;
-  dragging.lastY = nextY;
+  dragging.lastX += moveX;
+  dragging.lastY += moveY;
+}
+
+function linkedFamilyMovePeople(person) {
+  var familyGroup = null;
+  if (person.role === "grandchild") {
+    familyGroup = childGroupForPerson(person.id);
+  } else if (person.role === "child") {
+    familyGroup = state.familyGroups.find(function(group) {
+      return group.parents.indexOf(person.id) !== -1 &&
+        group.children.some(function(childId) {
+          var child = personById(childId);
+          return child && child.role === "grandchild";
+        });
+    });
+  }
+  if (!familyGroup) return [person];
+  var linkedIds = familyGroup.parents.concat(familyGroup.children);
+  return state.people.filter(function(item) {
+    return linkedIds.indexOf(item.id) !== -1;
+  });
 }
 
 function moveResource(point) {
@@ -1261,7 +1332,10 @@ function resizeResource(point) {
 
 function finishDrag() {
   if (!dragging) return;
-  if (dragging.moved) lastNodePress = { key: "", at: 0 };
+  if (dragging.moved) {
+    lastNodePress = { key: "", at: 0 };
+    rememberUndo(dragging.undoSnapshot);
+  }
   dragging = null;
   saveLocalState();
   renderPeople();
@@ -1312,6 +1386,7 @@ function saveHouseholdDraft() {
     showToast("동거가족을 두 명 이상 선택해주세요.");
     return;
   }
+  rememberUndo();
   var existing = state.households.find(function(household) {
     return household.id === householdDraft.id;
   });
@@ -1375,6 +1450,7 @@ function addPerson() {
     showToast("손자녀를 연결할 자녀를 먼저 추가해주세요.");
     return;
   }
+  rememberUndo();
   var person = {
     id: uid(),
     name: name,
@@ -1530,6 +1606,7 @@ function addResource() {
     input.focus();
     return;
   }
+  rememberUndo();
   var person = selectedPerson();
   var position = defaultResourcePosition(person, person.resources.length);
   var resource = {
@@ -1652,6 +1729,7 @@ function openQuickEditor(kind, ownerId, itemId) {
       fillPersonSelect(document.getElementById("quickParentPerson"), quickGrandchildParents, person.parentId);
     }
     document.getElementById("quickSave").addEventListener("click", function() {
+      rememberUndo();
       var nextRole = document.getElementById("quickRole").value;
       var previousParentId = person.parentId;
       var nextParentId = person.role === "grandchild"
@@ -1711,6 +1789,7 @@ function openQuickEditor(kind, ownerId, itemId) {
     fillSelect(document.getElementById("quickRelationship"), socialTypes, resource.relationship);
     fillSelect(document.getElementById("quickDirection"), directionTypes, resource.direction);
     document.getElementById("quickSave").addEventListener("click", function() {
+      rememberUndo();
       resource.name = document.getElementById("quickName").value.trim() || "이름 없는 자원";
       resource.memo = document.getElementById("quickMemo").value.trim();
       resource.type = document.getElementById("quickResourceType").value;
@@ -1781,6 +1860,25 @@ function layoutFamilyTree() {
       person.y = y;
     });
   });
+  var grandchildrenByParent = {};
+  state.people.forEach(function(person) {
+    if (person.role !== "grandchild" || !person.parentId) return;
+    if (!grandchildrenByParent[person.parentId]) grandchildrenByParent[person.parentId] = [];
+    grandchildrenByParent[person.parentId].push(person);
+  });
+  Object.keys(grandchildrenByParent).forEach(function(parentId) {
+    var parent = personById(parentId);
+    if (!parent) return;
+    var grandchildren = grandchildrenByParent[parentId].sort(byX);
+    var spacing = 135;
+    var firstX = parent.x - spacing * (grandchildren.length - 1) / 2;
+    var lastX = firstX + spacing * (grandchildren.length - 1);
+    var shiftX = firstX < 70 ? 70 - firstX : (lastX > 1030 ? 1030 - lastX : 0);
+    grandchildren.forEach(function(grandchild, index) {
+      grandchild.x = firstX + index * spacing + shiftX;
+      grandchild.y = 700;
+    });
+  });
   state.people.forEach(function(person) {
     person.resources.forEach(function(resource, index) {
       var position = defaultResourcePosition(person, index);
@@ -1794,6 +1892,7 @@ function layoutFamilyTree() {
 function deleteSelectedPerson() {
   var person = selectedPerson();
   if (person.role === "client") return;
+  rememberUndo();
   state.people = state.people.filter(function(item) { return item.id !== person.id; });
   state.links = state.links.filter(function(link) {
     return link.from !== person.id && link.to !== person.id;
@@ -2005,7 +2104,9 @@ function loadJson(file) {
   var reader = new FileReader();
   reader.onload = function() {
     try {
-      state = normalizeState(JSON.parse(reader.result));
+      var loadedState = JSON.parse(reader.result);
+      rememberUndo();
+      state = normalizeState(loadedState);
       backgroundImageUrl = null;
       householdDraft = null;
       closeQuickEditor();
@@ -2032,6 +2133,7 @@ async function loadSelectedFile(file) {
     try {
       var embeddedState = await extractStateFromPng(file);
       if (embeddedState) {
+        rememberUndo();
         state = normalizeState(embeddedState);
         backgroundImageUrl = null;
         householdDraft = null;
@@ -2048,6 +2150,7 @@ async function loadSelectedFile(file) {
   if (isImage) {
     var reader = new FileReader();
     reader.onload = function() {
+      rememberUndo();
       backgroundImageUrl = reader.result;
       renderMap();
       showToast("이미지를 참고 배경으로 불러왔습니다. 일반 이미지는 요소별 편집으로 변환되지 않습니다.");
@@ -2059,6 +2162,7 @@ async function loadSelectedFile(file) {
 }
 
 function clearState() {
+  rememberUndo();
   state = initialState();
   householdDraft = null;
   backgroundImageUrl = null;
@@ -2200,10 +2304,12 @@ document.getElementById("selectedName").addEventListener("input", function(event
   saveLocalState();
 });
 document.getElementById("selectedGender").addEventListener("change", function(event) {
+  rememberUndo();
   selectedPerson().gender = event.target.value;
   render();
 });
 document.getElementById("selectedRole").addEventListener("change", function(event) {
+  rememberUndo();
   changePersonRole(selectedPerson(), event.target.value);
 });
 document.getElementById("selectedBirthYear").addEventListener("input", function(event) {
@@ -2219,12 +2325,14 @@ document.getElementById("selectedDeathYear").addEventListener("input", function(
   saveLocalState();
 });
 document.getElementById("selectedDeceased").addEventListener("change", function(event) {
+  rememberUndo();
   selectedPerson().deceased = event.target.checked;
   render();
 });
 document.getElementById("selectedOutgoingRelationship").addEventListener("change", function(event) {
   var person = selectedPerson();
   if (person.role === "client") return;
+  rememberUndo();
   var relationship = relationshipForPerson(person.id);
   upsertSocialLink(
     clientPerson().id,
@@ -2237,6 +2345,7 @@ document.getElementById("selectedOutgoingRelationship").addEventListener("change
 document.getElementById("selectedIncomingRelationship").addEventListener("change", function(event) {
   var person = selectedPerson();
   if (person.role === "client") return;
+  rememberUndo();
   var relationship = relationshipForPerson(person.id);
   upsertSocialLink(
     clientPerson().id,
@@ -2249,6 +2358,7 @@ document.getElementById("selectedIncomingRelationship").addEventListener("change
 document.getElementById("selectedCoupleStatus").addEventListener("change", function(event) {
   var group = coupleGroupForPerson(selectedPerson().id);
   if (!group) return;
+  rememberUndo();
   group.status = event.target.value;
   selectedPerson().coupleStatus = event.target.value;
   render();
@@ -2257,6 +2367,7 @@ document.getElementById("selectedChildType").addEventListener("change", function
   var person = selectedPerson();
   var group = childGroupForPerson(person.id);
   if (!group) return;
+  rememberUndo();
   group.childTypes[person.id] = event.target.value;
   person.childType = event.target.value;
   render();
@@ -2264,11 +2375,29 @@ document.getElementById("selectedChildType").addEventListener("change", function
 document.getElementById("selectedParentPerson").addEventListener("change", function(event) {
   var person = selectedPerson();
   if (person.role !== "grandchild" || !event.target.value) return;
+  rememberUndo();
   removeFromFamilies(person.id);
   person.parentId = event.target.value;
   attachByRole(person, "grandchild");
   layoutFamilyTree();
 });
+
+["mapTitle", "clientName", "selectedName", "selectedBirthYear", "selectedDeathYear"].forEach(
+  function(fieldId) {
+    var field = document.getElementById(fieldId);
+    var editSnapshot = null;
+    field.addEventListener("focus", function() {
+      editSnapshot = createUndoSnapshot();
+    });
+    field.addEventListener("change", function() {
+      if (editSnapshot && editSnapshot.stateJson !== JSON.stringify(state)) {
+        rememberUndo(editSnapshot);
+      }
+      editSnapshot = null;
+    });
+  }
+);
+
 document.getElementById("addPerson").addEventListener("click", addPerson);
 document.getElementById("newRole").addEventListener("change", updateNewFamilyFields);
 document.getElementById("newPersonName").addEventListener("keydown", function(event) {
@@ -2298,6 +2427,16 @@ document.getElementById("loadInput").addEventListener("change", function(event) 
   event.target.value = "";
 });
 window.addEventListener("keydown", function(event) {
+  var target = event.target;
+  var tagName = target && target.tagName;
+  var isTyping = tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT" ||
+    (target && target.isContentEditable);
+  if (event.key === "Backspace" && !isTyping) {
+    event.preventDefault();
+    event.stopPropagation();
+    undoLastAction();
+    return;
+  }
   if (event.key === "Escape") {
     closeQuickEditor();
     if (householdDraft) cancelHouseholdDraft();
