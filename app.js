@@ -10,6 +10,7 @@ var roles = {
   spouse: { label: "배우자/파트너", generation: 0 },
   sibling: { label: "형제자매", generation: 0 },
   child: { label: "자녀", generation: 1 },
+  grandchild: { label: "손자/손녀", generation: 2 },
   family: { label: "기타 가족", generation: 0 }
 };
 
@@ -78,7 +79,7 @@ function initialState() {
   var originFamilyId = uid();
 
   return normalizeState({
-    version: 6,
+    version: 7,
     title: "우리 가족 생태도",
     selectedId: "client",
     selectedResourceId: null,
@@ -199,7 +200,7 @@ function initialState() {
 
 function normalizeState(next) {
   next = next || {};
-  next.version = 6;
+  next.version = 7;
   next.title = next.title || "나의 생태도";
   next.people = Array.isArray(next.people) ? next.people : [];
   next.links = Array.isArray(next.links) ? next.links : [];
@@ -240,6 +241,9 @@ function normalizeState(next) {
     person.deceased = Boolean(person.deceased);
     person.coupleStatus = coupleStatuses[person.coupleStatus] ? person.coupleStatus : "married";
     person.childType = childTypes[person.childType] ? person.childType : "biological";
+    person.parentId = next.people.some(function(item) { return item.id === person.parentId; })
+      ? person.parentId
+      : null;
     person.x = Number.isFinite(person.x) ? person.x : 550;
     person.y = Number.isFinite(person.y) ? person.y : 400;
     person.resources = Array.isArray(person.resources) ? person.resources : [];
@@ -318,7 +322,7 @@ function normalizeState(next) {
       childTypes: normalizedChildTypes
     };
   }).filter(function(group) {
-    return group.parents.length || group.children.length > 1;
+    return group.parents.length >= 2 || group.children.length > 0;
   });
 
   if (!next.familyGroups.length) inferFamilyGroups(next);
@@ -358,6 +362,7 @@ function inferFamilyGroups(next) {
   var siblings = next.people.filter(function(person) { return person.role === "sibling"; });
   var spouses = next.people.filter(function(person) { return person.role === "spouse"; });
   var children = next.people.filter(function(person) { return person.role === "child"; });
+  var grandchildren = next.people.filter(function(person) { return person.role === "grandchild"; });
   if (parents.length || siblings.length) {
     var originChildren = [client.id].concat(siblings.map(idOf));
     next.familyGroups.push({
@@ -378,6 +383,28 @@ function inferFamilyGroups(next) {
       childTypes: relationshipTypeMap(descendantIds, "biological")
     });
   }
+  grandchildren.forEach(function(grandchild) {
+    var parent = next.people.find(function(person) {
+      return person.id === grandchild.parentId;
+    }) || children[0];
+    if (!parent) return;
+    grandchild.parentId = parent.id;
+    var group = next.familyGroups.find(function(item) {
+      return item.parents.indexOf(parent.id) !== -1;
+    });
+    if (!group) {
+      group = {
+        id: uid(),
+        parents: [parent.id],
+        children: [],
+        status: "married",
+        childTypes: {}
+      };
+      next.familyGroups.push(group);
+    }
+    group.children.push(grandchild.id);
+    group.childTypes[grandchild.id] = grandchild.childType || "biological";
+  });
 
   function relationshipTypeMap(ids, type) {
     var result = {};
@@ -470,6 +497,25 @@ function fillSelect(select, source, value, excluded) {
     .join("");
 }
 
+function eligibleGrandchildParents() {
+  return state.people.filter(function(person) {
+    return person.role === "child";
+  });
+}
+
+function fillPersonSelect(select, people, value) {
+  if (!people.length) {
+    select.innerHTML = '<option value="">자녀를 먼저 추가해주세요</option>';
+    select.disabled = true;
+    return;
+  }
+  select.disabled = false;
+  select.innerHTML = people.map(function(person) {
+    return '<option value="' + attr(person.id) + '"' + (person.id === value ? " selected" : "") + ">" +
+      escapeHtml(person.name) + "</option>";
+  }).join("");
+}
+
 function render() {
   renderForm();
   renderPeople();
@@ -490,6 +536,12 @@ function renderForm() {
   fillSelect(document.getElementById("newIncomingRelationship"), directedSocialTypes, "good");
   fillSelect(document.getElementById("newCoupleStatus"), coupleStatuses, "married");
   fillSelect(document.getElementById("newChildType"), childTypes, "biological");
+  var grandchildParents = eligibleGrandchildParents();
+  fillPersonSelect(
+    document.getElementById("newParentPerson"),
+    grandchildParents,
+    grandchildParents.length ? grandchildParents[0].id : null
+  );
   fillSelect(document.getElementById("resourceType"), resourceTypes, "emotional");
   fillSelect(document.getElementById("resourceRelationship"), socialTypes, "good");
   fillSelect(document.getElementById("resourceDirection"), directionTypes, "both");
@@ -501,7 +553,9 @@ function updateNewFamilyFields() {
   document.getElementById("newCoupleStatusField").style.display =
     role === "parent" || role === "spouse" ? "grid" : "none";
   document.getElementById("newChildTypeField").style.display =
-    role === "sibling" || role === "child" ? "grid" : "none";
+    role === "sibling" || role === "child" || role === "grandchild" ? "grid" : "none";
+  document.getElementById("newParentPersonField").style.display =
+    role === "grandchild" ? "grid" : "none";
 }
 
 function renderPeople() {
@@ -605,6 +659,16 @@ function renderSelected() {
   );
   document.getElementById("selectedCoupleStatusField").style.display = coupleGroup ? "grid" : "none";
   document.getElementById("selectedChildTypeField").style.display = childGroup ? "grid" : "none";
+  var grandchildParents = eligibleGrandchildParents().filter(function(parent) {
+    return parent.id !== person.id;
+  });
+  fillPersonSelect(
+    document.getElementById("selectedParentPerson"),
+    grandchildParents,
+    person.parentId || (grandchildParents.length ? grandchildParents[0].id : null)
+  );
+  document.getElementById("selectedParentPersonField").style.display =
+    person.role === "grandchild" ? "grid" : "none";
 }
 
 function renderResources() {
@@ -1267,6 +1331,11 @@ function addPerson() {
     return;
   }
   var role = document.getElementById("newRole").value;
+  var parentId = role === "grandchild" ? document.getElementById("newParentPerson").value : null;
+  if (role === "grandchild" && !parentId) {
+    showToast("손자녀를 연결할 자녀를 먼저 추가해주세요.");
+    return;
+  }
   var person = {
     id: uid(),
     name: name,
@@ -1278,6 +1347,7 @@ function addPerson() {
     deceased: document.getElementById("newDeceased").checked,
     coupleStatus: document.getElementById("newCoupleStatus").value,
     childType: document.getElementById("newChildType").value,
+    parentId: parentId,
     x: 550,
     y: 400,
     resources: []
@@ -1366,14 +1436,49 @@ function attachByRole(person, role) {
       group.children.push(person.id);
       group.childTypes[person.id] = person.childType;
     }
+  } else if (role === "grandchild") {
+    var grandchildParent = personById(person.parentId) || eligibleGrandchildParents()[0];
+    if (!grandchildParent) return;
+    person.parentId = grandchildParent.id;
+    group = state.familyGroups.find(function(item) {
+      return item.parents.indexOf(grandchildParent.id) !== -1;
+    });
+    if (!group) {
+      group = {
+        id: uid(),
+        parents: [grandchildParent.id],
+        children: [],
+        status: "married",
+        childTypes: {}
+      };
+      state.familyGroups.push(group);
+    }
+    if (group.children.indexOf(person.id) === -1) {
+      group.children.push(person.id);
+      group.childTypes[person.id] = person.childType;
+    }
   }
 }
 
 function changePersonRole(person, nextRole) {
   if (person.role === "client") return;
+  if (nextRole === "grandchild") {
+    var possibleParents = eligibleGrandchildParents().filter(function(parent) {
+      return parent.id !== person.id;
+    });
+    if (!possibleParents.length) {
+      showToast("손자녀를 연결할 다른 자녀가 필요합니다.");
+      render();
+      return;
+    }
+    if (!possibleParents.some(function(parent) { return parent.id === person.parentId; })) {
+      person.parentId = possibleParents[0].id;
+    }
+  }
   removeFromFamilies(person.id);
   person.role = nextRole;
   person.generation = roles[nextRole].generation;
+  if (nextRole !== "grandchild") person.parentId = null;
   attachByRole(person, nextRole);
   layoutFamilyTree();
 }
@@ -1448,6 +1553,9 @@ function openQuickEditor(kind, ownerId, itemId) {
     if (!person) return closeQuickEditor();
     var quickCoupleGroup = coupleGroupForPerson(person.id);
     var quickChildGroup = childGroupForPerson(person.id);
+    var quickGrandchildParents = person.role === "grandchild"
+      ? eligibleGrandchildParents().filter(function(parent) { return parent.id !== person.id; })
+      : [];
     quickEditor.innerHTML =
       '<h3>인물 바로 수정</h3>' +
       '<div class="field"><label for="quickName">이름</label><input id="quickName" value="' + attr(person.name) + '"></div>' +
@@ -1470,6 +1578,9 @@ function openQuickEditor(kind, ownerId, itemId) {
       (quickChildGroup ?
         '<div class="field"><label for="quickChildType">부모-자녀 유형</label>' +
         '<select id="quickChildType"></select></div>' : "") +
+      (person.role === "grandchild" ?
+        '<div class="field"><label for="quickParentPerson">손자녀의 부모</label>' +
+        '<select id="quickParentPerson"></select></div>' : "") +
       '<div class="editor-actions"><button class="btn" id="quickCancel" type="button">취소</button>' +
       '<button class="btn primary" id="quickSave" type="button">적용</button></div>';
     fillSelect(document.getElementById("quickGender"), genders, person.gender);
@@ -1498,8 +1609,15 @@ function openQuickEditor(kind, ownerId, itemId) {
         quickChildGroup.childTypes[person.id] || "biological"
       );
     }
+    if (person.role === "grandchild") {
+      fillPersonSelect(document.getElementById("quickParentPerson"), quickGrandchildParents, person.parentId);
+    }
     document.getElementById("quickSave").addEventListener("click", function() {
       var nextRole = document.getElementById("quickRole").value;
+      var previousParentId = person.parentId;
+      var nextParentId = person.role === "grandchild"
+        ? document.getElementById("quickParentPerson").value
+        : person.parentId;
       person.name = document.getElementById("quickName").value.trim() || "이름 없음";
       person.gender = document.getElementById("quickGender").value;
       person.birthYear = document.getElementById("quickBirthYear").value.trim();
@@ -1522,8 +1640,17 @@ function openQuickEditor(kind, ownerId, itemId) {
         );
       }
       closeQuickEditor();
-      if (person.role !== "client" && person.role !== nextRole) changePersonRole(person, nextRole);
-      else render();
+      if (person.role !== "client" && person.role !== nextRole) {
+        person.parentId = nextParentId;
+        changePersonRole(person, nextRole);
+      } else if (person.role === "grandchild" && nextParentId && nextParentId !== previousParentId) {
+        removeFromFamilies(person.id);
+        person.parentId = nextParentId;
+        attachByRole(person, "grandchild");
+        layoutFamilyTree();
+      } else {
+        render();
+      }
     });
   } else {
     var owner = personById(ownerId);
@@ -1600,7 +1727,14 @@ function layoutFamilyTree() {
     var row = generations[key].sort(byX);
     var minX = 170;
     var maxX = 930;
-    var y = clamp(170 + (generation + 1) * 230, 120, 650);
+    var generationY = {
+      "-2": 100,
+      "-1": 165,
+      "0": 385,
+      "1": 555,
+      "2": 700
+    };
+    var y = generationY[key] || clamp(385 + generation * 165, 90, 700);
     row.forEach(function(person, index) {
       person.x = row.length === 1
         ? 550
@@ -1644,7 +1778,7 @@ function removeFromFamilies(personId) {
     if (group.childTypes) delete group.childTypes[personId];
   });
   state.familyGroups = state.familyGroups.filter(function(group) {
-    return group.parents.length || group.children.length > 1;
+    return group.parents.length >= 2 || group.children.length > 0;
   });
 }
 
@@ -2087,6 +2221,14 @@ document.getElementById("selectedChildType").addEventListener("change", function
   group.childTypes[person.id] = event.target.value;
   person.childType = event.target.value;
   render();
+});
+document.getElementById("selectedParentPerson").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  if (person.role !== "grandchild" || !event.target.value) return;
+  removeFromFamilies(person.id);
+  person.parentId = event.target.value;
+  attachByRole(person, "grandchild");
+  layoutFamilyTree();
 });
 document.getElementById("addPerson").addEventListener("click", addPerson);
 document.getElementById("newRole").addEventListener("change", updateNewFamilyFields);
