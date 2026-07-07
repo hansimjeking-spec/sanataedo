@@ -66,6 +66,72 @@
   background: #f8faff;
   border-color: #c8daf8;
 }
+.extension-panel {
+  margin-top: 8px;
+  padding: 9px;
+  background: #fafbfc;
+  border: 1px solid #d9dde4;
+  border-radius: 6px;
+}
+.extension-panel .hint {
+  margin: 0 0 8px;
+  color: #6d7480;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.extension-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+.extension-card {
+  min-height: 38px;
+  padding: 7px 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #d9dde4;
+  border-radius: 5px;
+}
+.extension-card strong {
+  display: block;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.extension-card span {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: #6d7480;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.extension-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.group-resource-node .resource-box {
+  stroke-dasharray: 6 4;
+}
+.group-resource-node .resource-scope {
+  fill: #6d7480;
+  font-size: 8px;
+  font-weight: 700;
+  text-anchor: middle;
+  pointer-events: none;
+}
+.group-resource-link {
+  opacity: .95;
+}
+.custom-social-line {
+  opacity: .92;
+}
 .export-note {
   display: inline-flex;
   align-items: center;
@@ -131,6 +197,7 @@
 }
 @media (max-width: 560px) {
   .workflow-nav,
-  .template-grid { grid-template-columns: 1fr; }
+  .template-grid,
+  .extension-panel .row { grid-template-columns: 1fr; }
   .export-note { display: none; }
 }
