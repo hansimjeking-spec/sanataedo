@@ -1,0 +1,65 @@
+/* 문서 출력 전용 보강: 사례회의록, 초기상담지, 외부공유용 */
+.document-export-panel {
+  margin-bottom: 14px;
+}
+.document-export-panel .export-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.document-export-panel .export-grid .btn {
+  min-height: 38px;
+  padding: 7px 8px;
+  line-height: 1.25;
+  white-space: normal;
+}
+.document-export-panel .export-grid .btn.full-row {
+  grid-column: 1 / -1;
+}
+.export-options {
+  margin-top: 9px;
+  padding: 9px;
+  display: grid;
+  gap: 7px;
+  background: #fafbfc;
+  border: 1px solid #d9dde4;
+  border-radius: 6px;
+}
+.export-options .check-field {
+  margin-bottom: 0;
+  min-height: 30px;
+  background: #fff;
+}
+.export-options .hint {
+  margin: 0;
+  color: #6d7480;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.export-mode-help {
+  margin: 8px 0 0;
+  padding: 8px;
+  color: #4f5966;
+  background: #f8fbff;
+  border: 1px solid #cfe0fa;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.export-mode-help strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #245fbd;
+  font-size: 12px;
+}
+.export-copy-status {
+  margin-top: 8px;
+  color: #6d7480;
+  font-size: 11px;
+  line-height: 1.4;
+}
+@media (max-width: 560px) {
+  .document-export-panel .export-grid {
+    grid-template-columns: 1fr;
+  }
+}
