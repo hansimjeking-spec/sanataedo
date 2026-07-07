@@ -39,7 +39,7 @@
     setLabel('newOutgoingRelationship', '대상자 → 이 인물');
     setLabel('newIncomingRelationship', '이 인물 → 대상자');
     setSectionTitle(2, '가족/주요 인물');
-    setSectionTitle(6, '선택 인물 또는 가구 자원 추가');
+    setSectionTitle(5, '선택 인물 또는 가구 자원 추가');
     setLabel('resourceRelationship', '관계 정도');
     setLabel('resourceDirection', '지원 방향');
     setLabel('resourceMemo', '지원 내용 또는 주요 역할');
@@ -81,7 +81,7 @@
     var targets = [
       { index: 1, id: 'family-input', label: '가족 입력' },
       { index: 4, id: 'relationship-edit', label: '관계 편집' },
-      { index: 6, id: 'resource-input', label: '자원 연결' },
+      { index: 5, id: 'resource-input', label: '자원 연결' },
       { index: -1, id: 'export-area', label: '저장/출력' }
     ];
     targets.forEach(function(target) {
