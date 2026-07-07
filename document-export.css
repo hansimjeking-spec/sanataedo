@@ -1,4 +1,4 @@
-/* 문서 출력 전용 보강: 외부공유용 중심 */
+/* 문서 출력 전용 보강: 외부공유용 중심 + 좌측 패널 정리 */
 .document-export-panel {
   margin-bottom: 14px;
 }
@@ -19,7 +19,8 @@
 #exportMeeting,
 #exportCaseRecord,
 #exportIntake,
-#copyDocumentImage {
+#copyDocumentImage,
+#jsonButton {
   display: none !important;
 }
 .export-options {
@@ -58,8 +59,79 @@
 .export-mask-output .node-year {
   display: none !important;
 }
+.sidebar-view-controls {
+  margin: 8px 0 12px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+  background: #f8fbff;
+  border: 1px solid #cfe0fa;
+  border-radius: 7px;
+}
+.sidebar-view-controls .btn.small {
+  min-height: 28px;
+  padding: 5px 6px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.clean-sidebar.simple-sidebar .workflow-card,
+.clean-sidebar.simple-sidebar .workflow-nav {
+  display: none !important;
+}
+.clean-sidebar .section {
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+.clean-sidebar .collapsible-section > .section-title {
+  min-height: 32px;
+  margin-bottom: 0;
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+}
+.clean-sidebar .collapsible-section > .section-title > span:first-child,
+.clean-sidebar .collapsible-section > .section-title::first-letter {
+  flex: 1;
+}
+.clean-sidebar .section-collapse-toggle {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #59616d;
+  background: #fff;
+  border: 1px solid #d9dde4;
+  border-radius: 5px;
+  font-size: 13px;
+  line-height: 1;
+}
+.clean-sidebar .section-collapse-toggle:hover {
+  background: #f4f6f8;
+}
+.clean-sidebar .section-body {
+  margin-top: 8px;
+}
+.clean-sidebar .collapsible-section.collapsed {
+  padding-bottom: 8px;
+}
+.clean-sidebar .collapsible-section.collapsed .section-body {
+  display: none !important;
+}
+.clean-sidebar .collapsible-section.collapsed .section-title {
+  color: #4f5966;
+}
+.clean-toolbar .export-note {
+  display: none;
+}
 @media (max-width: 560px) {
-  .document-export-panel .export-grid {
+  .document-export-panel .export-grid,
+  .sidebar-view-controls {
     grid-template-columns: 1fr;
   }
 }
