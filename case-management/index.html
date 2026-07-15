@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ì‚¬ë¡€ê´€ë¦¬ ì—…ë¬´ë„êµ¬</title>
+  <link rel="stylesheet" href="/case-management/styles.css?v=20260705-worktool-ui">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" role="img">
+            <rect x="6" y="8" width="36" height="32" rx="6"></rect>
+            <path d="M15 18h18M15 25h12M15 32h16"></path>
+            <circle cx="35" cy="31" r="4"></circle>
+          </svg>
+        </div>
+        <div>
+          <h1>ì œì²œì¢…í•©ì‚¬íšŒë³µì§€ê´€</h1>
+          <p>ì‚¬ë¡€ê´€ë¦¬íŒ€ í†µí•© ì—…ë¬´ë„êµ¬</p>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="ì£¼ìš” ë³´ê¸°">
+        <div class="nav-section">
+          <span class="nav-group-title">ì—…ë¬´ í˜„í™©</span>
+          <button class="nav-button active" data-view="dashboard" type="button"><span class="icon">â–¦</span>ëŒ€ì‹œë³´ë“œ</button>
+        </div>
+        <div class="nav-section">
+          <span class="nav-group-title">ì‚¬ë¡€ ì—…ë¬´</span>
+          <button class="nav-button" data-view="clients" type="button"><span class="icon">â—Ž</span>ëŒ€ìƒìž ê´€ë¦¬</button>
+          <button class="nav-button" data-view="casework" type="button"><span class="icon">âœ¦</span>í†µí•© ì‚¬ë¡€ê´€ë¦¬</button>
+          <button class="nav-button" data-view="process" type="button"><span class="icon">â–¤</span>ê³¼ì •ê¸°ë¡</button>
+        </div>
+        <div class="nav-section">
+          <span class="nav-group-title">ì‚¬ì—…Â·í†µê³„</span>
+          <button class="nav-button" data-view="entry" type="button"><span class="icon">ï¼‹</span>ì‹¤ì  ìž…ë ¥</button>
+          <button class="nav-button" data-view="clientStats" type="button"><span class="icon">â—«</span>ëŒ€ìƒìž í†µê³„</button>
+          <button class="nav-button" data-view="programs" type="button"><span class="icon">â—‡</span>ì‚¬ì—… ê´€ë¦¬</button>
+        </div>
+        <div class="nav-section">
+          <span class="nav-group-title">ìš´ì˜ ê´€ë¦¬</span>
+          <button class="nav-button" data-view="resources" type="button"><span class="icon">âŒ˜</span>ì§€ì—­ìžì›</button>
+          <button class="nav-button" data-view="import" type="button"><span class="icon">â‡…</span>ìžë£Œ ê´€ë¦¬</button>
+          <button class="nav-button" data-view="audit" type="button"><span class="icon">â—·</span>ë³€ê²½ê¸°ë¡</button>
+        </div>
+      </nav>
+
+      <div class="side-note">
+        <strong><span class="side-note-dot"></span> ê°œì¸ì •ë³´ ë³´í˜¸ ì•ˆë‚´</strong>
+        <span>ì—…ë¬´ì— í•„ìš”í•œ ìµœì†Œì •ë³´ë§Œ ê¸°ë¡í•˜ê³  ë‚´ë³´ë‚´ê¸° ì „ í¬í•¨ ë²”ìœ„ë¥¼ í™•ì¸í•˜ì„¸ìš”.</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-context">
+          <span id="currentViewEyebrow">ì—…ë¬´ í˜„í™©</span>
+          <strong id="currentViewTitle">ëŒ€ì‹œë³´ë“œ</strong>
+        </div>
+        <div class="topbar-controls">
+          <div class="period-control">
+            <label for="yearSelect">ê¸°ì¤€ì—°ë„</label>
+            <select id="yearSelect"></select>
+            <label for="monthSelect">ê¸°ì¤€ì›”</label>
+            <select id="monthSelect"></select>
+          </div>
+          <div class="top-actions">
+            <button class="ghost-button" id="toggleMask" type="button">ê°œì¸ì •ë³´ ë§ˆìŠ¤í‚¹</button>
+            <button class="ghost-button" id="printReport" type="button">ë³´ê³ ì„œ ì¸ì‡„</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="view active" id="dashboardView" aria-labelledby="dashboardTitle">
+        <div class="section-heading dashboard-heading">
+          <div>
+            <span class="page-kicker">CASE MANAGEMENT WORKSPACE</span>
+            <h2 id="dashboardTitle">ì˜¤ëŠ˜ì˜ ì‚¬ë¡€ê´€ë¦¬ í˜„í™©</h2>
+            <p>ê¸°í•œê³¼ ê¸°ë¡ ëˆ„ë½ì„ ë¨¼ì € í™•ì¸í•˜ê³  í•„ìš”í•œ ì‚¬ë¡€ì—…ë¬´ë¡œ ë°”ë¡œ ì´ë™í•˜ì„¸ìš”.</p>
+          </div>
+          <div class="dashboard-actions" aria-label="ë¹ ë¥¸ ì—…ë¬´">
+            <button class="primary-button" id="dashboardNewRecord" type="button">ï¼‹ ë¹ ë¥¸ ê¸°ë¡</button>
+            <button class="ghost-button" id="dashboardOpenCasework" type="button">í†µí•© ì‚¬ë¡€ê´€ë¦¬</button>
+            <button class="ghost-button" id="dashboardNewClient" type="button">ëŒ€ìƒìž ë“±ë¡</button>
+          </div>
+        </div>
+
+        <div class="work-metrics-grid" aria-label="ì‚¬ë¡€ê´€ë¦¬ í•µì‹¬ í˜„í™©">
+          <article class="work-metric">
+            <span class="work-metric-icon clients-icon" aria-hidden="true">â—Ž</span>
+            <div><span>ì „ì²´ ëŒ€ìƒìž</span><strong id="dashboardTotalClients">0</strong><small>ë“±ë¡ ê¸°ì¤€</small></div>
+          </article>
+          <article class="work-metric">
+            <span class="work-metric-icon active-icon" aria-hidden="true">â†—</span>
+            <div><span>ì§„í–‰ ì¤‘ ì‚¬ë¡€</span><strong id="dashboardActiveCases">0</strong><small>ì¢…ê²° ì œì™¸</small></div>
+          </article>
+          <article class="work-metric warn">
+            <span class="work-metric-icon due-icon" aria-hidden="true">!</span>
+            <div><span>ê¸°í•œ ì•Œë¦¼</span><strong id="dashboardDueAlerts">0</strong><small>ëª©í‘œÂ·ì„œë¹„ìŠ¤Â·ìž¬ì‚¬ì •</small></div>
+          </article>
+          <article class="work-metric danger">
+            <span class="work-metric-icon missing-icon" aria-hidden="true">â—‹</span>
+            <div><span>ì´ë²ˆ ë‹¬ ë¯¸ê¸°ë¡</span><strong id="dashboardMissingRecords">0</strong><small>ê³¼ì •ê¸°ë¡ ê¸°ì¤€</small></div>
+          </article>
+        </div>
+
+        <div class="dashboard-workspace">
+          <div class="panel workflow-panel">
+            <div class="panel-head">
+              <div><span class="panel-kicker">CASE FLOW</span><h3>ì‚¬ë¡€ ì§„í–‰ë‹¨ê³„</h3></div>
+              <button class="text-button" id="dashboardCaseworkShortcut" type="button">ì „ì²´ ì‚¬ë¡€ ë³´ê¸°</button>
+            </div>
+            <div class="case-flow" id="caseStageOverview"></div>
+          </div>
+          <div class="panel action-panel" id="dashboardCaseAlerts">
+            <div class="panel-head"><h3>í™•ì¸ì´ í•„ìš”í•œ ì—…ë¬´</h3><span class="status-chip">0ê±´</span></div>
+            <div class="empty-state">ê¸°í•œì´ ì§€ë‚œ ì‚¬ë¡€ì—…ë¬´ê°€ ì—†ìŠµë‹ˆë‹¤.</div>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <div><span class="page-kicker">PROGRAM PERFORMANCE</span><h3>ì‚¬ì—… ì‹¤ì  ìš”ì•½</h3></div>
+          <div class="filter-row">
+            <label for="managerFilter">ë‹´ë‹¹ìž<select id="managerFilter"><option value="all">ì „ì²´</option></select></label>
+            <label for="categoryFilter">ë¶„ë¥˜<select id="categoryFilter"><option value="all">ì „ì²´</option></select></label>
+          </div>
+        </div>
+
+        <div class="metrics-grid business-metrics">
+          <article class="metric"><span>ì‹¤ì¸ì›</span><strong id="totalActual">0</strong></article>
+          <article class="metric"><span>ì—°ì¸ì›</span><strong id="goalRate">0</strong></article>
+          <article class="metric"><span>ë‚¨</span><strong id="monthGoalRate">0</strong></article>
+          <article class="metric alert"><span>ì—¬</span><strong id="missingProgramCount">0</strong></article>
+        </div>
+
+        <div class="split">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>ì›”ë³„ í•©ê³„</h3>
+              <button class="text-button" id="copyMonthlySummary" type="button">í‘œ ë³µì‚¬</button>
+            </div>
+            <div class="chart-wrap"><div class="chart" id="monthlyChart" aria-label="ì›”ë³„ ì‹¤ì  ë§‰ëŒ€ê·¸ëž˜í”„"></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <h3>ì´ë²ˆ ë‹¬ ë¯¸ìž…ë ¥</h3>
+              <button class="text-button" id="copyMissingList" type="button">ëª©ë¡ ë³µì‚¬</button>
+            </div>
+            <div class="check-list" id="missingList"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>ì‚¬ì—…ë³„ ì§‘ê³„í‘œ</h3>
+            <div class="table-tools">
+              <input id="searchInput" type="search" placeholder="ì‚¬ì—…ëª… ê²€ìƒ‰">
+              <button class="text-button" id="exportSummaryCsv" type="button">CSV</button>
+              <button class="text-button" id="exportSummaryExcel" type="button">Excel</button>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr id="summaryHead"></tr></thead>
+              <tbody id="summaryBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="entryView" aria-labelledby="entryTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="entryTitle">ì‹¤ì  ìž…ë ¥</h2>
+            <p>ì¤‘ë³µ ìž…ë ¥ì€ ì €ìž¥ ì „ í™•ì¸í•©ë‹ˆë‹¤.</p>
+          </div>
+        </div>
+
+        <form class="form-grid panel wide-form" id="entryForm">
+          <label>ì‚¬ì—…<select id="entryProgram" required></select></label>
+          <label>ì›”<select id="entryMonth" required></select></label>
+          <label>ëŒ€ìƒìž<select id="entryClient"></select></label>
+          <label>ì‹¤ì <input id="entryActual" type="number" min="0" step="1" required></label>
+          <label>ë‚´ë¶€ ë©”ëª¨<input id="entryMemo" type="text" maxlength="100" placeholder="ì„ íƒ ìž…ë ¥"></label>
+          <div class="checkbox-stack">
+            <label class="inline-check"><input id="entryOverwrite" type="checkbox"> ê°™ì€ ì‚¬ì—…Â·ì›” ê¸°ì¡´ê°’ ë®ì–´ì“°ê¸°</label>
+          </div>
+          <div class="form-actions">
+            <button class="primary-button" type="submit">ì €ìž¥</button>
+            <button class="ghost-button" id="clearEntry" type="button">ë¹„ìš°ê¸°</button>
+          </div>
+        </form>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>ìµœê·¼ ìž…ë ¥</h3>
+            <button class="text-button danger" id="deleteSelectedEntries" type="button">ì„ íƒ ì‚­ì œ</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th><input id="selectAllEntries" type="checkbox" aria-label="ì „ì²´ ì„ íƒ"></th>
+                  <th>ì‚¬ì—…</th><th>ì›”</th><th>ëŒ€ìƒìž</th><th>ì‹¤ì </th><th>ë©”ëª¨</th><th>ìž…ë ¥ì¼</th>
+                </tr>
+              </thead>
+              <tbody id="entryRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="clientsView" aria-labelledby="clientsTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="clientsTitle">ëŒ€ìƒìž ê´€ë¦¬</h2>
+            <p>ëŒ€ìƒìž ê¸°ë³¸ì •ë³´, ê°€êµ¬ êµ¬ì„±ì›, ê°€ê³„ë„ì™€ ìƒíƒœë„ë¥¼ í•¨ê»˜ ê´€ë¦¬í•©ë‹ˆë‹¤.</p>
+          </div>
+        </div>
+
+        <form class="form-grid panel wide-form" id="clientForm">
+          <input id="clientId" type="hidden">
+          <label>ëŒ€ìƒìžëª…<input id="clientName" type="text" required placeholder="ì˜ˆ: í™ê¸¸ë™"></label>
+          <label>ì¶œìƒì—°ë„<input id="clientBirthYear" type="number" min="1900" max="2100"></label>
+          <label>ì„±ë³„<select id="clientGender"><option value="">ë¯¸ìž…ë ¥</option><option>ì—¬</option><option>ë‚¨</option><option>ê¸°íƒ€/ë¯¸ìƒ</option></select></label>
+          <label>ê±°ì£¼ì§€ì—­<input id="clientArea" type="text" placeholder="ì˜ˆ: â—‹â—‹ë™, â—‹â—‹êµ¬"></label>
+          <label>ì£¼ê±°í˜•íƒœ<select id="clientHousing"><option value="">ë¯¸ìž…ë ¥</option><option>ìžê°€</option><option>ì „ì„¸</option><option>ì›”ì„¸</option><option>ì˜êµ¬ìž„ëŒ€</option><option>ê³µê³µìž„ëŒ€</option><option>ê³ ì‹œì›/ìª½ë°©</option><option>ì‹œì„¤/ì‰¼í„°</option><option>ë…¸ìˆ™/ë¶ˆì•ˆì •</option><option>ê¸°íƒ€</option></select></label>
+          <label>ê²½ì œìƒí™©<select id="clientEconomic"><option value="">ë¯¸ìž…ë ¥</option><option>ê¸°ì´ˆìƒí™œìˆ˜ê¸‰</option><option>ì°¨ìƒìœ„</option><option>ì¤‘ìœ„ì†Œë“ 50% ì´í•˜</option><option>ì €ì†Œë“</option><option>ì¼ë°˜</option><option>ì†Œë“ ì—†ìŒ</option><option>ë¶€ì±„/ì²´ë‚©</option><option>í™•ì¸ í•„ìš”</option></select></label>
+          <label>ê°€êµ¬ìœ í˜•<select id="clientHousehold"><option value="">ë¯¸ìž…ë ¥</option><option>1ì¸ê°€êµ¬</option><option>í•œë¶€ëª¨</option><option>ì¡°ì†ê°€êµ¬</option><option>ìž¥ì• ì¸ê°€êµ¬</option><option>ë…¸ì¸ê°€êµ¬</option><option>ë‹¤ë¬¸í™”ê°€êµ¬</option><option>ì¼ë°˜ê°€êµ¬</option><option>ê¸°íƒ€</option></select></label>
+          <label>ì˜ë¢°ì¼<input id="clientConsentDate" type="date"></label>
+          <label>ë‹´ë‹¹ìž<input id="clientWorker" type="text" placeholder="ë‹´ë‹¹ìžëª…"></label>
+          <label class="full-span">ê°€êµ¬ êµ¬ì„±ì›<textarea id="clientFamilyMembers" rows="3" placeholder="í•œ ì¤„ì— í•œ ëª…: ì´ë¦„ / ì„±ë³„ / ê´€ê³„ / ì¶œìƒì—°ë„ ë˜ëŠ” ë‚˜ì´ / ë™ê±° ì—¬ë¶€ / ë¹„ê³ &#10;ì˜ˆ: ê¹€ì˜í¬ / ì—¬ / ë°°ìš°ìž / 1951 / ë™ê±° / ë‹¹ë‡¨ë¡œ ë³‘ì› ì´ìš©&#10;ì´ë¦„ì„ ëª¨ë¥´ë©´: ìž¥ë…€ / 48ì„¸ / ë¹„ë™ê±° / ì›” 1íšŒ ì—°ë½"></textarea></label>
+          <label>ê°€ê³„ë„ íŒŒì¼<input id="clientGenogramFile" type="file" accept="image/*,.pdf"></label>
+          <label>ìƒíƒœë„ íŒŒì¼<input id="clientEcomapFile" type="file" accept="image/*,.pdf"></label>
+          <div class="attachment-preview full-span" id="clientAttachmentPreview"></div>
+          <div class="form-actions">
+            <button class="primary-button" type="submit">ëŒ€ìƒìž ì €ìž¥</button>
+            <button class="ghost-button" id="resetClientForm" type="button">ìƒˆ ëŒ€ìƒìž</button>
+          </div>
+        </form>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>ëŒ€ìƒìž ëª©ë¡</h3>
+            <input id="clientSearch" type="search" placeholder="ì´ë¦„/ë‹´ë‹¹ìž ê²€ìƒ‰">
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>ëŒ€ìƒìž</th><th>ì„±ë³„</th><th>ê±°ì£¼ì§€ì—­</th><th>ê²½ì œìƒí™©</th><th>ê°€êµ¬ìœ í˜•</th><th>ê°€êµ¬ êµ¬ì„±ì›</th><th>ê°€ê³„ë„/ìƒíƒœë„</th><th>ë‹´ë‹¹ìž</th><th>ê´€ë¦¬</th></tr></thead>
+              <tbody id="clientRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="caseworkView" aria-labelledby="caseworkTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="caseworkTitle">í†µí•© ì‚¬ë¡€ê´€ë¦¬</h2>
+            <p>ì ‘ìˆ˜ë¶€í„° ì‚¬í›„ê´€ë¦¬ê¹Œì§€ ìš•êµ¬, ëª©í‘œ, ì„œë¹„ìŠ¤, íšŒì˜ì™€ ì„±ê³¼ë¥¼ í•œ íë¦„ìœ¼ë¡œ ê´€ë¦¬í•©ë‹ˆë‹¤.</p>
+          </div>
+          <div class="filter-row">
+            <label for="caseClientSelect">ëŒ€ìƒìž</label>
+            <select id="caseClientSelect"></select>
+            <span class="stage-badge" id="caseStageBadge">ì ‘ìˆ˜</span>
+          </dißž¸¶‰žËkºwµçYOH˜]Ûˆ» «:è`;&¥;%oH;'n;!áØ]ÛÙ]‚ˆÙ›Ü›O‚ˆÜÙXÝ[Û‚ˆÜÙXÝ[Û‚‚ˆÙXÝ[ÛˆÛ\ÜÏHšY]ÈˆYHœ›ØÙ\ÜÕšY]Èˆ\šXK[X™[YžOHœ›ØÙ\ÜÕ]H‚ˆ]ˆÛ\ÜÏHœÙXÝ[Û‹ZXY[™È‚ˆ]‚ˆˆYHœ›ØÙ\ÜÕ]Hº¬ï;(%z®,:èg{)àÚ‚ˆ»&å:ìá;(!;feúì*zë.;%b:í ;fe{'n:¬ï;b®{'m; «;ek{'a:ã ; à{'¤:ìá:èg;(%zé«;ejzââ:âéÜ‚ˆÙ]‚ˆ]ˆÛ\ÜÏH™š[\‹\›ÝÈ‚ˆX™[›ÜHœ›ØÙ\ÜÐÛY[š[\ˆºã ; à{'¤ÛX™[‚ˆÙ[XÝYHœ›ØÙ\ÜÐÛY[š[\ˆÜÙ[XÝ‚ˆX™[›ÜHœ›ØÙ\ÜÓY]Ùš[\ˆºì*zì¥OÛX™[‚ˆÙ[XÝYHœ›ØÙ\ÜÓY]Ùš[\ˆ‚ˆÜ[Ûˆ˜[YOH˜[»(!;,­ÛÜ[Û‚ˆÜ[Û»(!;feÛÜ[Û‚ˆÜ[Ûºì*zë.ÛÜ[Û‚ˆÜ[Ûºà­:ì*OÛÜ[Û‚ˆÜ[Ûºë.;'¤úêe;"è;( ÛÜ[Û‚ˆÜ[Ûº®,;`àÛÜ[Û‚ˆÜÙ[XÝ‚ˆÙ]‚ˆÙ]‚‚ˆ›Ü›HÛ\ÜÏH™›Ü›KYÜšY[™[ÚYKY›Ü›HˆYHœ›ØÙ\ÜÑ›Ü›H‚ˆ[œ]YHœ›ØÙ\ÜÒYˆ\OHšY[ˆ‚ˆX™[ºã ; à{'¤Ù[XÝYHœ›ØÙ\ÜÐÛY[ˆ™\]Z\™YÜÙ[XÝÛX™[‚ˆX™[»fe{'n;'o[œ]YHœ›ØÙ\ÜÑ]Hˆ\OH™]Hˆ™\]Z\™YÛX™[‚ˆX™[»fe{'n:ì*zì¥OÙ[XÝYHœ›ØÙ\ÜÓY]Ùˆ™\]Z\™YÜ[Û»(!;feÛÜ[ÛÜ[Ûºì*zë.ÛÜ[ÛÜ[Ûºà­:ì*OÛÜ[ÛÜ[Ûºë.;'¤úêe;"è;( ÛÜ[ÛÜ[Ûº®,;`àÛÜ[ÛÜÙ[XÝÛX™[‚ˆX™[»%b:í ; à{`çÙ[XÝYHœ›ØÙ\ÜÔÝ]\ÈÜ[Û»%¤{f.ÛÜ[ÛÜ[Ûº­ ;,,;ea;&¥ÛÜ[ÛÜ[Û»'!:®,;)å{fáÛÜ[ÛÜ[Û»%ì:çoH;%b:ä*ÛÜ[ÛÜ[Û»-¥;fá;fe{'nÛÜ[ÛÜÙ[XÝÛX™[‚ˆX™[Û\ÜÏH™[\Ü[ˆ»b®{'m; «;ekO^\™XHYHœ›ØÙ\ÜÓ›ÝHˆ›ÝÜÏHŒÈˆX^[™ÝHŒˆXÙZÛ\Hº¬m:¬%K;"ç{ «;(ï:¬l;(%{!':¬ ;(lz­ :¬á:®-:®"{)à;&ä;ea;&¥;%ë:í :äì{'a:¬!:âê;g¢:®,:ègHÝ^\™XOÛX™[‚ˆX™[Û\ÜÏH™[\Ü[ˆ»fá;!£{(l;.f^\™XHYHœ›ØÙ\ÜÑ›ÛÝÕ\ˆ›ÝÜÏHŒˆˆX^[™ÝHˆXÙZÛ\H»&"ˆ:âé;'c;(ï;'«:ì*zë.;'f:èã:îa; àzâí;%ì:¬á;fá;&ä:ë/;d¢;fe{'nÝ^\™XOÛX™[‚ˆ]ˆÛ\ÜÏH™›Ü›KXXÝ[ÛœÈ‚ˆ]ÛˆÛ\ÜÏHœš[X\žKX]Ûˆˆ\OHœÝX›Z]º®,:ègH;( ;'©OØ]Û‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYHœ™\Ù]›ØÙ\ÜÑ›Ü›Hˆ\OH˜]Ûˆ» â:®,:ègOØ]Û‚ˆÙ]‚ˆÙ›Ü›O‚‚ˆ]ˆÛ\ÜÏHœÜ]‚ˆ]ˆÛ\ÜÏHœ[™[‚ˆ]ˆÛ\ÜÏHœ[™[ZXY‚ˆÏºã ; à{'¤:ìá:®,:ègOÚÏ‚ˆ]ÛˆÛ\ÜÏH^X]ÛˆˆYH™^Ü›ØÙ\ÜÐÜÝˆˆ\OH˜]ÛˆÔÕØ]Û‚ˆÙ]‚ˆ]ˆÛ\ÜÏHœ›ØÙ\ÜË][Y[[™HˆYHœ›ØÙ\ÜÕ[Y[[™HÙ]‚ˆÙ]‚ˆ]ˆÛ\ÜÏHœ[™[‚ˆ]ˆÛ\ÜÏHœ[™[ZXY‚ˆÏ»&å:ìá;fe{'n;f!;fjOÚÏ‚ˆ]ÛˆÛ\ÜÏH^X]ÛˆˆYH˜ÛÜT›ØÙ\ÜÓZ\ÜÚ[™Èˆ\OH˜]Ûˆºëî;fe{'n:ìí{ «Ø]Û‚ˆÙ]‚ˆ]ˆÛ\ÜÏH˜ÚXÚË[\ÝˆYHœ›ØÙ\ÜÓ[ÛTÝ]\ÈÙ]‚ˆÙ]‚ˆÙ]‚‚ˆ]ˆÛ\ÜÏHœ[™[‚ˆ]ˆÛ\ÜÏHœ[™[ZXY‚ˆÏ»-g:­ï:¬ï;(%z®,:ègOÚÏ‚ˆ]ÛˆÛ\ÜÏH^X]Ûˆ[™Ù\ˆˆYH™[]TÙ[XÝY›ØÙ\ÜÔ™XÛÜ™Èˆ\OH˜]Ûˆ»!(;`çH; «{('Ø]Û‚ˆÙ]‚ˆ]ˆÛ\ÜÏHX›K\ØÜ›Û‚ˆX›O‚ˆXY[œ]YHœÙ[XÝ[›ØÙ\ÜÔ™XÛÜ™Èˆ\OH˜ÚXÚØ›Þˆ\šXK[X™[H»(!;,­;!(;`çHÝºã ; à{'¤Ý»fe{'n;'oÝºì*zì¥OÝ» à{`çÝ»b®{'m; «;ekOÝ»fá;!£{(l;.fÝº­ :é«ÝÝÝXY‚ˆ›ÙHYHœ›ØÙ\ÜÔ›ÝÜÈÝ›ÙO‚ˆÝX›O‚ˆÙ]‚ˆÙ]‚ˆÜÙXÝ[Û‚‚ˆÙXÝ[ÛˆÛ\ÜÏHšY]ÈˆYH˜ÛY[Ý]ÕšY]Èˆ\šXK[X™[YžOH˜ÛY[Ý]Õ]H‚ˆ]ˆÛ\ÜÏHœÙXÝ[Û‹ZXY[™È‚ˆ]‚ˆˆYH˜ÛY[Ý]Õ]H» «:è`:­ :é«:ã ; à{'¤;a­z¬áÚ‚ˆ»"çzìá;(%zìí:éo;(';&n;ef:¬è;!,zìá:¬l;(ï;)à;%ëK:¬¯{('; à{fjH:äìH:ã ; à{'¤;!£{!,{'a;)äz¬á;ejzââ:âéÜ‚ˆÙ]‚ˆ]ˆÛ\ÜÏH™š[\‹\›ÝÈ‚ˆX™[›ÜH˜ÛY[Ý]ÕÛÜšÙ\‘š[\ˆºâí:âî{'¤ÛX™[‚ˆÙ[XÝYH˜ÛY[Ý]ÕÛÜšÙ\‘š[\ˆÜ[Ûˆ˜[YOH˜[»(!;,­ÛÜ[ÛÜÙ[XÝ‚ˆÙ]‚ˆÙ]‚‚ˆ]ˆÛ\ÜÏH›Y]šXÜËYÜšY‚ˆ\XÛHÛ\ÜÏH›Y]šXÈÜ[ºã ; à{'¤;"&ÜÜ[Ý›Û™ÈYH˜ÛY[Ý]ÕÝ[ŒÜÝ›Û™ÏØ\XÛO‚ˆ\XÛHÛ\ÜÏH›Y]šXÈÜ[º¬ :­k:­k;!,{&ä:®,:ègOÜÜ[Ý›Û™ÈYH˜ÛY[Ý]Ñ˜[Z[HŒÜÝ›Û™ÏØ\XÛO‚ˆ\XÛHÛ\ÜÏH›Y]šXÈ[\Ü[ºëî:®,;'«;ekzêªOÜÜ[Ý›Û™ÈYH˜ÛY[Ý]ÓZ\ÜÚ[™ÈŒÜÝ›Û™ÏØ\XÛO‚ˆÙ]‚‚ˆ]ˆÛ\ÜÏHœÝ]ËYÜšY‚ˆ]ˆÛ\ÜÏHœ[™[]ˆÛ\ÜÏHœ[™[ZXYÏ»!,zìáÚÏÙ]]ˆÛ\ÜÏHœÝ]X˜\œÈˆYH™Ù[™\”Ý]ÈÙ]Ù]‚ˆ]ˆÛ\ÜÏHœ[™[]ˆÛ\ÜÏHœ[™[ZXYÏ»%ì:è.zã ÚÏÙ]]ˆÛ\ÜÏHœÝ]X˜\œÈˆYH˜YÙTÝ]ÈÙ]Ù]‚ˆ]ˆÛ\ÜÏHœ[™[]ˆÛ\ÜÏHœ[™[ZXYÏº¬l;(ï;)à;%ëOÚÏÙ]]ˆÛ\ÜÏHœÝ]X˜\œÈˆYH˜\™XTÝ]ÈÙ]Ù]‚ˆ]ˆÛ\ÜÏHœ[™[]ˆÛ\ÜÏHœ[™[ZXYÏº¬¯{('; à{fjOÚÏÙ]]ˆÛ\ÜÏHœÝ]X˜\œÈˆYH™XÛÛ›ÛZXÔÝ]ÈÙ]Ù]‚ˆ]ˆÛ\ÜÏHœ[™[]ˆÛ\ÜÏHœ[™[ZXYÏ»(ï:¬l;f%{`çÚÏÙ]]ˆÛ\ÜÏHœÝ]X˜\œÈˆYHšÝ\Ú[™ÔÝ]ÈÙ]Ù]‚ˆ]ˆÛ\ÜÏHœ[™[]ˆÛ\ÜÏHœ[™[ZXYÏº¬ :­k;'(;f%OÚÏÙ]]ˆÛ\ÜÏHœÝ]X˜\œÈˆYHšÝ\ÙZÛÝ]ÈÙ]Ù]‚ˆÙ]‚‚ˆ]ˆÛ\ÜÏHœ[™[‚ˆ]ˆÛ\ÜÏHœ[™[ZXY‚ˆÏºã ; à{'¤;a­z¬á;dgÚÏ‚ˆ]ˆÛ\ÜÏHX›K]ÛÛÈ‚ˆ]ÛˆÛ\ÜÏH^X]ÛˆˆYH˜ÛÜPÛY[Ý]Èˆ\OH˜]Ûˆ»dg:ìí{ «Ø]Û‚ˆ]ÛˆÛ\ÜÏH^X]ÛˆˆYH™^ÜÛY[Ý]ÐÜÝˆˆ\OH˜]ÛˆÔÕØ]Û‚ˆ]ÛˆÛ\ÜÏH^X]ÛˆˆYH™^ÜÛY[Ý]Ñ^Ù[ˆ\OH˜]Ûˆ‘^Ù[Ø]Û‚ˆÙ]‚ˆÙ]‚ˆ]ˆÛ\ÜÏHX›K\ØÜ›Û‚ˆX›O‚ˆXYº­k:í¡Ý»ekzêªOÝ»'n;&äÝºîa;'*ÝÝÝXY‚ˆ›ÙHYH˜ÛY[Ý]Ô›ÝÜÈÝ›ÙO‚ˆÝX›O‚ˆÙ]‚ˆÙ]‚ˆÜÙXÝ[Û‚‚ˆÙXÝ[ÛˆÛ\ÜÏHšY]ÈˆYHœ›ÙÜ˜[\ÕšY]Èˆ\šXK[X™[YžOHœ›ÙÜ˜[\Õ]H‚ˆ]ˆÛ\ÜÏHœÙXÝ[Û‹ZXY[™È‚ˆ]‚ˆˆYHœ›ÙÜ˜[\Õ]H» «;%áH:­ :é«Ú‚ˆ» «;%ázìá:âí:âî{'¤;&`;em:âîH:ã ; à{'¤:éo:äìzèg{ejzââ:âéÜ‚ˆÙ]‚ˆÙ]‚‚ˆ›Ü›HÛ\ÜÏH™›Ü›KYÜšY[™[ÚYKY›Ü›HˆYHœ›ÙÜ˜[Q›Ü›H‚ˆ[œ]YHœ›ÙÜ˜[RYˆ\OHšY[ˆ‚ˆX™[» «;%ázê¡O[œ]YHœ›ÙÜ˜[S˜[YHˆ\OH^ˆ™\]Z\™YXÙZÛ\H»&"ˆ; «:è`:­ :é«; àzâíÛX™[‚ˆX™[ºí¡:éf[œ]YHœ›ÙÜ˜[PØ]YÛÜžHˆ\OH^ˆ™\]Z\™YXÙZÛ\H»&"ˆ; «:è`:­ :é«ÛX™[‚ˆX™[ºâí:âî{'¤[œ]YHœ›ÙÜ˜[SX[˜YÙ\ˆˆ\OH^ˆXÙZÛ\H»&"ˆ:®`; «;f£ÛX™[‚ˆ]ˆÛ\ÜÏH™›Ü›KXXÝ[ÛœÈ‚ˆ]ÛˆÛ\ÜÏHœš[X\žKX]Ûˆˆ\OHœÝX›Z]» «;%áH;( ;'©OØ]Û‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYHœ™\Ù]›ÙÜ˜[Q›Ü›Hˆ\OH˜]Ûˆ» â; «;%áOØ]Û‚ˆÙ]‚ˆÙ›Ü›O‚‚ˆ]ˆÛ\ÜÏHœ›ÙÜ˜[K[\ÝˆYHœ›ÙÜ˜[S\ÝÙ]‚ˆÜÙXÝ[Û‚‚ˆÙXÝ[ÛˆÛ\ÜÏHšY]ÈˆYHœ™\ÛÝ\˜Ù\ÕšY]Èˆ\šXK[X™[YžOHœ™\ÛÝ\˜Ù\Õ]H‚ˆ]ˆÛ\ÜÏHœÙXÝ[Û‹ZXY[™È‚ˆ]ˆYHœ™\ÛÝ\˜Ù\Õ]H»)à;%ë{'¤;&ä:­ :é«Ú»(';,§;)à;%ë{'f:®,:­ 0­û!':îa;"©;'m;&ªz®,;) :¬ï;fe{'n;'o;'a:­ :é«;ejzââ:âéÜÙ]‚ˆ[œ]YHœ™\ÛÝ\˜ÙTÙX\˜Úˆ\OHœÙX\˜ÚˆXÙZÛ\Hº®,:­ 0­û!':îa;"©0­û)à;%ëH:¬ ; âH‚ˆÙ]‚ˆ›Ü›HÛ\ÜÏH™›Ü›KYÜšY[™[ÚYKY›Ü›HˆYHœ™\ÛÝ\˜ÙQ›Ü›H‚ˆ[œ]YHœ™\ÛÝ\˜ÙRYˆ\OHšY[ˆ‚ˆX™[º®,:­ 0­û'¤;&ä:ê¡O[œ]YHœ™\ÛÝ\˜ÙS˜[YHˆ\OH^ˆ™\]Z\™YÛX™[‚ˆX™[ºí¡:éfÙ[XÝYHœ™\ÛÝ\˜ÙU\HÜ[Ûº¬íz¬íOÛÜ[ÛÜ[Ûºìí{)àÛÜ[ÛÜ[Ûºìí:¬m0­û'f:èãÛÜ[ÛÜ[Û»(%{"è:¬m:¬%OÛÜ[ÛÜ[Û»(ï:¬lÛÜ[ÛÜ[Ûº¬è;&ªp­ú­d;'(OÛÜ[ÛÜ[Ûºì¥zéh0­ú­£;'mOÛÜ[ÛÜ[Û»fá;&äÛÜ[ÛÜ[Ûºãã:í!ÛÜ[ÛÜ[Ûº®,;`àÛÜ[ÛÜÙ[XÝÛX™[‚ˆX™[»)à;%ëO[œ]YHœ™\ÛÝ\˜ÙP\™XHˆ\OH^ˆXÙZÛ\H»(';,§;"ç8¥âø¥âúãæHÛX™[‚ˆX™[ºã ;dg;%ì:ço{,¦[œ]YHœ™\ÛÝ\˜ÙTÛ™Hˆ\OH^ˆ[œ][ÙOH[ÛX™[‚ˆX™[ºâí:âîzí ;!'0­úâí:âî{'¤[œ]YHœ™\ÛÝ\˜ÙPÛÛXÝˆ\OH^ÛX™[‚ˆX™[»(%zìí;fe{'n;'o[œ]YHœ™\ÛÝ\˜ÙU™\šYšYY]ˆ\OH™]HÛX™[‚ˆX™[»&­;& { à{`çÙ[XÝYHœ™\ÛÝ\˜ÙTÝ]\ÈÜ[Û»'m;&ªz¬ :â©OÛÜ[ÛÜ[Ûºã :®,ÛÜ[ÛÜ[Û»)$zâêÛÜ[ÛÜ[Û»fe{'n;ea;&¥ÛÜ[ÛÜÙ[XÝÛX™[‚ˆX™[Û\ÜÏH™[\Ü[ˆ»!':îa;"©:à­;&ªO^\™XHYHœ™\ÛÝ\˜ÙTÙ\šXÙ\Èˆ›ÝÜÏHŒÈˆ™\]Z\™YÝ^\™XOÛX™[‚ˆX™[Û\ÜÏH™[\Ü[ˆ»'m;&ªz®,;) 0­û"è;,«zì*zì¥O^\™XHYHœ™\ÛÝ\˜ÙQ[YÚXš[]Hˆ›ÝÜÏHŒˆÝ^\™XOÛX™[‚ˆX™[Û\ÜÏH™[\Ü[ˆºêe:êª^\™XHYHœ™\ÛÝ\˜ÙS›Ý\Èˆ›ÝÜÏHŒˆÝ^\™XOÛX™[‚ˆ]ˆÛ\ÜÏH™›Ü›KXXÝ[ÛœÈ]ÛˆÛ\ÜÏHœš[X\žKX]Ûˆˆ\OHœÝX›Z]»'¤;&ä;( ;'©OØ]Û]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYHœ™\Ù]™\ÛÝ\˜ÙHˆ\OH˜]Ûˆ» â;'¤;&äØ]ÛÙ]‚ˆÙ›Ü›O‚ˆ]ˆÛ\ÜÏH˜Ø\™[\ÝˆYHœ™\ÛÝ\˜ÙS\ÝÙ]‚ˆÜÙXÝ[Û‚‚ˆÙXÝ[ÛˆÛ\ÜÏHšY]ÈˆYH˜]Y]šY]Èˆ\šXK[X™[YžOH˜]Y]]H‚ˆ]ˆÛ\ÜÏHœÙXÝ[Û‹ZXY[™È‚ˆ]ˆYH˜]Y]]Hºìà:¬¯z®,:ègOÚº¬ízãæH;( ;'©{!£;'f;(ï;&¥;"&;(%p­úà­:ìí:à­:®,;'m:è){'a;fe{'n;ejzââ:âéÜÙ]‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYHœ™Yœ™\Ú]Y]ˆ\OH˜]Ûˆ» â:èg:¬è;.jØ]Û‚ˆÙ]‚ˆ]ˆÛ\ÜÏHœ[™[‚ˆ]ˆÛ\ÜÏHX›K\ØÜ›Û‚ˆX›OXY»'o;"çÝ»)à{&äÝ»'¤{%áOÝºà­;&ªOÝÝÝXY›ÙHYH˜]Y]›ÝÜÈÝ›ÙOÝX›O‚ˆÙ]‚ˆÙ]‚ˆÜÙXÝ[Û‚‚ˆÙXÝ[ÛˆÛ\ÜÏHšY]ÈˆYHš[\ÜšY]Èˆ\šXK[X™[YžOHš[\Ü]H‚ˆ]ˆÛ\ÜÏHœÙXÝ[Û‹ZXY[™È‚ˆ]‚ˆˆYHš[\Ü]Hº¬ ;(.;&):®,úà­:ìí:à­:®,Ú‚ˆ‘^Ù[;%ä;!':í¦{%ë:á(ú®,ÔÕˆ:¬ ;(.;&):®,^Ù[;f.;ff;c#;'o:à­:ìí:à­:®,:ì,{%áKúìí{&ä;'a;)à;&ä;ejzââ:âéÜ‚ˆÙ]‚ˆÙ]‚ˆ]ˆÛ\ÜÏHœÜ]‚ˆ]ˆÛ\ÜÏHœ[™[‚ˆÏ‘ÛÛÙÛH;"ç;b®:ã ; à{'¤:¬ ;(.;&):®,ÚÏ‚ˆÛ\ÜÏHš[]^ºã ; à{'¤:ê¡zâê;%ä;!';(':êªH;e¢z¬ï;%í;'m:é¡;'a;cë;ej;em:ìí{ «;eg;dg:éo:í¦{%ë:á(û'/;!.;&¥ˆ;%ì:ço{,¦; à{!.;(ï;!£;"çzìá:ì¢;f.:â¥;( ;'©{ef;)à;%b»"­zââ:âéÜ‚ˆ^\™XHYH™ÛÛÙÛTÚY]\ÝHˆ›ÝÜÏHŽˆXÙZÛ\H‘ÛÛÙÛH;"ç;b®;'f:ã ; à{'¤;dg:éo:í¦{%ë:á(ú®,Ý^\™XO‚ˆ]ÛˆÛ\ÜÏHœš[X\žKX]ÛˆˆYHš[\ÜÛÛÙÛTÚY]ÛY[Èˆ\OH˜]Ûˆºã ; à{'¤:¬ ;(.;&):®,Ø]Û‚ˆÙ]‚ˆ]ˆÛ\ÜÏHœ[™[‚ˆÏÔÕˆ:¬ ;(.;&):®,ÚÏ‚ˆÛ\ÜÏHš[]^»%í;'m:é¡ˆ; «;%ázê¡K:í¡:éf:âí:âî{'¤;%ì:ãá;&å;"é;( K:ã ; à{'¤:ê¡K;-§; ç{%ì:ãá;!,zìá:¬l;(ï;)à;%ëK;(ï:¬l;f%{`ç:¬¯{('; à{fjK:¬ :­k;'(;f%K:¬ :­k:­k;!,{&ä:êe:êªÜ‚ˆ[œ]YH˜ÜÝ‘š[Hˆ\OH™š[HˆXØÙ\H‹˜ÜÝ‹Ý‹^ØÜÝ‹^ÝX‹\Ù\\˜]Y]˜[Y\È‚ˆ]ˆÛ\ÜÏH˜]Û‹\›ÝÈ‚ˆ]ÛˆÛ\ÜÏHœš[X\žKX]ÛˆˆYHš[\ÜÜÝˆˆ\OH˜]Ûˆº¬ ;(.;&):®,Ø]Û‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYH™ÝÛ›ØY[\]Hˆ\OH˜]Ûˆ»%¤{"çH:âé;&­:èg:äçØ]Û‚ˆÙ]‚ˆÙ]‚ˆ]ˆÛ\ÜÏHœ[™[‚ˆÏ‘^Ù[:í¦{%ë:á(ú®,ÚÏ‚ˆÛ\ÜÏHš[]^»%ä{!`;dg:éo:ìí{ «;eg:ä©;%a:ç¦;%ä:í¦{%ë:á(û'/:êm;`ëH:­k:í¡;'¤:èã:èg:¬ ;(.;&-zââ:âéÜ‚ˆ^\™XHYH™^Ù[\ÝHˆ›ÝÜÏHŽˆXÙZÛ\H»%ä{!`;%ä;!':ìí{ «;eg;dg:éo:í¦{%ë:á(ú®,Ý^\™XO‚ˆ]ÛˆÛ\ÜÏHœš[X\žKX]ÛˆˆYHš[\Ü\ÝY^Ù[ˆ\OH˜]Ûˆºí¦{%ë:á(û'`;dg:¬ ;(.;&):®,Ø]Û‚ˆÙ]‚ˆÙ]‚ˆ]ˆÛ\ÜÏHœ[™[‚ˆÏºì,{%áKúìí{&ä:ì#È:ìí:¬è;!'ÚÏ‚ˆ]ˆÛ\ÜÏH™^Ü[Ü[ÛœÈ‚ˆX™[Û\ÜÏHš[›[™KXÚXÚÈ[œ]YHš[˜ÛYT\œÛÛ˜[^Üˆ\OH˜ÚXÚØ›Þˆ:à­:ìí:à­:®,;%ä:¬';'n;(%zìí;cë;ejÛX™[‚ˆÙ]‚ˆ]ˆÛ\ÜÏH˜]Û‹\›ÝÈ‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYH™^ÜœÛÛˆˆ\OH˜]Ûˆ’”ÓÓˆ:ì,{%áOØ]Û‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYHœ™\ÝÜ™RœÛÛ]Ûˆˆ\OH˜]Ûˆ’”ÓÓˆ:ìí{&äØ]Û‚ˆ[œ]YHœ™\ÝÜ™RœÛÛ‘š[Hˆ\OH™š[HˆXØÙ\H˜\XØ][Û‹ÚœÛÛ‹šœÛÛˆˆY[‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYH™^Ü[ÜÝˆˆ\OH˜]Ûˆ»(!;,­ÔÕØ]Û‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYH™^Ü[^Ù[ˆ\OH˜]Ûˆ»(!;,­^Ù[Ø]Û‚ˆ]ÛˆÛ\ÜÏH™[™Ù\‹X]ÛˆˆYHœ™\Ù][ˆ\OH˜]Ûˆ»(!;,­;-":®,;feØ]Û‚ˆÙ]‚ˆÙ]‚ˆÜÙXÝ[Û‚ˆÛXZ[‚ˆÙ]‚‚ˆX[ÙÈÛ\ÜÏH™Ù[›ÙÜ˜[KYY]Ü‹YX[ÙÈˆYH™Ù[›ÙÜ˜[QY]Ü‘X[ÙÈˆ\šXK[X™[YžOH™Ù[›ÙÜ˜[QY]Ü•]H‚ˆ]ˆÛ\ÜÏH™Ù[›ÙÜ˜[KYX[ÙËZXY‚ˆ]‚ˆÈYH™Ù[›ÙÜ˜[QY]Ü•]Hº¬ :¬á:ãá0­û ç{`ç:ãá;c®;)äOÚÏ‚ˆYH™Ù[›ÙÜ˜[QY]Ü”Ý]\Èˆ›ÛOHœÝ]\Èˆ\šXK[]™OHœÛ]Hºã ; à{'¤;&`:¬ :­k;&ä;(%zìí:èg;'¤:ãæH;-";%b;'a;) :îa;ejzââ:âéÜ‚ˆÙ]‚ˆ]ˆÛ\ÜÏH™Ù[›ÙÜ˜[KYX[ÙËXXÝ[ÛœÈ‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYHœ™YÙ[™\˜]QÙ[›ÙÜ˜[Hˆ\OH˜]Ûˆºã ; à{'¤;(%zìí:èg:âé;"ç; ç{!,OØ]Û‚ˆ]ÛˆÛ\ÜÏHšXÛÛ‹X]ÛˆˆYH˜ÛÜÙQÙ[›ÙÜ˜[QY]Üˆˆ\OH˜]Ûˆˆ\šXK[X™[Hºâêú®,°åÏØ]Û‚ˆÙ]‚ˆÙ]‚ˆYœ˜[YHYH™Ù[›ÙÜ˜[QY]Ü‘œ˜[YHˆ]OHº¬ :¬á:ãá0­û ç{`ç:ãá;c®;)äz®,ˆØY[™ÏH›^žHˆØ[™›ÞH˜[ÝË\ØÜš\È[ÝË\Ø[YK[ÜšYÚ[ˆ[ÝËYÝÛ›ØYÈÚYœ˜[YO‚ˆÙX[ÙÏ‚‚ˆX[ÙÈÛ\ÜÏH™Ù[›ÙÜ˜[KYX[ÙÈˆYH™Ù[›ÙÜ˜[QX[ÙÈˆ\šXK[X™[YžOH™Ù[›ÙÜ˜[U]H‚ˆ]ˆÛ\ÜÏH™Ù[›ÙÜ˜[KYX[ÙËZXY‚ˆ]‚ˆÈYH™Ù[›ÙÜ˜[U]H»'¤:ãæH:¬ :¬á:ãáÚÏ‚ˆYH™Ù[›ÙÜ˜[TÝ[[X\žHÜ‚ˆÙ]‚ˆ]ÛˆÛ\ÜÏHšXÛÛ‹X]ÛˆˆYH˜ÛÜÙQÙ[›ÙÜ˜[Hˆ\OH˜]Ûˆˆ\šXK[X™[Hº¬ :¬á:ãá:âêú®,ˆ]OHºâêú®,°åÏØ]Û‚ˆÙ]‚ˆ]ˆÛ\ÜÏH™Ù[›ÙÜ˜[KXØ[˜\ÈˆYH™Ù[›ÙÜ˜[PØ[˜\ÈÙ]‚ˆ]ˆÛ\ÜÏH™Ù[›ÙÜ˜[K[YÙ[™ˆ\šXK[X™[Hº¬ :¬á:ãá:®,;f.‚ˆÜ[HÛ\ÜÏH›YÙ[™\Ü]X\™HÚOºàª;!,OÜÜ[‚ˆÜ[HÛ\ÜÏH›YÙ[™XÚ\˜ÛHÚO»%ë;!,OÜÜ[‚ˆÜ[HÛ\ÜÏH›YÙ[™YÝX›HÚOºã ; à{'¤ÜÜ[‚ˆÙ]‚ˆ]ˆÛ\ÜÏH™›Ü›KXXÝ[ÛœÈ‚ˆ]ÛˆÛ\ÜÏHœš[X\žKX]ÛˆˆYHœØ]™QÙ[›ÙÜ˜[Hˆ\OH˜]Ûˆº¬ :¬á:ãá:èg;( ;'©OØ]Û‚ˆ]ÛˆÛ\ÜÏH™ÚÜÝX]ÛˆˆYH™ÝÛ›ØYÙ[›ÙÜ˜[Hˆ\OH˜]Ûˆ”Õ‘È:à­:è):ì&ú®,Ø]Û‚ˆÙ]‚ˆÙX[ÙÏ‚‚ˆ]ˆÛ\ÜÏHØ\ÝˆYHØ\Ýˆ›ÛOHœÝ]\Èˆ\šXK[]™OHœÛ]HÙ]‚ˆØÜš\Ü˜ÏH‹ØØ\ÙK[X[˜YÙ[Y[Ø\šœÏÝLŒŒÌK]ÛÜšÝÛÛ]ZHÜØÜš\‚Ø›ÙO‚Ú[‚

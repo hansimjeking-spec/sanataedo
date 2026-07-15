@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>가계도/생태도</title>
+  <link rel="stylesheet" href="/genogram/styles.css?v=20260715-pets">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <header class="sidebar-header">
+        <div>
+          <p class="sidebar-kicker">사례관리 작업판</p>
+          <h1 class="app-title">가계도/생태도</h1>
+        </div>
+        <p class="sidebar-intro">자료를 입력하고 가족·자원을 연결한 뒤, 확인 필요 항목을 점검하세요.</p>
+      </header>
+
+      <details class="sidebar-panel" id="startPanel" open>
+        <summary>
+          <span class="step-badge">1</span>
+          <span class="step-copy"><strong>사례 시작</strong><small>제목과 중심 인물 입력</small></span>
+          <span class="summary-chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="panel-body">
+          <section class="section">
+            <h2 class="section-title">기본 정보</h2>
+        <div class="field">
+          <label for="mapTitle">생태도 제목</label>
+          <input id="mapTitle" placeholder="예: 우리 가족 생태도">
+        </div>
+        <div class="field">
+          <label for="clientName">중심 인물(Client) 이름</label>
+          <input id="clientName" placeholder="중심 인물 이름">
+        </div>
+          </section>
+
+          <section class="section quick-start-section">
+            <h2 class="section-title">빠른 시작</h2>
+            <div class="quick-actions">
+              <button class="btn" id="blankCaseButton" type="button">빈 사례 시작</button>
+              <button class="btn" id="bulkPeopleButton" type="button">가족 일괄 입력</button>
+            </div>
+            <button class="btn draft-button full" id="sidebarDocumentDraftButton" type="button">문서로 초안 만들기</button>
+            <p class="section-help">기초현황 문서가 있다면 초안을 먼저 만들고, 필요한 부분만 수정하세요.</p>
+          </section>
+        </div>
+      </details>
+
+      <details class="sidebar-panel" id="familyPanel">
+        <summary>
+          <span class="step-badge">2</span>
+          <span class="step-copy"><strong>가족 구성</strong><small>구성원과 관계 추가</small></span>
+          <span class="summary-chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="panel-body">
+          <section class="section">
+            <h2 class="section-title">가족 구성원 추가</h2>
+        <div class="field">
+          <label for="newPersonName">이름</label>
+          <input id="newPersonName" placeholder="예: 아버지, 큰누나">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="newGender">가계도 기호</label>
+            <select id="newGender"></select>
+          </div>
+          <div class="field">
+            <label for="newRole">중심 인물과의 관계</label>
+            <select id="newRole"></select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="newOutgoingRelationship">클라이언트 → 대상</label>
+            <select id="newOutgoingRelationship"></select>
+          </div>
+          <div class="field">
+            <label for="newIncomingRelationship">대상 → 클라이언트</label>
+            <select id="newIncomingRelationship"></select>
+          </div>
+        </div>
+          <div class="row">
+            <div class="field" id="newCoupleStatusField">
+              <label for="newCoupleStatus">부부/파트너 상태</label>
+              <select id="newCoupleStatus"></select>
+            </div>
+            <div class="field" id="newChildTypeField">
+              <label for="newChildType">부모-자녀 유형</label>
+              <select id="newChildType"></select>
+            </div>
+          </div>
+        <div class="row" id="newPetFields">
+          <div class="field" id="newPetTypeField">
+            <label for="newPetType">반려동물 종류</label>
+            <select id="newPetType"></select>
+          </div>
+          <div class="field" id="newPetOwnerField">
+            <label for="newPetOwner">함께 사는 가족</label>
+            <select id="newPetOwner"></select>
+          </div>
+        </div>
+        <div class="field" id="newParentPersonField">
+          <label for="newParentPerson">손자녀의 부모</label>
+          <select id="newParentPerson"></select>
+        </div>
+        <div class="row compact-row">
+          <div class="field">
+            <label for="newBirthYear">출생연도</label>
+            <input id="newBirthYear" inputmode="numeric" placeholder="예: 1967">
+          </div>
+          <div class="field">
+            <label for="newDeathYear">사망연도</label>
+            <input id="newDeathYear" inputmode="numeric" placeholder="예: 2020">
+          </div>
+        </div>
+        <label class="check-field">
+          <input id="newDeceased" type="checkbox">
+          <span>사망 표시</span>
+        </label>
+        <label class="check-field">
+          <input id="newDeathYearUnknown" type="checkbox">
+          <span>사망연도 미상</span>
+        </label>
+        <div class="row compact-row">
+          <label class="check-field">
+            <input id="newGenderUnknown" type="checkbox">
+            <span>성별 미상</span>
+          </label>
+          <label class="check-field" id="newBirthOrderUnknownField">
+            <input id="newBirthOrderUnknown" type="checkbox">
+            <span>자녀 출생순서 미상</span>
+          </label>
+        </div>
+        <button class="btn primary full" id="addPerson">가족 구성원 추가</button>
+          </section>
+
+          <section class="section compact-list-section">
+            <h2 class="section-title">
+              <span>가족 구성원</span>
+              <span class="count" id="peopleCount">0</span>
+            </h2>
+            <div class="people-list" id="peopleList"></div>
+          </section>
+        </div>
+      </details>
+
+      <details class="sidebar-panel" id="editPanel">
+        <summary>
+          <span class="step-badge">3</span>
+          <span class="step-copy"><strong>선택 항목 편집</strong><small>사람·자원 상세 내용 수정</small></span>
+          <span class="summary-chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="panel-body">
+          <section class="section" id="selectedPersonSection">
+            <h2 class="section-title">
+              <span>선택 인물 편집</span>
+              <button class="btn danger small" id="deletePerson">삭제</button>
+            </h2>
+            <div class="selected-panel">
+          <div class="field">
+            <label for="selectedName">이름</label>
+            <input id="selectedName">
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="selectedGender">가계도 기호</label>
+              <select id="selectedGender"></select>
+            </div>
+            <div class="field">
+              <label for="selectedRole">역할</label>
+              <select id="selectedRole"></select>
+            </div>
+          </div>
+          <div class="row compact-row">
+            <div class="field">
+              <label for="selectedBirthYear">출생연도</label>
+              <input id="selectedBirthYear" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="selectedDeathYear">사망연도</label>
+              <input id="selectedDeathYear" inputmode="numeric">
+            </div>
+          </div>
+          <label class="check-field">
+            <input id="selectedDeceased" type="checkbox">
+            <span>사망 표시</span>
+          </label>
+          <label class="check-field">
+            <input id="selectedDeathYearUnknown" type="checkbox">
+            <span>사망연도 미상</span>
+          </label>
+          <div class="row compact-row">
+            <label class="check-field">
+              <input id="selectedGenderUnknown" type="checkbox">
+              <span>성별 미상</span>
+            </label>
+            <label class="check-field" id="selectedBirthOrderUnknownField">
+              <input id="selectedBirthOrderUnknown" type="checkbox">
+              <span>자녀 출생순서 미상</span>
+            </label>
+          </div>
+          <div class="row" id="selectedRelationshipField">
+            <div class="field">
+              <label for="selectedOutgoingRelationship">클라이언트 → 대상</label>
+              <select id="selectedOutgoingRelationship"></select>
+            </div>
+            <div class="field">
+              <label for="selectedIncomingRelationship">대상 → 클라이언트</label>
+              <select id="selectedIncomingRelationship"></select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" id="selectedCoupleStatusField">
+              <label for="selectedCoupleStatus">부부/파트너 상태</label>
+              <select id="selectedCoupleStatus"></select>
+            </div>
+            <div class="field" id="selectedChildTypeField">
+              <label for="selectedChildType">부모-자녀 유형</label>
+              <select id="selectedChildType"></select>
+            </div>
+          </div>
+          <div class="row" id="selectedPetFields">
+            <div class="field" id="selectedPetTypeField">
+              <label for="selectedPetType">반려동물 종류</label>
+              <select id="selectedPetType"></select>
+            </div>
+            <div class="field" id="selectedPetOwnerField">
+              <label for="selectedPetOwner">함께 사는 가족</label>
+              <select id="selectedPetOwner"></select>
+            </div>
+          </div>
+          <div class="field" id="selectedParentPersonField">
+            <label for="selectedParentPerson">손자녀의 부모</label>
+            <select id="selectedParentPerson"></select>
+          </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">선택 인물의 자원 추가</h2>
+        <div class="field">
+          <label for="resourceName">기관명 또는 자원 이름</label>
+          <input id="resourceName" placeholder="예: 제천병원, 주거비 지원">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="resourceType">자원 분류</label>
+            <select id="resourceType"></select>
+          </div>
+          <div class="field">
+            <label for="resourceRelationship">자원과의 관계</label>
+            <select id="resourceRelationship"></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="resourceDirection">관계 방향</label>
+          <select id="resourceDirection"></select>
+        </div>
+        <div class="field">
+          <label for="resourceMemo">지원 내용 (여러 개 가능)</label>
+          <textarea id="resourceMemo" rows="3" placeholder="예: 차량 이동 도움\n물품 구매 도움\n실질적 지원"></textarea>
+        </div>
+        <button class="btn primary full" id="addResource">자원 추가</button>
+        <div class="resource-list" id="resourceList"></div>
+          </section>
+        </div>
+      </details>
+
+      <details class="sidebar-panel" id="reviewPanel">
+        <summary>
+          <span class="step-badge">4</span>
+          <span class="step-copy"><strong>검토·저장</strong><small>누락 확인과 동거가족 정리</small></span>
+          <span class="review-badge" id="reviewBadge">확인 필요 0</span>
+          <span class="summary-chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="panel-body">
+          <section class="section" id="checklistSection">
+            <h2 class="section-title">
+              <span>확인 필요 항목</span>
+              <span class="count" id="checklistCount">0</span>
+              <button class="btn small review-confirm-button" id="acknowledgeReviewButton" type="button">검토 완료</button>
+            </h2>
+            <div class="checklist-list" id="checklistList"></div>
+          </section>
+
+          <section class="section drive-case-section" id="driveCaseSection">
+            <h2 class="section-title">
+              <span>내 Google Drive에 저장</span>
+              <span class="drive-badge" id="driveStatusBadge">연결 전</span>
+            </h2>
+            <p class="section-help" id="driveStatusText">내 Google Drive에 연결하면 대상자 자료를 안전하게 보관하고 다시 불러올 수 있습니다. 저장 목록은 연결한 계정에서만 표시됩니다.</p>
+            <div class="drive-actions">
+              <button class="btn primary" id="driveConnectButton" type="button">Google Drive 연결</button>
+              <button class="btn" id="driveSaveButton" type="button" disabled>현재 대상자 저장</button>
+              <button class="btn" id="driveRefreshButton" type="button" disabled>목록 새로고침</button>
+              <button class="btn" id="driveLogoutButton" type="button" hidden>연결 해제</button>
+            </div>
+            <div class="field drive-search-field">
+              <label for="driveCaseSearch">저장된 대상자 찾기</label>
+              <input id="driveCaseSearch" type="search" placeholder="이름으로 검색" disabled>
+            </div>
+            <div class="drive-case-list" id="driveCaseList"></div>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">
+              <span>동거가족</span>
+              <span class="count" id="householdCount">0</span>
+            </h2>
+            <div class="household-actions">
+              <button class="btn primary" id="startHousehold" type="button">동거가족 선택</button>
+              <button class="btn primary" id="saveHousehold" type="button" hidden>선택 완료</button>
+              <button class="btn" id="cancelHousehold" type="button" hidden>취소</button>
+            </div>
+            <div class="household-list" id="householdList"></div>
+          </section>
+
+          <div class="sidebar-actions">
+            <button class="btn" id="loadButton">불러오기</button>
+            <button class="btn danger" id="resetButton">전체 삭제</button>
+          </div>
+        </div>
+      </details>
+      <input id="loadInput" type="file" accept=".json,image/png,image/jpeg" hidden>
+      <input id="documentDraftInput" type="file" accept=".hwp,.pdf,application/pdf,application/x-hwp" hidden>
+    </aside>
+
+    <section class="workspace">
+      <div class="toolbar">
+        <button class="btn" id="newButton">예시로 시작</button>
+        <button class="btn" id="undoButton" type="button" title="마지막 작업 되돌리기 (Backspace)">되돌리기</button>
+        <button class="btn draft-button" id="documentDraftButton" type="button">문서로 초안 만들기</button>
+        <button class="btn primary" id="saveButton">PNG 저장</button>
+        <button class="btn case-save" id="caseSaveButton" type="button" hidden>사례에 저장</button>
+        <span class="toolbar-spacer"></span>
+      </div>
+
+      <main class="stage">
+        <svg id="map" viewBox="0 0 1100 760" tabindex="0" aria-label="가계도 기반 생태도 작업판"></svg>
+        <i class="canvas-corner tl"></i>
+        <i class="canvas-corner tr"></i>
+        <i class="canvas-corner bl"></i>
+        <i class="canvas-corner br"></i>
+        <div class="toast" id="toast"></div>
+        <div class="quick-editor" id="quickEditor" hidden></div>
+      </main>
+
+      <footer class="statusbar">
+        <span id="statusText">인물과 자원은 이동할 수 있고, 선택한 요소의 네 꼭짓점에서 크기를 조절할 수 있습니다.</span>
+        <span class="legend">
+          <span class="legend-symbol square-symbol"></span>남성
+          <span class="legend-symbol circle-symbol"></span>여성
+          <span class="legend-symbol pet-symbol"></span>반려동물
+          <span class="legend-symbol resource-symbol"></span>자원
+          <span class="legend-line good-line"></span>좋은 관계
+          <span class="legend-line distant-line"></span>소원
+          <span class="legend-line conflict-line"></span>갈등
+          <span class="legend-household"></span>동거가족
+        </span>
+      </footer>
+      <div class="draft-overlay" id="draftOverlay" hidden>
+        <section class="draft-dialog" role="dialog" aria-modal="true" aria-labelledby="draftDialogTitle">
+          <div class="draft-dialog-header">
+            <div>
+              <p class="eyebrow">문서 분석</p>
+              <h2 id="draftDialogTitle">가계도·생태도 초안 검토</h2>
+            </div>
+            <button class="icon-button" id="draftCloseButton" type="button" aria-label="취소">×</button>
+          </div>
+          <p class="draft-status" id="draftStatus">문서를 분석합니다.</p>
+          <div class="draft-summary" id="draftSummary"></div>
+          <div class="draft-warnings" id="draftWarnings"></div>
+          <div class="draft-preview" id="draftPreview"></div>
+          <div class="editor-actions">
+            <button class="btn" id="draftCancelButton" type="button">취소</button>
+            <button class="btn primary" id="draftApplyButton" type="button" disabled>초안 적용</button>
+          </div>
+        </section>
+      </div>
+      <div class="bulk-overlay" id="bulkInputOverlay" hidden>
+        <section class="bulk-dialog" role="dialog" aria-modal="true" aria-labelledby="bulkDialogTitle">
+          <div class="draft-dialog-header">
+            <div>
+              <p class="eyebrow">빠른 입력</p>
+              <h2 id="bulkDialogTitle">가족 구성원 일괄 입력</h2>
+            </div>
+            <button class="icon-button" id="bulkCloseButton" type="button" aria-label="취소">×</button>
+          </div>
+          <p class="draft-status">한 줄에 한 명씩 입력하세요. 형식: 관계 | 이름 | 성별 | 출생연도 | 사망연도</p>
+          <div class="bulk-help">
+            예시<br>
+            <code>부모 | 어머니 | 여성 | 1945</code><br>
+            <code>형제자매 | 남동생 | 남성 | 1970</code><br>
+            <code>자녀 | 첫째 | 미상 | 2010</code><br>
+            관계는 부모, 배우자, 형제자매, 자녀, 손자녀, 기타 가족, 반려동물을 사용할 수 있습니다.
+          </div>
+          <textarea id="bulkPeopleInput" rows="8" placeholder="부모 | 어머니 | 여성 | 1945&#10;형제자매 | 남동생 | 남성 | 1970&#10;자녀 | 첫째 | 미상 | 2010"></textarea>
+          <p class="bulk-input-status" id="bulkInputStatus"></p>
+          <div class="editor-actions">
+            <button class="btn" id="bulkCancelButton" type="button">취소</button>
+            <button class="btn primary" id="bulkApplyButton" type="button">구성원 추가</button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+  <script src="/genogram/app.js?v=20260715-document-draft"></script>
+</body>
+</html>
