@@ -235,6 +235,11 @@
             <label for="selectedParentPerson">손자녀의 부모</label>
             <select id="selectedParentPerson"></select>
           </div>
+          <div class="field person-support-field" id="selectedSupportField">
+            <label for="selectedSupportMemo">가족 지원 내용 (여러 개 가능)</label>
+            <textarea id="selectedSupportMemo" rows="3" placeholder="차량 이동 도움 / 물품 구매 도움 / 실질적 지원"></textarea>
+            <p class="field-help">가계도 인물 아래에 지원 내용이 표시됩니다.</p>
+          </div>
             </div>
           </section>
 
@@ -261,6 +266,7 @@
         <div class="field">
           <label for="resourceMemo">지원 내용 (여러 개 가능)</label>
           <textarea id="resourceMemo" rows="3" placeholder="예: 차량 이동 도움\n물품 구매 도움\n실질적 지원"></textarea>
+          <p class="field-help">가족 이름과 같은 이름을 입력하면 별도 자원 대신 가족 항목 아래에 표시됩니다.</p>
         </div>
         <button class="btn primary full" id="addResource">자원 추가</button>
         <div class="resource-list" id="resourceList"></div>
@@ -406,6 +412,6 @@
       </div>
     </section>
   </div>
-  <script src="/genogram/app.js?v=20260715-document-draft"></script>
+  <script src="/genogram/app.js?v=20260717-family-support"></script>
 </body>
 </html>
