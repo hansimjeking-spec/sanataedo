@@ -2870,6 +2870,7 @@ function createExternalState(source) {
   });
   external.title = "외부 배포용 가계도·생태도";
   external.externalRedacted = true;
+  delete external.source;
   external.driveFileId = "";
   external.reviewConfirmedKey = null;
   external.selectedId = personIdMap[source.selectedId] || (external.people[0] && external.people[0].id) || null;
