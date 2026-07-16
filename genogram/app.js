@@ -245,6 +245,7 @@ function normalizeState(next) {
   next = next || {};
   var savedVersion = Number(next.version || 0);
   next.version = 9;
+  next.externalRedacted = Boolean(next.externalRedacted);
   next.reviewConfirmedKey = savedVersion >= 9 && typeof next.reviewConfirmedKey === "string"
     ? next.reviewConfirmedKey
     : null;
@@ -461,7 +462,3230 @@ function inferFamilyGroups(next) {
       childTypes: relationshipTypeMap(originChildren, "biological")
     });
   }
-  if (spouses.length || children.length)ß7òÚ$z{-®éÜj×Rç‚ÒW'6öâçƒ°¢f"G’Ò&W6÷W&6Rç’ÒW'6öâç“°¢–b„ÖF‚æ'2†G‚’ÂãbbÖF‚æ'2†G’’Âã’°¢&WGW&â$Ò"²W'6öâç‚²""²W'6öâç“°¢Ğ¢f"ÆVæwF‚ÒÖF‚æ‡—÷B†G‚ÂG’’ÇÂ°¢f"W'6öäVFvRÒW'6öäVFvUö–çB‡W'6öâÂ&W6÷W&6R“°¢f"W'6öå‚ÒW'6öäVFvRçƒ°¢f"W'6öå’ÒW'6öäVFvRç“°¢f"66ÆRÒÖF‚æÖ–â€¢ÖF‚æ'2†G‚’âò&W6÷W&6Rçv–GF‚ò"òÖF‚æ'2†G‚’¢–æf–æ—G’À¢ÖF‚æ'2†G’’âò&W6÷W&6Ræ†V–v‡Bò"òÖF‚æ'2†G’’¢–æf–æ—G¢“°¢f"&W6÷W&6U‚Ò&W6÷W&6Rç‚ÒG‚¢66ÆS°¢f"&W6÷W&6U’Ò&W6÷W&6Rç’ÒG’¢66ÆS°¢&WGW&â&VÆF–öç6†—F‚‡W'6öå‚ÂW'6öå’Â&W6÷W&6U‚Â&W6÷W&6U’Â&VÆF–öç6†—“°§Ğ ¦gVæ7F–öâ7Æ—DÆ&VÂ‡fÇVRÂÖ„6†'2’°¢f"FW‡BÒ7G&–ær‡fÇVRÇÂ""“°¢–b‡FW‡BæÆVæwF‚ÃÒÖ„6†'2’&WGW&â·FW‡EÓ°¢f"v÷&G2ÒFW‡Bç7Æ—B‚õÇ2²ò“°¢–b‡v÷&G2æÆVæwF‚â’°¢f"Æ–æW2Ò²"%Ó°¢v÷&G2æf÷$V6‚†gVæ7F–öâ‡v÷&B’°¢f"Æ7BÒÆ–æW2æÆVæwF‚Ò°¢–b‚†Æ–æW5¶Æ7EÒ²""²v÷&B’çG&–Ò‚’æÆVæwF‚ÃÒÖ„6†'2’°¢Æ–æW5¶Æ7EÒÒ†Æ–æW5¶Æ7EÒ²""²v÷&B’çG&–Ò‚“°¢ÒVÇ6R°¢Æ–æW2çW6‚‡v÷&B“°¢Ğ¢Ò“°¢&WGW&âÆ–æW2æÖ†gVæ7F–öâ†Æ–æR’°¢&WGW&âÆ–æRæÆVæwF‚âÖ„6†'2òÆ–æRç6Æ–6RƒÂÖ„6†'2Ò’².(
-b"¢Æ–æS°¢Ò“°¢Ğ¢&WGW&â°¢FW‡Bç6Æ–6RƒÂÖ„6†'2’À¢FW‡BæÆVæwF‚âÖ„6†'2¢"òFW‡Bç6Æ–6R†Ö„6†'2ÂÖ„6†'2¢"Ò’².(
-b"¢FW‡Bç6Æ–6R†Ö„6†'2¢Ó°§Ğ ¦gVæ7F–öâf—E&W6÷W&6T†V–v‡B‡&W6÷W&6R’°¢f"7W÷'G2Ò&W6÷W&6Rç7W÷'G2ÇÂ7Æ—E7W÷'G2‡&W6÷W&6RæÖVÖò“°¢f"—FVÔ6÷VçBÒ7W÷'G2æÆVæwF‚ÇÂ°¢f"&÷†–ÖFTÆ–æW2Ò7W÷'G2ç&VGV6R†gVæ7F–öâ‡F÷FÂÂ—FVÒ’°¢&WGW&âF÷FÂ²ÖF‚æÖ‚ƒÂÖF‚æ6V–Â…7G&–ær†—FVÒÇÂ""’æÆVæwF‚ò‚’“°¢ÒÂ’ÇÂ°¢f"&WV—&VD†V–v‡BÒS²ÖF‚æÖ‚†—FVÔ6÷VçBÂ&÷†–ÖFTÆ–æW2’¢#°¢&W6÷W&6Ræ†V–v‡BÒ6Æ×„ÖF‚æÖ‚„çVÖ&W"‡&W6÷W&6Ræ†V–v‡B’ÇÂs"Â&WV—&VD†V–v‡B’ÂSbÂ#c“°§Ğ ¦gVæ7F–öâÖ¶U7fr‡FrÂGG'2’°¢f"VÆVÖVçBÒFö7VÖVçBæ7&VFTVÆVÖVçDå2‚&‡GG¢ò÷wwrçs2æ÷&ró#÷7fr"ÂFr“°¢ö&¦V7Bæ¶W—2†GG'2’æf÷$V6‚†gVæ7F–öâ†¶W’’²VÆVÖVçBç6WDGG&–'WFR†¶W’ÂGG'5¶¶W•Ò“²Ò“°¢&WGW&âVÆVÖVçC°§Ğ ¦gVæ7F–öâ7fuö–çB†WfVçB’°¢f"ö–çBÒ7fræ7&VFU5duö–çB‚“°¢ö–çBç‚ÒWfVçBæ6Æ–VçEƒ°¢ö–çBç’ÒWfVçBæ6Æ–VçE“°¢&WGW&âö–çBæÖG&—…G&ç6f÷&Ò‡7frævWE67&VVä5DÒ‚’æ–çfW'6R‚’“°§Ğ ¦gVæ7F–öâW'6öä'”–B†–B’°¢&WGW&â7FFRçV÷ÆRæf–æB†gVæ7F–öâ‡W'6öâ’²&WGW&âW'6öâæ–BÓÓÒ–C²Ò“°§Ğ ¦gVæ7F–öâ&W6÷W&6T'”–B‡W'6öâÂ–B’°¢&WGW&âW'6öâbbW'6öâç&W6÷W&6W2æf–æB†gVæ7F–öâ‡&W6÷W&6R’²&WGW&â&W6÷W&6Ræ–BÓÓÒ–C²Ò“°§Ğ ¦gVæ7F–öâf–æE&W6÷W&6T–å7FFR‡6÷W&6RÂ–B’°¢–b‚–B’&WGW&âçVÆÃ°¢f÷"‡f"–æFW‚Ò²–æFW‚Â6÷W&6RçV÷ÆRæÆVæwFƒ²–æFW‚³Ò’°¢f"&W6÷W&6RÒ6÷W&6RçV÷ÆU¶–æFW…Òç&W6÷W&6W2æf–æB†gVæ7F–öâ†—FVÒ’²&WGW&â—FVÒæ–BÓÓÒ–C²Ò“°¢–b‡&W6÷W&6R’&WGW&â²÷væW#¢6÷W&6RçV÷ÆU¶–æFW…ÒÂ&W6÷W&6S¢&W6÷W&6RÓ°¢Ğ¢&WGW&âçVÆÃ°§Ğ ¦gVæ7F–öâ–Döb†—FVÒ’²&WGW&â—FVÒæ–C²Ğ¦gVæ7F–öâ'•‚†Â"’²&WGW&âç‚Ò"çƒ²Ğ¦gVæ7F–öâ6Æ×‡fÇVRÂÖ–âÂÖ‚’²&WGW&âÖF‚æÖ‚†Ö–âÂÖF‚æÖ–â†Ö‚ÂfÇVR’“²Ğ¦gVæ7F–öâ6†÷'EFW‡B‡fÇVRÂÖ‚’°¢fÇVRÒ7G&–ær‡fÇVRÇÂ""“°¢&WGW&âfÇVRæÆVæwF‚âÖ‚òfÇVRç6Æ–6RƒÂÖ‚Ò’².(
-b"¢fÇVS°§Ğ¦gVæ7F–öâ6fTf–ÆVæÖR‡fÇVR’°¢&WGW&â7G&–ær‡fÇVR’ç&WÆ6R‚õµÅÂó¢£ò#ÃçÅÒörÂ%ò"’çG&–Ò‚’ÇÂ.È9ŞØ9Î¸øB#°§Ğ¦gVæ7F–öâF÷væÆöD&Æö"†&Æö"Âf–ÆVæÖR’°¢f"W&ÂÒU$Âæ7&VFTö&¦V7EU$Â†&Æö"“°¢f"æ6†÷"ÒFö7VÖVçBæ7&VFTVÆVÖVçB‚&"“°¢æ6†÷"æ‡&VbÒW&Ã°¢æ6†÷"æF÷væÆöBÒf–ÆVæÖS°¢æ6†÷"æ6Æ–6²‚“°¢6WEF–ÖV÷WB†gVæ7F–öâ‚’²U$Âç&Wfö¶Tö&¦V7EU$Â‡W&Â“²ÒÂ“°§Ğ¦gVæ7F–öâ6†÷uFö7B†ÖW76vR’°¢Fö7BçFW‡D6öçFVçBÒÖW76vS°¢Fö7Bæ6Æ74Æ—7BæFB‚'6†÷r"“°¢6ÆV%F–ÖV÷WB‡6†÷uFö7BçF–ÖW"“°¢6†÷uFö7BçF–ÖW"Ò6WEF–ÖV÷WB†gVæ7F–öâ‚’²Fö7Bæ6Æ74Æ—7Bç&VÖ÷fR‚'6†÷r"“²ÒÂƒ“°§Ğ¦gVæ7F–öâW66T‡FÖÂ‡fÇVR’°¢&WGW&â7G&–ær‡fÇVR¢ç&WÆ6TÆÂ‚"b"Â"f×²"¢ç&WÆ6TÆÂ‚#Â"Â"fÇC²"¢ç&WÆ6TÆÂ‚#â"Â"fwC²"¢ç&WÆ6TÆÂ‚r"rÂ"gV÷C²"¢ç&WÆ6TÆÂ‚"r"Â"b33“²"“°§Ğ¦gVæ7F–öâGG"‡fÇVR’²&WGW&âW66T‡FÖÂ‡fÇVR“²Ğ ¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&ÖF—FÆR"’æFDWfVçDÆ—7FVæW"‚&–çWB"ÂgVæ7F–öâ†WfVçB’°¢7FFRçF—FÆRÒWfVçBçF&vWBçfÇVS°¢6fTÆö6Å7FFR‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&6Æ–VçDæÖR"’æFDWfVçDÆ—7FVæW"‚&–çWB"ÂgVæ7F–öâ†WfVçB’°¢6Æ–VçEW'6öâ‚’ææÖRÒWfVçBçF&vWBçfÇVRÇÂ.ØN¹ÛÎÉÛNÉkØ«‚#°¢&VæFW%V÷ÆR‚“°¢&VæFW$Ö‚“°¢6fTÆö6Å7FFR‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVDæÖR"’æFDWfVçDÆ—7FVæW"‚&–çWB"ÂgVæ7F–öâ†WfVçB’°¢6VÆV7FVEW'6öâ‚’ææÖRÒWfVçBçF&vWBçfÇVRÇÂ.ÉÛNºhBÉxnÉØÂ#°¢&VæFW%V÷ÆR‚“°¢&VæFW$Ö‚“°¢6fTÆö6Å7FFR‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVE7W÷'DÖVÖò"’æFDWfVçDÆ—7FVæW"‚&–çWB"ÂgVæ7F–öâ†WfVçB’°¢f"W'6öâÒ6VÆV7FVEW'6öâ‚“°¢6WEW'6öå7W÷'B‡W'6öâÂWfVçBçF&vWBçfÇVR“°¢&VæFW%V÷ÆR‚“°¢&VæFW$Ö‚“°¢6fTÆö6Å7FFR‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVDvVæFW""’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢&VÖVÖ&W%VæFò‚“°¢6VÆV7FVEW'6öâ‚’ævVæFW"ÒWfVçBçF&vWBçfÇVS°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVE&öÆR"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢&VÖVÖ&W%VæFò‚“°¢6†ævUW'6öå&öÆR‡6VÆV7FVEW'6öâ‚’ÂWfVçBçF&vWBçfÇVR“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVD&—'F…–V""’æFDWfVçDÆ—7FVæW"‚&–çWB"ÂgVæ7F–öâ†WfVçB’°¢6VÆV7FVEW'6öâ‚’æ&—'F…–V"ÒWfVçBçF&vWBçfÇVRçG&–Ò‚“°¢&VæFW%V÷ÆR‚“°¢&VæFW$Ö‚“°¢6fTÆö6Å7FFR‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVDFVF…–V""’æFDWfVçDÆ—7FVæW"‚&–çWB"ÂgVæ7F–öâ†WfVçB’°¢6VÆV7FVEW'6öâ‚’æFVF…–V"ÒWfVçBçF&vWBçfÇVRçG&–Ò‚“°¢&VæFW%V÷ÆR‚“°¢&VæFW$Ö‚“°¢6fTÆö6Å7FFR‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVDFV6V6VB"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢&VÖVÖ&W%VæFò‚“°¢6VÆV7FVEW'6öâ‚’æFV6V6VBÒWfVçBçF&vWBæ6†V6¶VC°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVDFVF…–V%Væ¶æ÷vâ"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢&VÖVÖ&W%VæFò‚“°¢6VÆV7FVEW'6öâ‚’æFVF…–V%Væ¶æ÷vâÒWfVçBçF&vWBæ6†V6¶VC°¢–b†WfVçBçF&vWBæ6†V6¶VB’6VÆV7FVEW'6öâ‚’æFV6V6VBÒG'VS°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVDvVæFW%Væ¶æ÷vâ"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢&VÖVÖ&W%VæFò‚“°¢6VÆV7FVEW'6öâ‚’ævVæFW%Væ¶æ÷vâÒWfVçBçF&vWBæ6†V6¶VC°¢–b†WfVçBçF&vWBæ6†V6¶VB’6VÆV7FVEW'6öâ‚’ævVæFW"Ò&÷F†W"#°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVD&—'F„÷&FW%Væ¶æ÷vâ"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢&VÖVÖ&W%VæFò‚“°¢6VÆV7FVEW'6öâ‚’æ&—'F„÷&FW%Væ¶æ÷vâÒWfVçBçF&vWBæ6†V6¶VC°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVEWEG—R"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢f"W'6öâÒ6VÆV7FVEW'6öâ‚“°¢–b‡W'6öâç&öÆRÓÒ'WB"’&WGW&ã°¢&VÖVÖ&W%VæFò‚“°¢W'6öâçWEG—RÒWfVçBçF&vWBçfÇVS°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVEWD÷væW""’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢f"W'6öâÒ6VÆV7FVEW'6öâ‚“°¢–b‡W'6öâç&öÆRÓÒ'WB"ÇÂWfVçBçF&vWBçfÇVR’&WGW&ã°¢&VÖVÖ&W%VæFò‚“°¢W'6öâçWD÷væW$–BÒWfVçBçF&vWBçfÇVS°¢&VæFW$Ö‚“°¢6fTÆö6Å7FFR‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVD÷WFvö–æu&VÆF–öç6†—"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢f"W'6öâÒ6VÆV7FVEW'6öâ‚“°¢–b‡W'6öâç&öÆRÓÓÒ&6Æ–VçB"’&WGW&ã°¢&VÖVÖ&W%VæFò‚“°¢f"&VÆF–öç6†—Ò&VÆF–öç6†—f÷%W'6öâ‡W'6öâæ–B“°¢W6W'E6ö6–ÄÆ–æ²€¢6Æ–VçEW'6öâ‚’æ–BÀ¢W'6öâæ–BÀ¢WfVçBçF&vWBçfÇVRÀ¢&VÆF–öç6†—ò&VÆF–öç6†—æ–åG—R¢&æöæR ¢“°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVD–æ6öÖ–æu&VÆF–öç6†—"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢f"W'6öâÒ6VÆV7FVEW'6öâ‚“°¢–b‡W'6öâç&öÆRÓÓÒ&6Æ–VçB"’&WGW&ã°¢&VÖVÖ&W%VæFò‚“°¢f"&VÆF–öç6†—Ò&VÆF–öç6†—f÷%W'6öâ‡W'6öâæ–B“°¢W6W'E6ö6–ÄÆ–æ²€¢6Æ–VçEW'6öâ‚’æ–BÀ¢W'6öâæ–BÀ¢&VÆF–öç6†—ò&VÆF–öç6†—æ÷WEG—R¢&æöæR"À¢WfVçBçF&vWBçfÇVP¢“°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVD6÷WÆU7FGW2"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢f"w&÷WÒ6÷WÆTw&÷Wf÷%W'6öâ‡6VÆV7FVEW'6öâ‚’æ–B“°¢–b‚w&÷W’&WGW&ã°¢&VÖVÖ&W%VæFò‚“°¢w&÷Wç7FGW2ÒWfVçBçF&vWBçfÇVS°¢6VÆV7FVEW'6öâ‚’æ6÷WÆU7FGW2ÒWfVçBçF&vWBçfÇVS°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVD6†–ÆEG—R"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢f"W'6öâÒ6VÆV7FVEW'6öâ‚“°¢f"w&÷WÒ6†–ÆDw&÷Wf÷%W'6öâ‡W'6öâæ–B“°¢–b‚w&÷W’&WGW&ã°¢&VÖVÖ&W%VæFò‚“°¢w&÷Wæ6†–ÆEG—W5·W'6öâæ–EÒÒWfVçBçF&vWBçfÇVS°¢W'6öâæ6†–ÆEG—RÒWfVçBçF&vWBçfÇVS°¢&VæFW"‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6VÆV7FVE&VçEW'6öâ"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢f"W'6öâÒ6VÆV7FVEW'6öâ‚“°¢–b‡W'6öâç&öÆRÓÒ&w&æF6†–ÆB"ÇÂWfVçBçF&vWBçfÇVR’&WGW&ã°¢&VÖVÖ&W%VæFò‚“°¢&VÖ÷fTg&öÔfÖ–Æ–W2‡W'6öâæ–B“°¢W'6öâç&VçD–BÒWfVçBçF&vWBçfÇVS°¢GF6„'•&öÆR‡W'6öâÂ&w&æF6†–ÆB"“°¢Æ–÷WDfÖ–Ç•G&VR‚“°§Ò“° ¥²&ÖF—FÆR"Â&6Æ–VçDæÖR"Â'6VÆV7FVDæÖR"Â'6VÆV7FVD&—'F…–V""Â'6VÆV7FVDFVF…–V"%Òæf÷$V6‚€¢gVæ7F–öâ†f–VÆD–B’°¢f"f–VÆBÒFö7VÖVçBævWDVÆVÖVçD'”–B†f–VÆD–B“°¢f"VF—E6æ6†÷BÒçVÆÃ°¢f–VÆBæFDWfVçDÆ—7FVæW"‚&fö7W2"ÂgVæ7F–öâ‚’°¢VF—E6æ6†÷BÒ7&VFUVæFõ6æ6†÷B‚“°¢Ò“°¢f–VÆBæFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ‚’°¢–b†VF—E6æ6†÷BbbVF—E6æ6†÷Bç7FFT§6öâÓÒ¥4ôâç7G&–æv–g’‡7FFR’’°¢&VÖVÖ&W%VæFò†VF—E6æ6†÷B“°¢Ğ¢VF—E6æ6†÷BÒçVÆÃ°¢Ò“°¢Ğ¢“° ¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&FEW'6öâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂFEW'6öâ“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&æWu&öÆR"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂWFFTæWtfÖ–Ç”f–VÆG2“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&æWuW'6öäæÖR"’æFDWfVçDÆ—7FVæW"‚&¶W–F÷vâ"ÂgVæ7F–öâ†WfVçB’°¢–b†WfVçBæ¶W’ÓÓÒ$VçFW""’FEW'6öâ‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&FE&W6÷W&6R"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂFE&W6÷W&6R“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'&W6÷W&6TæÖR"’æFDWfVçDÆ—7FVæW"‚&¶W–F÷vâ"ÂgVæ7F–öâ†WfVçB’°¢–b†WfVçBæ¶W’ÓÓÒ$VçFW""’FE&W6÷W&6R‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&FVÆWFUW'6öâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂFVÆWFU6VÆV7FVEW'6öâ“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'7F'D†÷W6V†öÆB"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂgVæ7F–öâ‚’°¢7F'D†÷W6V†öÆDG&gB†çVÆÂ“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6fT†÷W6V†öÆB"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6fT†÷W6V†öÆDG&gB“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&6æ6VÄ†÷W6V†öÆB"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6æ6VÄ†÷W6V†öÆDG&gB“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&æWt'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6ÆV%7FFR“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&&Ææ´66T'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â7F'D&Ææ´66R“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&'VÆµV÷ÆT'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â÷Vä'VÆ´–çWB“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6–FV&$Fö7VÖVçDG&gD'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂgVæ7F–öâ‚’°¢Fö7VÖVçBævWDVÆVÖVçD'”–B‚&Fö7VÖVçDG&gD–çWB"’æ6Æ–6²‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'VæFô'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂVæFôÆ7D7F–öâ“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'&W6WD'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6ÆV%7FFR“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚'6fT'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂgVæ7F–öâ‚’°¢W‡÷'Eær‡G'VR“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&ÆöD'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂgVæ7F–öâ‚’°¢Fö7VÖVçBævWDVÆVÖVçD'”–B‚&ÆöD–çWB"’æ6Æ–6²‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&ÆöD–çWB"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢f"f–ÆRÒWfVçBçF&vWBæf–ÆW5³Ó°¢–b†f–ÆR’ÆöE6VÆV7FVDf–ÆR†f–ÆR“°¢WfVçBçF&vWBçfÇVRÒ"#°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&Fö7VÖVçDG&gD'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂgVæ7F–öâ‚’°¢Fö7VÖVçBævWDVÆVÖVçD'”–B‚&Fö7VÖVçDG&gD–çWB"’æ6Æ–6²‚“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&Fö7VÖVçDG&gD–çWB"’æFDWfVçDÆ—7FVæW"‚&6†ævR"ÂgVæ7F–öâ†WfVçB’°¢f"f–ÆRÒWfVçBçF&vWBæf–ÆW5³Ó°¢–b†f–ÆR’÷VäFö7VÖVçDG&gB†f–ÆR“°¢WfVçBçF&vWBçfÇVRÒ"#°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&G&—fT6öææV7D'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂgVæ7F–öâ‚’°¢Æö6F–öâæ‡&VbÒ"ö’övöövÆRÖWFƒö7F–öãÖÆöv–âg&WGW&åFóÒ"²Væ6öFUU$”6ö×öæVçB†Æö6F–öâçF†æÖR“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&G&—fU6fT'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6fT7W'&VçEFôG&—fR“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&G&—fU&Vg&W6„'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂgVæ7F–öâ‚’°¢&Vg&W6„G&—fT66W2‚’æ6F6‚†gVæ7F–öâ†W'&÷"’²6†÷uFö7B†W'&÷"æÖW76vRÇÂ.ÊÉêRºªºŞÉØBÈ8ºÎ«:ËšÙYÊxº«¾ÙhÈ«^¸¸¸ºBâ"“²Ò“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&G&—fTÆöv÷WD'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂgVæ7F–öâ‚’°¢Æö6F–öâæ‡&VbÒ"ö’övöövÆRÖWFƒö7F–öãÖÆöv÷WBg&WGW&åFóÒ"²Væ6öFUU$”6ö×öæVçB†Æö6F–öâçF†æÖR“°§Ò“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&G&—fT66U6V&6‚"’æFDWfVçDÆ—7FVæW"‚&–çWB"Â&VæFW$G&—fT66W2“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&6¶æ÷vÆVFvU&Wf–Wt'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6¶æ÷vÆVFvU&Wf–Wr“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&G&gDÇ”'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂÇ”Fö7VÖVçDG&gB“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&G&gD6æ6VÄ'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6Æ÷6TFö7VÖVçDG&gB“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&G&gD6Æ÷6T'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6Æ÷6TFö7VÖVçDG&gB“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&'VÆ´Ç”'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂÇ”'VÆµV÷ÆR“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&'VÆ´6æ6VÄ'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6Æ÷6T'VÆ´–çWB“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&'VÆ´6Æ÷6T'WGFöâ"’æFDWfVçDÆ—7FVæW"‚&6Æ–6²"Â6Æ÷6T'VÆ´–çWB“°¦Fö7VÖVçBævWDVÆVÖVçD'”–B‚&'VÆµV÷ÆT–çWB"’æFDWfVçDÆ—7FVæW"‚&–çWB"ÂgVæ7F–öâ‚’°¢f"'6VBÒ'6T'VÆµV÷ÆR‡F†—2çfÇVR“°¢Fö7VÖVçBævWDVÆVÖVçD'”–B‚&'VÆ´–çWE7FGW2"’çFW‡D6öçFVçBÒ'6VBæW'&÷'2æÆVæwF€¢ò'6VBæW'&÷'5³Ğ¢¢‡'6VBç&V6÷&G2æÆVæwF‚ò'6VBç&V6÷&G2æÆVæwF‚².º¨^ÉØBËiN«ÙZÈ‰‚ÉèÈ«^¸¸¸ºBâ"¢""“°§Ò“°§f"66U6fT'WGFöâÒFö7VÖVçBævWDVÆVÖVçD'”–B‚&66U6fT'WGFöâ"“°¦–b‡v–æF÷rç&VçBÓÒv–æF÷r’°¢66U6fT'WGFöâæ†–FFVâÒfÇ6S°¢66U6fT'WGFöâæFDWfVçDÆ—7FVæW"‚&6Æ–6²"ÂgVæ7F–öâ‚’°¢v–æF÷rç&VçBç÷7DÖW76vR‡°¢G—S¢%4%”UôtTäôu$Õõ4dR"À¢–ÆöC¢¥4ôâç'6R„¥4ôâç7G&–æv–g’‡7FFR’¢ÒÂv–æF÷ræÆö6F–öâæ÷&–v–â“°¢6†÷uFö7B‚.È*ÎºÉyÊÉê^ÙhÈ«^¸¸¸ºBâ"“°¢Ò“°¢v–æF÷ræFDWfVçDÆ—7FVæW"‚&ÖW76vR"ÂgVæ7F–öâ†WfVçB’°¢–b†WfVçBæ÷&–v–âÓÒv–æF÷ræÆö6F–öâæ÷&–v–âÇÂWfVçBç6÷W&6RÓÒv–æF÷rç&VçB’&WGW&ã°¢–b†WfVçBæFFbbWfVçBæFFçG—RÓÓÒ%4%”UôtTäôu$ÕôÄôB"bbWfVçBæFFç–ÆöB’°¢&VÖVÖ&W%VæFò‚“°¢7FFRÒæ÷&ÖÆ—¦U7FFR„¥4ôâç'6R„¥4ôâç7G&–æv–g’†WfVçBæFFç–ÆöB’’“°¢&6¶w&÷VæD–ÖvUW&ÂÒçVÆÃ°¢†÷W6V†öÆDG&gBÒçVÆÃ°¢6Æ÷6UV–6´VF—F÷"‚“°¢Æ–÷WDfÖ–Ç•G&VR‚“°¢&VæFW"‚“°¢6†÷uFö7B‚.¸ÈÈ8ÉéÉéº8ÎºÂ««8N¸øBËHÉXÉØBºxÎ¹:NÉxÈ«^¸¸¸ºBâ"“°¢Ğ¢Ò“°¢v–æF÷rç&VçBç÷7DÖW76vR‡²G—S¢%4%”UôtTäôu$Õõ$TE’"ÒÂv–æF÷ræÆö6F–öâæ÷&–v–â“°§Ğ§v–æF÷ræFDWfVçDÆ—7FVæW"‚&¶W–F÷vâ"ÂgVæ7F–öâ†WfVçB’°¢f"F&vWBÒWfVçBçF&vWC°¢f"FtæÖRÒF&vWBbbF&vWBçFtæÖS°¢f"—5G—–ærÒFtæÖRÓÓÒ$”åUB"ÇÂFtæÖRÓÓÒ%DU…D$T"ÇÂFtæÖRÓÓÒ%4TÄT5B"ÇÀ¢‡F&vWBbbF&vWBæ—46öçFVçDVF—F&ÆR“°¢–b†WfVçBæ¶W’ÓÓÒ$&6·76R"bb—5G—–ær’°¢WfVçBç&WfVçDFVfVÇB‚“°¢WfVçBç7F÷&÷vF–öâ‚“°¢VæFôÆ7D7F–öâ‚“°¢&WGW&ã°¢Ğ¢–b†WfVçBæ¶W’ÓÓÒ$W66R"’°¢6Æ÷6UV–6´VF—F÷"‚“°¢–b††÷W6V†öÆDG&gB’6æ6VÄ†÷W6V†öÆDG&gB‚“°¢Ğ§ÒÂG'VR“° ¦Fö7VÖVçBçVW'•6VÆV7F÷$ÆÂ‚"ç6–FV&"×æVÂ"’æf÷$V6‚†gVæ7F–öâ‡æVÂ’°¢æVÂæFDWfVçDÆ—7FVæW"‚'FövvÆR"ÂgVæ7F–öâ‚’°¢–b‚æVÂæ÷Vâ’&WGW&ã°¢Fö7VÖVçBçVW'•6VÆV7F÷$ÆÂ‚"ç6–FV&"×æVÂ"’æf÷$V6‚†gVæ7F–öâ†÷F†W"’°¢–b†÷F†W"ÓÒæVÂ’÷F†W"æ÷VâÒfÇ6S°¢Ò“°¢Ò“°§Ò“° §6WDG&—fT6öææV7F–öâ†G&—fT6öææV7F–öâ“°§&VæFW$G&—fT66W2‚“°¦–æ—F–Æ—¦TG&—fU7F÷&vR‚“°§&VæFW"‚“°
+  if (spouses.length || children.length) {
+    var descendantIds = children.map(idOf);
+    next.familyGroups.push({
+      id: uid(),
+      parents: [client.id].concat(spouses.slice(0, 1).map(idOf)),
+      children: descendantIds,
+      status: "married",
+      childTypes: relationshipTypeMap(descendantIds, "biological")
+    });
+  }
+  grandchildren.forEach(function(grandchild) {
+    var parent = next.people.find(function(person) {
+      return person.id === grandchild.parentId;
+    }) || children[0];
+    if (!parent) return;
+    grandchild.parentId = parent.id;
+    var group = next.familyGroups.find(function(item) {
+      return item.parents.indexOf(parent.id) !== -1;
+    });
+    if (!group) {
+      group = {
+        id: uid(),
+        parents: [parent.id],
+        children: [],
+        status: "married",
+        childTypes: {}
+      };
+      next.familyGroups.push(group);
+    }
+    group.children.push(grandchild.id);
+    group.childTypes[grandchild.id] = grandchild.childType || "biological";
+  });
+
+  function relationshipTypeMap(ids, type) {
+    var result = {};
+    ids.forEach(function(id) { result[id] = type; });
+    return result;
+  }
+}
+
+function loadLocalState() {
+  try {
+    var saved = localStorage.getItem("ecomap-genogram-state-v3");
+    return saved ? normalizeState(JSON.parse(saved)) : initialState();
+  } catch (error) {
+    return initialState();
+  }
+}
+
+var state = loadLocalState();
+
+function saveLocalState() {
+  localStorage.setItem("ecomap-genogram-state-v3", JSON.stringify(state));
+}
+
+function createUndoSnapshot() {
+  return {
+    stateJson: JSON.stringify(state),
+    backgroundImageUrl: backgroundImageUrl
+  };
+}
+
+function rememberUndo(snapshot) {
+  undoStack.push(snapshot || createUndoSnapshot());
+  if (undoStack.length > 50) undoStack.shift();
+}
+
+function undoLastAction() {
+  if (!undoStack.length) {
+    showToast("ë˜ëŒë¦´ ì‘ì—…ì´ ì—†ìŠµë‹ˆë‹¤.");
+    return;
+  }
+  var snapshot = undoStack.pop();
+  state = normalizeState(JSON.parse(snapshot.stateJson));
+  backgroundImageUrl = snapshot.backgroundImageUrl;
+  householdDraft = null;
+  dragging = null;
+  closeQuickEditor();
+  render();
+  showToast("ì´ì „ ì‘ì—…ìœ¼ë¡œ ë˜ëŒë ¸ìŠµë‹ˆë‹¤.");
+}
+
+function clientPerson(source) {
+  source = source || state;
+  return source.people.find(function(person) { return person.role === "client"; }) || source.people[0];
+}
+
+function selectedPerson() {
+  return personById(state.selectedId) || clientPerson();
+}
+
+function selectedResource() {
+  return findResourceInState(state, state.selectedResourceId);
+}
+
+function coupleGroupForPerson(personId) {
+  return state.familyGroups.find(function(group) {
+    return group.parents.length >= 2 && group.parents.indexOf(personId) !== -1;
+  }) || null;
+}
+
+function childGroupForPerson(personId) {
+  return state.familyGroups.find(function(group) {
+    return group.children.indexOf(personId) !== -1;
+  }) || null;
+}
+
+function normalizeRelationshipType(type) {
+  var previousTypes = {
+    strong: "good",
+    normal: "good",
+    weak: "distant",
+    stress: "conflict",
+    emotional: "good",
+    care: "good",
+    money: "good",
+    info: "good",
+    place: "good",
+    risk: "conflict"
+  };
+  return socialTypes[type] ? type : (previousTypes[type] || "good");
+}
+
+function normalizeDirectedRelationshipType(type) {
+  return type == null || type === "none" ? "none" : normalizeRelationshipType(type);
+}
+
+function relationshipForPerson(personId) {
+  var client = clientPerson();
+  if (!client || personId === client.id) return null;
+  return state.links.find(function(link) {
+    return (link.from === client.id && link.to === personId) ||
+      (link.from === personId && link.to === client.id);
+  }) || null;
+}
+
+function personDateLabel(person) {
+  if (state.externalRedacted) return "";
+  if (!person.deceased && !person.deathYearUnknown) return person.birthYear || "";
+  return (person.birthYear || "?") + "â€“" + (person.deathYear || (person.deathYearUnknown ? "ì‚¬ë§ì—°ë„ ë¯¸ìƒ" : "ì‚¬ë§"));
+}
+
+function splitSupports(value) {
+  return String(value || "")
+    .replace(/\s*\d+\s*[.)]\s*/g, "\n")
+    .split(/\r?\n|\s*\/\s*/)
+    .map(function(item) { return item.trim(); })
+    .filter(Boolean);
+}
+
+function personSupportItems(person) {
+  var values = [];
+  splitSupports(person && person.supportMemo).concat(person && Array.isArray(person.supports) ? person.supports : [])
+    .forEach(function(item) {
+      splitSupports(item).forEach(function(value) {
+        if (values.indexOf(value) === -1) values.push(value);
+      });
+    });
+  return values;
+}
+
+function setPersonSupport(person, value) {
+  var items = splitSupports(value);
+  person.supports = items;
+  person.supportMemo = items.join("\n");
+}
+
+function addPersonSupport(person, value) {
+  if (!person) return;
+  setPersonSupport(person, personSupportItems(person).concat(splitSupports(value)).join("\n"));
+}
+
+function familyPersonByName(name, excludedId) {
+  var normalizedName = String(name || "").trim();
+  if (!normalizedName) return null;
+  return state.people.find(function(person) {
+    return person.id !== excludedId && person.role !== "client" && person.role !== "pet" &&
+      String(person.name || "").trim() === normalizedName;
+  }) || null;
+}
+
+function migrateFamilyNamedResources(next) {
+  var byName = {};
+  next.people.forEach(function(person) {
+    var name = String(person.name || "").trim();
+    if (name && person.role !== "client" && person.role !== "pet" && !byName[name]) byName[name] = person;
+  });
+  next.people.forEach(function(owner) {
+    owner.resources = owner.resources.filter(function(resource) {
+      var target = byName[String(resource.name || "").trim()];
+      var items = (resource.supports && resource.supports.length ? resource.supports : splitSupports(resource.memo));
+      if (!target || target.id === owner.id || !items.length) return true;
+      addPersonSupport(target, items.join("\n"));
+      return false;
+    });
+  });
+}
+
+function fillSelect(select, source, value, excluded) {
+  select.innerHTML = Object.keys(source)
+    .filter(function(key) { return !excluded || excluded.indexOf(key) === -1; })
+    .map(function(key) {
+      return '<option value="' + key + '"' + (key === value ? " selected" : "") + ">" +
+        escapeHtml(source[key].label || source[key]) + "</option>";
+    })
+    .join("");
+}
+
+function eligibleGrandchildParents() {
+  return state.people.filter(function(person) {
+    return person.role === "child";
+  });
+}
+
+function eligiblePetOwners() {
+  return state.people.filter(function(person) {
+    return person.role !== "pet";
+  });
+}
+
+function fillPersonSelect(select, people, value) {
+  if (!people.length) {
+    select.innerHTML = '<option value="">ìë…€ë¥¼ ë¨¼ì € ì¶”ê°€í•´ì£¼ì„¸ìš”</option>';
+    select.disabled = true;
+    return;
+  }
+  select.disabled = false;
+  select.innerHTML = people.map(function(person) {
+    return '<option value="' + attr(person.id) + '"' + (person.id === value ? " selected" : "") + ">" +
+      escapeHtml(person.name) + "</option>";
+  }).join("");
+}
+
+function render() {
+  renderForm();
+  renderPeople();
+  renderChecklist();
+  renderHouseholds();
+  renderSelected();
+  renderResources();
+  renderMap();
+  document.getElementById("undoButton").disabled = !undoStack.length;
+  saveLocalState();
+}
+
+function openSidebarPanel(panelId) {
+  var target = document.getElementById(panelId);
+  if (!target) return;
+  document.querySelectorAll(".sidebar-panel").forEach(function(panel) {
+    if (panel !== target) panel.open = false;
+  });
+  target.open = true;
+}
+
+function renderForm() {
+  var client = clientPerson();
+  document.getElementById("mapTitle").value = state.title;
+  document.getElementById("clientName").value = client.name;
+  fillSelect(document.getElementById("newGender"), genders, "female");
+  fillSelect(document.getElementById("newRole"), roles, "sibling", ["client"]);
+  fillSelect(document.getElementById("newOutgoingRelationship"), directedSocialTypes, "good");
+  fillSelect(document.getElementById("newIncomingRelationship"), directedSocialTypes, "good");
+  fillSelect(document.getElementById("newCoupleStatus"), coupleStatuses, "married");
+  fillSelect(document.getElementById("newChildType"), childTypes, "biological");
+  fillSelect(document.getElementById("newPetType"), petTypes, "dog");
+  var petOwners = eligiblePetOwners();
+  fillPersonSelect(
+    document.getElementById("newPetOwner"),
+    petOwners,
+    client.id
+  );
+  var grandchildParents = eligibleGrandchildParents();
+  fillPersonSelect(
+    document.getElementById("newParentPerson"),
+    grandchildParents,
+    grandchildParents.length ? grandchildParents[0].id : null
+  );
+  fillSelect(document.getElementById("resourceType"), resourceTypes, "emotional");
+  fillSelect(document.getElementById("resourceRelationship"), socialTypes, "good");
+  fillSelect(document.getElementById("resourceDirection"), directionTypes, "both");
+  updateNewFamilyFields();
+}
+
+function updateNewFamilyFields() {
+  var role = document.getElementById("newRole").value;
+  document.getElementById("newCoupleStatusField").style.display =
+    role === "parent" || role === "spouse" ? "grid" : "none";
+  document.getElementById("newChildTypeField").style.display =
+    role === "sibling" || role === "child" || role === "grandchild" ? "grid" : "none";
+  document.getElementById("newParentPersonField").style.display =
+    role === "grandchild" ? "grid" : "none";
+  document.getElementById("newPetFields").style.display =
+    role === "pet" ? "grid" : "none";
+  document.getElementById("newBirthOrderUnknownField").style.display =
+    role === "child" || role === "grandchild" ? "flex" : "none";
+}
+
+function renderPeople() {
+  var list = document.getElementById("peopleList");
+  document.getElementById("peopleCount").textContent = state.people.length;
+  list.innerHTML = state.people.map(function(person) {
+    var symbolClass = "person-symbol " + person.gender +
+      (person.role === "pet" ? " pet " + person.petType : (person.deceased ? " deceased" : ""));
+    var year = personDateLabel(person) ? " Â· " + personDateLabel(person) : "";
+    var draftSelected = householdDraft && householdDraft.memberIds.indexOf(person.id) !== -1;
+    return '<button class="person-row ' + (person.id === state.selectedId ? "active " : "") +
+      (draftSelected ? "household-pick" : "") +
+      '" type="button" data-person-id="' + attr(person.id) + '">' +
+      '<i class="' + symbolClass + '"></i>' +
+      '<span class="person-main"><span class="person-name">' + escapeHtml(person.name) + '</span>' +
+      '<span class="person-meta">' + escapeHtml(roles[person.role].label) +
+       (person.role === "pet" ? " Â· " + escapeHtml(petTypes[person.petType]) : "") + year +
+       " Â· ìì› " + person.resources.length + "ê°œ" +
+       (personSupportItems(person).length ? " Â· ì§€ì› " + personSupportItems(person).length + "ê°œ" : "") +
+       (person.genderUnknown ? " Â· ì„±ë³„ ë¯¸ìƒ" : "") +
+      (person.birthOrderUnknown ? " Â· ìˆœì„œ ë¯¸ìƒ" : "") + "</span></span>" +
+      '<span class="count">' + person.resources.length + "</span></button>";
+  }).join("");
+
+  list.querySelectorAll("[data-person-id]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      if (householdDraft) {
+        toggleHouseholdMember(button.dataset.personId);
+        return;
+      }
+      state.selectedId = button.dataset.personId;
+      state.selectedResourceId = null;
+      openSidebarPanel("editPanel");
+      render();
+    });
+  });
+}
+
+function checklistItems() {
+  var items = [];
+  state.people.forEach(function(person) {
+    if (person.role !== "pet" && (person.genderUnknown || person.gender === "other")) {
+      items.push({ personId: person.id, message: "ì„±ë³„ í™•ì¸ í•„ìš”" });
+    }
+    if (person.role !== "pet" && !person.birthYear) {
+      items.push({ personId: person.id, message: "ì¶œìƒì—°ë„ ë¯¸ì…ë ¥" });
+    }
+    if (person.role !== "pet" && person.deceased && !person.deathYear && !person.deathYearUnknown) {
+      items.push({ personId: person.id, message: "ì‚¬ë§ì—°ë„ ì…ë ¥ ë˜ëŠ” ë¯¸ìƒ í‘œì‹œ í•„ìš”" });
+    }
+    if ((person.role === "child" || person.role === "grandchild") && person.birthOrderUnknown) {
+      items.push({ personId: person.id, message: "ì¶œìƒìˆœì„œ í™•ì¸ í•„ìš”" });
+    }
+  });
+  return items;
+}
+
+function reviewChecklistKey(items) {
+  return items.map(function(item) {
+    return item.personId + ":" + item.message;
+  }).join("|");
+}
+
+function acknowledgeReview() {
+  var items = checklistItems();
+  if (items.length) return;
+  state.reviewConfirmedKey = reviewChecklistKey(items);
+  saveLocalState();
+  renderChecklist();
+}
+
+function renderChecklist() {
+  var list = document.getElementById("checklistList");
+  var count = document.getElementById("checklistCount");
+  var reviewBadge = document.getElementById("reviewBadge");
+  var acknowledgeButton = document.getElementById("acknowledgeReviewButton");
+  var items = checklistItems();
+  var checklistKey = reviewChecklistKey(items);
+  var confirmed = !items.length && state.reviewConfirmedKey === checklistKey;
+  count.textContent = items.length;
+  reviewBadge.hidden = !items.length && !confirmed;
+  reviewBadge.textContent = items.length
+    ? "í™•ì¸ í•„ìš” " + items.length
+    : "í™•ì¸ ì™„ë£Œ";
+  reviewBadge.classList.toggle("clear", !items.length && !reviewBadge.hidden);
+  acknowledgeButton.hidden = items.length > 0 || confirmed;
+  list.innerHTML = items.length ? items.map(function(item) {
+    var person = personById(item.personId);
+    return '<button class="checklist-item" type="button" data-check-person="' + attr(item.personId) + '">' +
+      '<span class="check-icon">!</span><span><strong>' + escapeHtml(person ? person.name : "ì‚­ì œëœ ì¸ë¬¼") +
+      '</strong><small>' + escapeHtml(item.message) + '</small></span></button>';
+  }).join("") : '<div class="empty">í™•ì¸í•  í•­ëª©ì´ ì—†ìŠµë‹ˆë‹¤.</div>';
+  list.querySelectorAll("[data-check-person]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      state.selectedId = button.dataset.checkPerson;
+      state.selectedResourceId = null;
+      openSidebarPanel("editPanel");
+      render();
+      document.getElementById("selectedPersonSection").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
+function setDriveConnection(next) {
+  driveConnection = next || { configured: false, connected: false, email: "" };
+  var badge = document.getElementById("driveStatusBadge");
+  var text = document.getElementById("driveStatusText");
+  var connect = document.getElementById("driveConnectButton");
+  var save = document.getElementById("driveSaveButton");
+  var refresh = document.getElementById("driveRefreshButton");
+  var logout = document.getElementById("driveLogoutButton");
+  var search = document.getElementById("driveCaseSearch");
+  if (!badge || !text) return;
+
+  badge.classList.remove("connected", "warn");
+  if (!driveConnection.configured) {
+    badge.textContent = "ì„¤ì • í•„ìš”";
+    badge.classList.add("warn");
+    text.textContent = "Google Drive ì—°ê²° ì„¤ì •ì´ ì•„ì§ ì™„ë£Œë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.";
+  } else if (!driveConnection.connected) {
+    badge.textContent = "ì—°ê²° ì „";
+    text.textContent = "ë‚´ Google ê³„ì •ì— ì—°ê²°í•˜ë©´ ëŒ€ìƒì ìë£Œë¥¼ ì•ˆì „í•˜ê²Œ ë³´ê´€í•˜ê³  ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¬ ìˆ˜ ìˆìŠµë‹ˆë‹¤.";
+  } else {
+    badge.textContent = "ì—°ê²°ë¨";
+    badge.classList.add("connected");
+    text.textContent = "ë‚´ Google Drive ê³„ì •ì— ì—°ê²°ë˜ì–´ ìˆìŠµë‹ˆë‹¤. ì €ì¥ ëª©ë¡ì€ ì—°ê²°í•œ ê³„ì •ì—ì„œë§Œ í‘œì‹œë©ë‹ˆë‹¤.";
+  }
+  connect.hidden = driveConnection.connected;
+  connect.disabled = !driveConnection.configured;
+  save.disabled = !driveConnection.connected;
+  refresh.disabled = !driveConnection.connected;
+  search.disabled = !driveConnection.connected;
+  logout.hidden = !driveConnection.connected;
+  save.textContent = state.driveFileId ? "ë³€ê²½ì‚¬í•­ ì €ì¥" : "í˜„ì¬ ëŒ€ìƒì ì €ì¥";
+}
+
+function driveErrorMessage(payload, fallback) {
+  return payload && payload.error ? payload.error : fallback;
+}
+
+function renderDriveCases() {
+  var list = document.getElementById("driveCaseList");
+  var search = document.getElementById("driveCaseSearch");
+  if (!list) return;
+  if (!driveConnection.connected) {
+    list.innerHTML = '<div class="drive-case-empty">Google Driveë¥¼ ì—°ê²°í•˜ë©´ ì €ì¥ëœ ëŒ€ìƒìê°€ í‘œì‹œë©ë‹ˆë‹¤.</div>';
+    return;
+  }
+  var query = String(search?.value || "").trim().toLowerCase();
+  var rows = driveCases.filter(function(item) {
+    return !query || String(item.subjectName || "").toLowerCase().includes(query);
+  });
+  list.innerHTML = rows.length ? rows.map(function(item) {
+    var date = item.updatedAt ? new Date(item.updatedAt).toLocaleString("ko-KR") : "ë‚ ì§œ ë¯¸ìƒ";
+    return '<div class="drive-case-card">' +
+      '<div class="drive-case-copy"><strong>' + escapeHtml(item.subjectName || "ì´ë¦„ ë¯¸ìƒ") +
+      '</strong><small>ìµœê·¼ ì €ì¥ ' + escapeHtml(date) + '</small></div>' +
+      '<button class="btn" type="button" data-drive-load="' + attr(item.id) + '">ë¶ˆëŸ¬ì˜¤ê¸°</button>' +
+      '</div>';
+  }).join("") : '<div class="drive-case-empty">ì €ì¥ëœ ëŒ€ìƒìê°€ ì—†ìŠµë‹ˆë‹¤.</div>';
+  list.querySelectorAll("[data-drive-load]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      loadDriveCase(button.dataset.driveLoad);
+    });
+  });
+}
+
+async function refreshDriveCases() {
+  if (!driveConnection.connected) return;
+  var response = await fetch("/api/google-cases", { headers: { Accept: "application/json" }, cache: "no-store" });
+  var payload = await response.json();
+  if (!response.ok) throw new Error(driveErrorMessage(payload, "ì €ì¥ëœ ëŒ€ìƒìë¥¼ ë¶ˆëŸ¬ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤."));
+  driveCases = payload.files || [];
+  renderDriveCases();
+}
+
+async function initializeDriveStorage() {
+  var response;
+  try {
+    response = await fetch("/api/google-auth?action=status", { headers: { Accept: "application/json" }, cache: "no-store" });
+    var payload = await response.json();
+    setDriveConnection(payload);
+    if (payload.connected) await refreshDriveCases();
+    var result = new URLSearchParams(location.search).get("google");
+    if (result === "connected") showToast("Google Driveì— ì—°ê²°í–ˆìŠµë‹ˆë‹¤.");
+    if (result === "disconnected") showToast("Google Drive ì—°ê²°ì„ í•´ì œí–ˆìŠµë‹ˆë‹¤.");
+    if (result && !["connected", "disconnected"].includes(result)) showToast("Google Drive ì—°ê²°ì„ ì™„ë£Œí•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
+  } catch (error) {
+    setDriveConnection({ configured: true, connected: false, email: "" });
+    document.getElementById("driveStatusText").textContent = error.message || "Google Drive ìƒíƒœë¥¼ í™•ì¸í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.";
+  }
+}
+
+async function saveCurrentToDrive() {
+  if (!driveConnection.connected) return;
+  var button = document.getElementById("driveSaveButton");
+  button.disabled = true;
+  try {
+    var snapshot = JSON.parse(JSON.stringify(state));
+    var response = await fetch("/api/google-cases", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        id: state.driveFileId || "",
+        subjectName: clientPerson().name,
+        data: snapshot
+      })
+    });
+    var payload = await response.json();
+    if (!response.ok) throw new Error(driveErrorMessage(payload, "ëŒ€ìƒì ìë£Œë¥¼ ì €ì¥í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤."));
+    state.driveFileId = payload.id;
+    saveLocalState();
+    await refreshDriveCases();
+    setDriveConnection(driveConnection);
+    showToast("Google Driveì— ëŒ€ìƒì ìë£Œë¥¼ ì €ì¥í–ˆìŠµë‹ˆë‹¤.");
+  } catch (error) {
+    showToast(error.message || "Google Drive ì €ì¥ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
+  } finally {
+    button.disabled = !driveConnection.connected;
+  }
+}
+
+async function loadDriveCase(id) {
+  if (!driveConnection.connected) return;
+  try {
+    var response = await fetch("/api/google-cases?id=" + encodeURIComponent(id), { headers: { Accept: "application/json" }, cache: "no-store" });
+    var payload = await response.json();
+    if (!response.ok) throw new Error(driveErrorMessage(payload, "ëŒ€ìƒì ìë£Œë¥¼ ë¶ˆëŸ¬ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤."));
+    rememberUndo();
+    state = normalizeState(payload.data);
+    state.driveFileId = payload.id;
+    householdDraft = null;
+    backgroundImageUrl = null;
+    closeQuickEditor();
+    layoutFamilyTree();
+    render();
+    openSidebarPanel("reviewPanel");
+    showToast((payload.subjectName || "ëŒ€ìƒì") + " ìë£Œë¥¼ ë¶ˆëŸ¬ì™”ìŠµë‹ˆë‹¤.");
+  } catch (error) {
+    showToast(error.message || "ëŒ€ìƒì ìë£Œë¥¼ ë¶ˆëŸ¬ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
+  }
+}
+
+function renderHouseholds() {
+  var list = document.getElementById("householdList");
+  document.getElementById("householdCount").textContent = state.households.length;
+  document.getElementById("startHousehold").hidden = Boolean(householdDraft);
+  document.getElementById("saveHousehold").hidden = !householdDraft;
+  document.getElementById("cancelHousehold").hidden = !householdDraft;
+  list.innerHTML = state.households.length ? state.households.map(function(household, index) {
+    var names = household.memberIds.map(personById).filter(Boolean).map(function(person) {
+      return person.name;
+    }).join(", ");
+    var householdName = household.memberIds.length === 1
+      ? "ë…ê±°ê°€êµ¬"
+      : (household.name || "ë™ê±°ê°€ì¡± " + (index + 1));
+    return '<div class="household-card"><div><strong>' +
+      escapeHtml(householdName) +
+      '</strong><span>' + escapeHtml(names) + '</span></div>' +
+      '<div class="household-card-actions"><button class="select-resource" type="button" ' +
+      'data-household-edit="' + attr(household.id) + '">ìˆ˜ì •</button>' +
+      '<button class="delete-icon" type="button" title="ë™ê±°ê°€ì¡± ì‚­ì œ" data-household-delete="' +
+      attr(household.id) + '">Ã—</button></div></div>';
+  }).join("") : '<div class="empty">ë“±ë¡ëœ ë™ê±°ê°€ì¡±ì´ ì—†ìŠµë‹ˆë‹¤.</div>';
+
+  list.querySelectorAll("[data-household-edit]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      startHouseholdDraft(button.dataset.householdEdit);
+    });
+  });
+  list.querySelectorAll("[data-household-delete]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      rememberUndo();
+      state.households = state.households.filter(function(household) {
+        return household.id !== button.dataset.householdDelete;
+      });
+      render();
+    });
+  });
+}
+
+function renderSelected() {
+  var person = selectedPerson();
+  document.getElementById("selectedName").value = person.name;
+  document.getElementById("selectedBirthYear").value = person.birthYear;
+  document.getElementById("selectedDeathYear").value = person.deathYear;
+  document.getElementById("selectedSupportMemo").value = person.supportMemo || personSupportItems(person).join("\n");
+  document.getElementById("selectedDeceased").checked = person.deceased;
+  document.getElementById("selectedDeathYearUnknown").checked = person.deathYearUnknown;
+  document.getElementById("selectedGenderUnknown").checked = person.genderUnknown;
+  document.getElementById("selectedBirthOrderUnknown").checked = person.birthOrderUnknown;
+  fillSelect(document.getElementById("selectedGender"), genders, person.gender);
+  fillSelect(document.getElementById("selectedRole"), roles, person.role);
+  fillSelect(document.getElementById("selectedPetType"), petTypes, person.petType);
+  fillPersonSelect(
+    document.getElementById("selectedPetOwner"),
+    eligiblePetOwners(),
+    person.petOwnerId || clientPerson().id
+  );
+  document.getElementById("selectedRole").disabled = person.role === "client";
+  document.getElementById("deletePerson").style.visibility = person.role === "client" ? "hidden" : "visible";
+  var relationship = relationshipForPerson(person.id);
+  fillSelect(
+    document.getElementById("selectedOutgoingRelationship"),
+    directedSocialTypes,
+    relationship ? relationship.outType : "none"
+  );
+  fillSelect(
+    document.getElementById("selectedIncomingRelationship"),
+    directedSocialTypes,
+    relationship ? relationship.inType : "none"
+  );
+  document.getElementById("selectedRelationshipField").style.display =
+    person.role === "client" || person.role === "pet" ? "none" : "grid";
+  var coupleGroup = coupleGroupForPerson(person.id);
+  var childGroup = childGroupForPerson(person.id);
+  fillSelect(
+    document.getElementById("selectedCoupleStatus"),
+    coupleStatuses,
+    coupleGroup ? coupleGroup.status : "married"
+  );
+  fillSelect(
+    document.getElementById("selectedChildType"),
+    childTypes,
+    childGroup && childGroup.childTypes ? childGroup.childTypes[person.id] : "biological"
+  );
+  document.getElementById("selectedCoupleStatusField").style.display = coupleGroup ? "grid" : "none";
+  document.getElementById("selectedChildTypeField").style.display = childGroup ? "grid" : "none";
+  var grandchildParents = eligibleGrandchildParents().filter(function(parent) {
+    return parent.id !== person.id;
+  });
+  fillPersonSelect(
+    document.getElementById("selectedParentPerson"),
+    grandchildParents,
+    person.parentId || (grandchildParents.length ? grandchildParents[0].id : null)
+  );
+  document.getElementById("selectedParentPersonField").style.display =
+    person.role === "grandchild" ? "grid" : "none";
+  document.getElementById("selectedSupportField").style.display =
+    person.role === "pet" ? "none" : "grid";
+  document.getElementById("selectedPetFields").style.display =
+    person.role === "pet" ? "grid" : "none";
+  document.getElementById("selectedBirthOrderUnknownField").style.display =
+    person.role === "child" || person.role === "grandchild" ? "flex" : "none";
+}
+
+function renderResources() {
+  var person = selectedPerson();
+  var list = document.getElementById("resourceList");
+  list.innerHTML = person.resources.length ? person.resources.map(function(resource) {
+    return '<div class="resource-card"><div><strong>' + escapeHtml(resource.name) +
+      '</strong><span>' + escapeHtml((resource.supports || []).join(" Â· ") || resource.memo || "ì§€ì› ë‚´ìš© ë¯¸ì…ë ¥") +
+      " Â· " + Math.round(resource.width) + "Ã—" + Math.round(resource.height) +
+      '</span></div><div class="resource-card-actions">' +
+      '<button class="select-resource" type="button" data-resource-select="' + attr(resource.id) +
+      '">í¬ê¸°</button><button class="delete-icon" type="button" title="ìì› ì‚­ì œ" data-resource-delete="' +
+      attr(resource.id) + '">Ã—</button></div></div>';
+  }).join("") : '<div class="empty">ì„ íƒí•œ ì¸ë¬¼ì— ë“±ë¡ëœ ìì›ì´ ì—†ìŠµë‹ˆë‹¤.</div>';
+
+  var active = selectedResource();
+  if (active && active.owner.id === person.id) {
+    var sizeUndoSnapshot = createUndoSnapshot();
+    var sizeUndoCaptured = false;
+    function captureSizeUndo() {
+      if (sizeUndoCaptured) return;
+      rememberUndo(sizeUndoSnapshot);
+      sizeUndoCaptured = true;
+    }
+    list.insertAdjacentHTML("beforeend",
+      '<div class="size-editor"><strong>' + escapeHtml(active.resource.name) + " í¬ê¸° ì¡°ì ˆ</strong>" +
+      '<label class="range-row"><span>ê°€ë¡œ</span><input id="resourceWidth" type="range" min="110" max="300" value="' +
+      Math.round(active.resource.width) + '"><output id="resourceWidthValue">' +
+      Math.round(active.resource.width) + '</output></label>' +
+      '<label class="range-row"><span>ì„¸ë¡œ</span><input id="resourceHeight" type="range" min="56" max="260" value="' +
+      Math.round(active.resource.height) + '"><output id="resourceHeightValue">' +
+      Math.round(active.resource.height) + "</output></label></div>");
+
+    document.getElementById("resourceWidth").addEventListener("input", function(event) {
+      captureSizeUndo();
+      active.resource.width = Number(event.target.value);
+      document.getElementById("resourceWidthValue").textContent = event.target.value;
+      renderMap();
+      saveLocalState();
+    });
+    document.getElementById("resourceHeight").addEventListener("input", function(event) {
+      captureSizeUndo();
+      active.resource.height = Number(event.target.value);
+      document.getElementById("resourceHeightValue").textContent = event.target.value;
+      renderMap();
+      saveLocalState();
+    });
+  }
+
+  list.querySelectorAll("[data-resource-select]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      state.selectedResourceId = button.dataset.resourceSelect;
+      render();
+    });
+  });
+  list.querySelectorAll("[data-resource-delete]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      rememberUndo();
+      person.resources = person.resources.filter(function(resource) {
+        return resource.id !== button.dataset.resourceDelete;
+      });
+      if (state.selectedResourceId === button.dataset.resourceDelete) state.selectedResourceId = null;
+      render();
+    });
+  });
+}
+
+function renderMap() {
+  svg.innerHTML = "";
+  appendRelationshipMarkers();
+  if (backgroundImageUrl) {
+    svg.appendChild(makeSvg("image", {
+      href: backgroundImageUrl,
+      x: 0,
+      y: 0,
+      width: 1100,
+      height: 760,
+      opacity: .28,
+      preserveAspectRatio: "xMidYMid meet"
+    }));
+  }
+  state.households.forEach(function(household) {
+    if (householdDraft && householdDraft.id === household.id) return;
+    drawHouseholdBoundary(household.memberIds, false);
+  });
+  if (householdDraft && householdDraft.memberIds.length) {
+    drawHouseholdBoundary(householdDraft.memberIds, true);
+  }
+  state.familyGroups.forEach(drawFamilyGroup);
+
+  state.people.forEach(function(person) {
+    if (person.role !== "pet") return;
+    var owner = personById(person.petOwnerId) || clientPerson();
+    if (owner && owner.id !== person.id) drawPetConnection(owner, person);
+  });
+
+  state.links.forEach(function(link) {
+    var from = personById(link.from);
+    var to = personById(link.to);
+    if (!from || !to || from.role === "pet" || to.role === "pet") return;
+    drawDirectedSocialLink(link, from, to);
+  });
+
+  state.people.forEach(function(person) {
+    person.resources.forEach(function(resource) {
+      var path = makeSvg("path", {
+        d: resourceConnectionPath(person, resource, resource.relationship),
+        class: "resource-link " + resource.relationship
+      });
+      applyRelationshipDirection(path, resource.relationship, resource.direction);
+      svg.appendChild(path);
+    });
+  });
+
+  state.people.forEach(function(person) { svg.appendChild(personNode(person)); });
+  state.people.forEach(function(person) {
+    person.resources.forEach(function(resource) {
+      svg.appendChild(resourceNode(person, resource));
+    });
+  });
+}
+
+function drawPetConnection(owner, pet) {
+  var endpoints = personConnectionEndpoints(owner, pet);
+  svg.appendChild(makeSvg("path", {
+    d: "M " + endpoints.x1 + " " + endpoints.y1 + " L " + endpoints.x2 + " " + endpoints.y2,
+    class: "pet-line"
+  }));
+}
+
+function drawDirectedSocialLink(link, from, to) {
+  var outType = normalizeDirectedRelationshipType(link.outType);
+  var inType = normalizeDirectedRelationshipType(link.inType);
+  var endpoints = personConnectionEndpoints(from, to);
+  if (outType !== "none" && outType === inType) {
+    appendSocialPath(endpoints, outType, "both");
+    return;
+  }
+  var hasTwoLines = outType !== "none" && inType !== "none";
+  if (outType !== "none") {
+    appendSocialPath(offsetConnectionEndpoints(endpoints, hasTwoLines ? 6 : 0), outType, "out");
+  }
+  if (inType !== "none") {
+    appendSocialPath(offsetConnectionEndpoints(endpoints, hasTwoLines ? -6 : 0), inType, "in");
+  }
+}
+
+function appendSocialPath(endpoints, type, direction) {
+  var path = makeSvg("path", {
+    d: relationshipPath(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, type),
+    class: "social-line " + type
+  });
+  applyRelationshipDirection(path, type, direction);
+  svg.appendChild(path);
+}
+
+function offsetConnectionEndpoints(endpoints, offset) {
+  if (!offset) return endpoints;
+  var dx = endpoints.x2 - endpoints.x1;
+  var dy = endpoints.y2 - endpoints.y1;
+  var length = Math.hypot(dx, dy) || 1;
+  var offsetX = -dy / length * offset;
+  var offsetY = dx / length * offset;
+  return {
+    x1: endpoints.x1 + offsetX,
+    y1: endpoints.y1 + offsetY,
+    x2: endpoints.x2 + offsetX,
+    y2: endpoints.y2 + offsetY
+  };
+}
+
+function drawHouseholdBoundary(memberIds, draft) {
+  var members = memberIds.map(personById).filter(Boolean);
+  if (!members.length) return;
+  var xs = members.map(function(person) { return person.x; });
+  var ys = members.map(function(person) { return person.y; });
+  var minX = Math.min.apply(null, xs);
+  var maxX = Math.max.apply(null, xs);
+  var minY = Math.min.apply(null, ys);
+  var maxY = Math.max.apply(null, ys);
+  svg.appendChild(makeSvg("ellipse", {
+    class: "household-boundary" + (draft ? " draft" : ""),
+    cx: (minX + maxX) / 2,
+    cy: (minY + maxY) / 2,
+    rx: Math.max(78, (maxX - minX) / 2 + 78),
+    ry: Math.max(72, (maxY - minY) / 2 + 72)
+  }));
+}
+
+function appendRelationshipMarkers() {
+  var defs = makeSvg("defs", {});
+  [
+    { id: "good", color: "#3b82f6" },
+    { id: "distant", color: "#22a860" },
+    { id: "conflict", color: "#9b52c7" }
+  ].forEach(function(item) {
+    var marker = makeSvg("marker", {
+      id: "arrow-" + item.id,
+      viewBox: "0 0 10 10",
+      refX: 8,
+      refY: 5,
+      markerWidth: 8,
+      markerHeight: 8,
+      orient: "auto-start-reverse",
+      markerUnits: "userSpaceOnUse"
+    });
+    marker.appendChild(makeSvg("path", {
+      d: "M 0 0 L 10 5 L 0 10 z",
+      fill: item.color
+    }));
+    defs.appendChild(marker);
+  });
+  svg.appendChild(defs);
+}
+
+function applyRelationshipDirection(path, type, direction) {
+  var marker = "url(#arrow-" + normalizeRelationshipType(type) + ")";
+  if (direction === "in" || direction === "both") path.setAttribute("marker-start", marker);
+  if (direction === "out" || direction === "both") path.setAttribute("marker-end", marker);
+}
+
+function connectionEndpoints(x1, y1, x2, y2, startPadding, endPadding) {
+  var dx = x2 - x1;
+  var dy = y2 - y1;
+  var length = Math.hypot(dx, dy) || 1;
+  return {
+    x1: x1 + dx / length * startPadding,
+    y1: y1 + dy / length * startPadding,
+    x2: x2 - dx / length * endPadding,
+    y2: y2 - dy / length * endPadding
+  };
+}
+
+function personConnectionEndpoints(from, to) {
+  return {
+    x1: personEdgePoint(from, to).x,
+    y1: personEdgePoint(from, to).y,
+    x2: personEdgePoint(to, from).x,
+    y2: personEdgePoint(to, from).y
+  };
+}
+
+function personEdgePoint(person, target) {
+  var dx = target.x - person.x;
+  var dy = target.y - person.y;
+  var length = Math.hypot(dx, dy) || 1;
+  var half = (person.size || 86) / 2 + 2;
+  var scale = half / Math.max(Math.abs(dx), Math.abs(dy), 1);
+  return { x: person.x + dx * scale, y: person.y + dy * scale };
+}
+
+function relationshipPath(x1, y1, x2, y2, type) {
+  if (type !== "conflict") return "M " + x1 + " " + y1 + " L " + x2 + " " + y2;
+  var dx = x2 - x1;
+  var dy = y2 - y1;
+  var length = Math.hypot(dx, dy) || 1;
+  var segments = Math.max(6, Math.floor(length / 15));
+  var normalX = -dy / length;
+  var normalY = dx / length;
+  var path = "M " + x1 + " " + y1;
+  for (var index = 1; index < segments; index += 1) {
+    var ratio = index / segments;
+    var offset = (index % 2 === 0 ? -1 : 1) * 7;
+    path += " L " + (x1 + dx * ratio + normalX * offset) +
+      " " + (y1 + dy * ratio + normalY * offset);
+  }
+  return path + " L " + x2 + " " + y2;
+}
+
+function drawFamilyGroup(group) {
+  var parents = group.parents.map(personById).filter(Boolean).sort(byX);
+  var children = group.children.map(personById).filter(Boolean).sort(byX);
+  if (!parents.length) return;
+
+  var startX;
+  var startY;
+  if (parents.length >= 2) {
+    var left = parents[0];
+    var right = parents[1];
+    // Couple lines must follow both node centers. Using only left.y made the
+    // line stop above/below a partner when the two people were moved or resized.
+    var leftCoupleEdge = personEdgePoint(left, right);
+    var rightCoupleEdge = personEdgePoint(right, left);
+    svg.appendChild(makeSvg("path", {
+      d: "M " + leftCoupleEdge.x + " " + leftCoupleEdge.y +
+        " L " + rightCoupleEdge.x + " " + rightCoupleEdge.y,
+      class: "family-line couple " + group.status
+    }));
+    startX = (leftCoupleEdge.x + rightCoupleEdge.x) / 2;
+    startY = (leftCoupleEdge.y + rightCoupleEdge.y) / 2;
+    appendCoupleStatusMarks(startX, startY, group.status);
+  } else {
+    startX = parents[0].x;
+    startY = parents[0].y + (parents[0].size || 86) / 2 + 2;
+  }
+
+  if (!children.length) return;
+  if (children.length === 1) {
+    var onlyChild = children[0];
+    var onlyChildType = group.childTypes && childTypes[group.childTypes[onlyChild.id]]
+      ? group.childTypes[onlyChild.id]
+      : "biological";
+    svg.appendChild(makeSvg("path", {
+      d: singleChildFamilyPath(parents, startX, startY, onlyChild),
+      class: "family-line child " + onlyChildType
+    }));
+    return;
+  }
+  var childTop = Math.min.apply(null, children.map(function(child) { return child.y - (child.size || 86) / 2 - 2; }));
+  var branchY = Math.max(startY + 45, childTop - 72);
+  var firstX = children[0].x;
+  var lastX = children[children.length - 1].x;
+  var path = "M " + startX + " " + startY + " V " + branchY;
+  path += " M " + Math.min(startX, firstX) + " " + branchY +
+    " H " + Math.max(startX, lastX);
+  svg.appendChild(makeSvg("path", { d: path, class: "family-line" }));
+  children.forEach(function(child) {
+    var childType = group.childTypes && childTypes[group.childTypes[child.id]]
+      ? group.childTypes[child.id]
+      : "biological";
+    svg.appendChild(makeSvg("path", {
+      d: "M " + child.x + " " + branchY + " V " + (child.y - (child.size || 86) / 2 - 2),
+      class: "family-line child " + childType
+    }));
+  });
+}
+
+function singleChildFamilyPath(parents, startX, startY, child) {
+  var sourceX = startX;
+  var sourceY = startY;
+  var sourcePadding = 0;
+  if (parents.length === 1) {
+    sourceX = parents[0].x;
+    sourceY = parents[0].y;
+    sourcePadding = (parents[0].size || 86) / 2 + 2;
+  }
+  var dx = child.x - sourceX;
+  var dy = child.y - sourceY;
+  if (Math.abs(dy) >= 110) {
+    var verticalDirection = dy >= 0 ? 1 : -1;
+    var sourceEdgeY = sourceY + verticalDirection * sourcePadding;
+    var childEdgeY = child.y - verticalDirection * ((child.size || 86) / 2 + 2);
+    var middleY = (sourceEdgeY + childEdgeY) / 2;
+    return "M " + sourceX + " " + sourceEdgeY +
+      " V " + middleY + " H " + child.x + " V " + childEdgeY;
+  }
+  var horizontalDirection = dx >= 0 ? 1 : -1;
+  var sourceEdgeX = sourceX + horizontalDirection * sourcePadding;
+  var childEdgeX = child.x - horizontalDirection * ((child.size || 86) / 2 + 2);
+  var middleX = (sourceEdgeX + childEdgeX) / 2;
+  return "M " + sourceEdgeX + " " + sourceY +
+    " H " + middleX + " V " + child.y + " H " + childEdgeX;
+}
+
+function appendCoupleStatusMarks(x, y, status) {
+  var markCount = status === "divorced" ? 2 : (status === "separated" || status === "widowed" ? 1 : 0);
+  for (var index = 0; index < markCount; index += 1) {
+    var offset = markCount === 2 ? (index === 0 ? -5 : 5) : 0;
+    svg.appendChild(makeSvg("line", {
+      class: "couple-status-mark",
+      x1: x + offset - 6,
+      y1: y + 10,
+      x2: x + offset + 6,
+      y2: y - 10
+    }));
+  }
+}
+
+function personNode(person) {
+  var personSize = person.size || 86;
+  var halfSize = personSize / 2;
+  var group = makeSvg("g", {
+    class: "person-node " + (person.role === "client" ? "client " : "") +
+      (person.role === "pet" ? "pet-node " : "") +
+      (person.id === state.selectedId ? "selected " : "") +
+      (householdDraft && householdDraft.memberIds.indexOf(person.id) !== -1 ? "household-pick" : ""),
+    transform: "translate(" + person.x + " " + person.y + ")"
+  });
+  group.dataset.personId = person.id;
+  group.appendChild(makeSvg("circle", { class: "select-ring", r: halfSize + 10 }));
+  if (person.role === "pet") {
+    appendPetShape(group, person.petType, personSize);
+  } else {
+    appendClientRing(group, person.gender, personSize);
+    appendPersonShape(group, person.gender, personSize);
+  }
+  addPersonLabel(group, person);
+  if (person.role !== "pet" && (person.deceased || person.deathYearUnknown)) {
+    var mark = halfSize * .79;
+    group.appendChild(makeSvg("line", { class: "death-mark", x1: -mark, y1: -mark, x2: mark, y2: mark }));
+    group.appendChild(makeSvg("line", { class: "death-mark", x1: mark, y1: -mark, x2: -mark, y2: mark }));
+  }
+  addPersonResizeHandles(group, personSize);
+  group.addEventListener("pointerdown", startPersonDrag);
+  group.addEventListener("click", function(event) {
+    event.stopPropagation();
+    if (householdDraft) return;
+    if (event.detail > 1) return;
+    selectDiagramItem(person.id, null, group);
+  });
+  return group;
+}
+
+function appendPetShape(group, type, size) {
+  var half = size / 2;
+  group.appendChild(makeSvg("rect", {
+    class: "person-shape pet-shape",
+    x: -half,
+    y: -half,
+    width: size,
+    height: size,
+    rx: Math.max(10, size * .22)
+  }));
+  var icon = makeSvg("text", {
+    class: "pet-icon",
+    y: 8 * (size / 86),
+    style: "font-size:" + clamp(24 * (size / 86), 16, 34) + "px"
+  });
+  icon.textContent = type === "dog" ? "ğŸ¶" : (type === "cat" ? "ğŸ±" : "ğŸ¾");
+  group.appendChild(icon);
+}
+
+function appendPersonShape(group, gender, size) {
+  var half = size / 2;
+  if (gender === "female") {
+    group.appendChild(makeSvg("circle", { class: "person-shape", r: half }));
+  } else if (gender === "other") {
+    group.appendChild(makeSvg("polygon", {
+      class: "person-shape",
+      points: "0," + (-half) + " " + half + ",0 0," + half + " " + (-half) + ",0"
+    }));
+  } else {
+    group.appendChild(makeSvg("rect", {
+      class: "person-shape",
+      x: -half,
+      y: -half,
+      width: size,
+      height: size,
+      rx: 2
+    }));
+  }
+}
+
+function appendClientRing(group, gender, size) {
+  var half = size / 2 + 5;
+  if (gender === "female") {
+    group.appendChild(makeSvg("circle", { class: "client-ring", r: half }));
+  } else if (gender === "other") {
+    group.appendChild(makeSvg("polygon", {
+      class: "client-ring",
+      points: "0," + (-half) + " " + half + ",0 0," + half + " " + (-half) + ",0"
+    }));
+  } else {
+    group.appendChild(makeSvg("rect", {
+      class: "client-ring",
+      x: -half,
+      y: -half,
+      width: half * 2,
+      height: half * 2,
+      rx: 3
+    }));
+  }
+}
+
+function addPersonLabel(group, person) {
+  var scale = (person.size || 86) / 86;
+  var dates = personDateLabel(person);
+  var name = makeSvg("text", {
+    class: "node-name",
+    y: person.role === "pet" ? -24 * scale : (dates ? -2 * scale : 5 * scale),
+    style: "font-size:" + clamp(14 * scale, 9, 22) + "px"
+  });
+  name.textContent = shortText(person.name, 8);
+  group.appendChild(name);
+  if (person.role === "pet") {
+    var typeLabel = makeSvg("text", {
+      class: "node-pet-type",
+      y: 28 * scale,
+      style: "font-size:" + clamp(9 * scale, 7, 14) + "px"
+    });
+    typeLabel.textContent = petTypes[person.petType];
+    group.appendChild(typeLabel);
+    return;
+  }
+  if (dates) {
+    var year = makeSvg("text", { class: "node-year", y: 21 * scale, style: "font-size:" + clamp(10 * scale, 7, 16) + "px" });
+    year.textContent = "(" + dates + ")";
+    group.appendChild(year);
+  }
+  var flags = [];
+  if (person.genderUnknown) flags.push("ì„±ë³„ ë¯¸ìƒ");
+  if (person.birthOrderUnknown) flags.push("ìˆœì„œ ë¯¸ìƒ");
+  if (flags.length) {
+    var flag = makeSvg("text", { class: "node-flag", y: (dates ? 35 : 22) * scale, style: "font-size:" + clamp(9 * scale, 6, 13) + "px" });
+    flag.textContent = flags.join(" Â· ");
+    group.appendChild(flag);
+  }
+  var supportItems = personSupportItems(person);
+  if (supportItems.length) {
+    var supportSize = clamp(9 * scale * Math.min(1, 4 / supportItems.length), 5.5, 10);
+    var supportChars = Math.max(8, Math.floor((person.size - 8) / (supportSize * .72)));
+    var supportLines = [];
+    supportItems.forEach(function(item) {
+      splitLabel(item, supportChars).forEach(function(line) { supportLines.push(line); });
+    });
+    var support = makeSvg("text", {
+      class: "node-support",
+      y: (person.size / 2 + 16 * scale),
+      style: "font-size:" + supportSize + "px"
+    });
+    var supportLineHeight = supportSize * 1.25;
+    supportLines.forEach(function(line, index) {
+      var tspan = makeSvg("tspan", { x: 0, dy: index === 0 ? 0 : supportLineHeight });
+      tspan.textContent = line;
+      support.appendChild(tspan);
+    });
+    group.appendChild(support);
+  }
+}
+
+function addPersonResizeHandles(group, size) {
+  var half = size / 2;
+  ["nw", "ne", "sw", "se"].forEach(function(corner) {
+    var x = corner.indexOf("w") !== -1 ? -half - 6 : half - 6;
+    var y = corner.indexOf("n") !== -1 ? -half - 6 : half - 6;
+    var handle = makeSvg("rect", {
+      class: "resize-handle person-resize-handle handle-" + corner,
+      x: x,
+      y: y,
+      width: 12,
+      height: 12,
+      rx: 2
+    });
+    handle.dataset.corner = corner;
+    handle.addEventListener("pointerdown", startPersonResize);
+    group.appendChild(handle);
+  });
+}
+
+function resourceNode(owner, resource) {
+  var tone = resourceTypes[resource.type].tone;
+  var selected = state.selectedResourceId === resource.id;
+  var group = makeSvg("g", {
+    class: "resource-node " + tone + (selected ? " selected" : ""),
+    transform: "translate(" + resource.x + " " + resource.y + ")"
+  });
+  group.dataset.ownerId = owner.id;
+  group.dataset.resourceId = resource.id;
+  group.appendChild(makeSvg("rect", {
+    class: "resource-box",
+    x: -resource.width / 2,
+    y: -resource.height / 2,
+    width: resource.width,
+    height: resource.height,
+    rx: 5
+  }));
+  addResourceLabel(group, resource);
+  var handle = makeSvg("rect", {
+    class: "resize-handle resource-resize-handle handle-se",
+    x: resource.width / 2 - 9,
+    y: resource.height / 2 - 9,
+    width: 14,
+    height: 14,
+    rx: 2
+  });
+  var title = makeSvg("title", {});
+  title.textContent = "ëŒì–´ì„œ ìì› í¬ê¸° ì¡°ì ˆ";
+  handle.appendChild(title);
+  handle.dataset.corner = "se";
+  handle.addEventListener("pointerdown", startResourceResize);
+  group.appendChild(handle);
+  addResourceResizeHandles(group, resource);
+  group.addEventListener("pointerdown", startResourceDrag);
+  group.addEventListener("click", function(event) {
+    event.stopPropagation();
+    if (event.detail > 1) return;
+    selectDiagramItem(owner.id, resource.id, group);
+  });
+  return group;
+}
+
+function addResourceResizeHandles(group, resource) {
+  ["nw", "ne", "sw"].forEach(function(corner) {
+    var handle = makeSvg("rect", {
+      class: "resize-handle resource-resize-handle handle-" + corner,
+      x: corner.indexOf("w") !== -1 ? -resource.width / 2 - 6 : resource.width / 2 - 6,
+      y: corner.indexOf("n") !== -1 ? -resource.height / 2 - 6 : resource.height / 2 - 6,
+      width: 12,
+      height: 12,
+      rx: 2
+    });
+    handle.dataset.corner = corner;
+    handle.addEventListener("pointerdown", startResourceResize);
+    group.appendChild(handle);
+  });
+}
+
+function addResourceLabel(group, resource) {
+  var scale = clamp(Math.min(resource.width / 150, resource.height / 72), .72, 1.9);
+  var nameSize = clamp(13 * scale, 9, 18);
+  var metaSize = clamp(9 * scale, 5.5, 11);
+  var nameChars = Math.max(6, Math.floor((resource.width - 22) / (nameSize * .82)));
+  var lines = splitLabel(resource.name, nameChars).slice(0, 2);
+  var nameLineHeight = nameSize * 1.15;
+  var topPadding = clamp(resource.height * .18, 20, 30);
+  var nameTop = -resource.height / 2 + topPadding;
+  var name = makeSvg("text", {
+    class: "resource-name",
+    y: nameTop,
+    style: "font-size:" + nameSize + "px"
+  });
+  lines.forEach(function(line, index) {
+    var tspan = makeSvg("tspan", { x: 0, dy: index === 0 ? 0 : nameLineHeight });
+    tspan.textContent = line;
+    name.appendChild(tspan);
+  });
+  group.appendChild(name);
+  var supports = resource.supports || splitSupports(resource.memo);
+  var supportChars = Math.max(8, Math.floor((resource.width - 22) / (metaSize * .78)));
+  var supportLines = [];
+  (supports.length ? supports : ["ì§€ì› ë‚´ìš© ë¯¸ì…ë ¥"]).forEach(function(item) {
+    splitLabel(item, supportChars).forEach(function(line) {
+      supportLines.push(line);
+    });
+  });
+  var lineHeight = metaSize * 1.25;
+  var metaTop = nameTop + lines.length * nameLineHeight + 8;
+  var metaBottom = resource.height / 2 - 9;
+  var availableLines = Math.max(1, Math.floor((metaBottom - metaTop) / lineHeight));
+  if (supportLines.length > availableLines && metaSize > 5.5) {
+    metaSize = Math.max(5.5, metaSize * availableLines / supportLines.length);
+    supportChars = Math.max(8, Math.floor((resource.width - 22) / (metaSize * .78)));
+    supportLines = [];
+    (supports.length ? supports : ["ì§€ì› ë‚´ìš© ë¯¸ì…ë ¥"]).forEach(function(item) {
+      splitLabel(item, supportChars).forEach(function(line) {
+        supportLines.push(line);
+      });
+    });
+    lineHeight = metaSize * 1.25;
+    availableLines = Math.max(1, Math.floor((metaBottom - metaTop) / lineHeight));
+  }
+  var meta = makeSvg("text", {
+    class: "resource-meta",
+    y: metaTop + metaSize,
+    style: "font-size:" + metaSize + "px"
+  });
+  supportLines.forEach(function(line, index) {
+    var tspan = makeSvg("tspan", { x: 0, dy: index === 0 ? 0 : lineHeight });
+    tspan.textContent = line;
+    meta.appendChild(tspan);
+  });
+  group.appendChild(meta);
+}
+
+function startPersonDrag(event) {
+  event.preventDefault();
+  var person = personById(event.currentTarget.dataset.personId);
+  if (householdDraft) {
+    event.stopPropagation();
+    toggleHouseholdMember(person.id);
+    return;
+  }
+  if (isSecondNodePress("person", person.id)) {
+    event.stopPropagation();
+    dragging = null;
+    state.selectedId = person.id;
+    state.selectedResourceId = null;
+    openSidebarPanel("editPanel");
+    openQuickEditor("person", person.id);
+    return;
+  }
+  var point = svgPoint(event);
+  dragging = {
+    kind: "person",
+    personId: person.id,
+    dx: point.x - person.x,
+    dy: point.y - person.y,
+    lastX: person.x,
+    lastY: person.y,
+    moved: false,
+    undoSnapshot: createUndoSnapshot()
+  };
+  state.selectedId = person.id;
+  state.selectedResourceId = null;
+  openSidebarPanel("editPanel");
+  svg.setPointerCapture(event.pointerId);
+}
+
+function startResourceDrag(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  var owner = personById(event.currentTarget.dataset.ownerId);
+  var resource = resourceById(owner, event.currentTarget.dataset.resourceId);
+  if (isSecondNodePress("resource", resource.id)) {
+    dragging = null;
+    state.selectedId = owner.id;
+    state.selectedResourceId = resource.id;
+    openSidebarPanel("editPanel");
+    openQuickEditor("resource", owner.id, resource.id);
+    return;
+  }
+  var point = svgPoint(event);
+  dragging = {
+    kind: "resource",
+    ownerId: owner.id,
+    resourceId: resource.id,
+    dx: point.x - resource.x,
+    dy: point.y - resource.y,
+    moved: false,
+    undoSnapshot: createUndoSnapshot()
+  };
+  state.selectedId = owner.id;
+  state.selectedResourceId = resource.id;
+  openSidebarPanel("editPanel");
+  svg.setPointerCapture(event.pointerId);
+}
+
+function startResourceResize(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  var group = event.currentTarget.parentNode;
+  var owner = personById(group.dataset.ownerId);
+  var resource = resourceById(owner, group.dataset.resourceId);
+  dragging = {
+    kind: "resource-resize",
+    ownerId: owner.id,
+    resourceId: resource.id,
+    left: resource.x - resource.width / 2,
+    top: resource.y - resource.height / 2,
+    right: resource.x + resource.width / 2,
+    bottom: resource.y + resource.height / 2,
+    corner: event.currentTarget.dataset.corner || "se",
+    moved: false,
+    undoSnapshot: createUndoSnapshot()
+  };
+  state.selectedId = owner.id;
+  state.selectedResourceId = resource.id;
+  openSidebarPanel("editPanel");
+  svg.setPointerCapture(event.pointerId);
+}
+
+function startPersonResize(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  var group = event.currentTarget.parentNode;
+  var person = personById(group.dataset.personId);
+  var half = (person.size || 86) / 2;
+  dragging = {
+    kind: "person-resize",
+    personId: person.id,
+    left: person.x - half,
+    top: person.y - half,
+    right: person.x + half,
+    bottom: person.y + half,
+    corner: event.currentTarget.dataset.corner || "se",
+    moved: false,
+    undoSnapshot: createUndoSnapshot()
+  };
+  state.selectedId = person.id;
+  state.selectedResourceId = null;
+  openSidebarPanel("editPanel");
+  svg.setPointerCapture(event.pointerId);
+}
+
+svg.addEventListener("pointermove", function(event) {
+  if (!dragging) return;
+  dragging.moved = true;
+  var point = svgPoint(event);
+  if (dragging.kind === "person") movePerson(point);
+  else if (dragging.kind === "resource") moveResource(point);
+  else if (dragging.kind === "resource-resize") resizeResource(point);
+  else resizePerson(point);
+  renderMap();
+});
+
+svg.addEventListener("pointerup", finishDrag);
+svg.addEventListener("pointercancel", finishDrag);
+
+function movePerson(point) {
+  var person = personById(dragging.personId);
+  var nextX = clamp(point.x - dragging.dx, 70, 1030);
+  var nextY = clamp(point.y - dragging.dy, 70, 710);
+  var linkedPeople = linkedFamilyMovePeople(person);
+  var requestedX = nextX - dragging.lastX;
+  var requestedY = nextY - dragging.lastY;
+  var minMoveX = Math.max.apply(null, linkedPeople.map(function(item) { return 70 - item.x; }));
+  var maxMoveX = Math.min.apply(null, linkedPeople.map(function(item) { return 1030 - item.x; }));
+  var minMoveY = Math.max.apply(null, linkedPeople.map(function(item) { return 70 - item.y; }));
+  var maxMoveY = Math.min.apply(null, linkedPeople.map(function(item) { return 710 - item.y; }));
+  var moveX = clamp(requestedX, minMoveX, maxMoveX);
+  var moveY = clamp(requestedY, minMoveY, maxMoveY);
+  linkedPeople.forEach(function(item) {
+    item.x += moveX;
+    item.y += moveY;
+    item.resources.forEach(function(resource) {
+      resource.x = clamp(resource.x + moveX, 60, 1040);
+      resource.y = clamp(resource.y + moveY, 50, 710);
+    });
+  });
+  dragging.lastX += moveX;
+  dragging.lastY += moveY;
+}
+
+function linkedFamilyMovePeople(person) {
+  var familyGroup = null;
+  if (person.role === "grandchild") {
+    familyGroup = childGroupForPerson(person.id);
+  } else if (person.role === "child") {
+    familyGroup = state.familyGroups.find(function(group) {
+      return group.parents.indexOf(person.id) !== -1 &&
+        group.children.some(function(childId) {
+          var child = personById(childId);
+          return child && child.role === "grandchild";
+        });
+    });
+  }
+  if (!familyGroup) return [person];
+  var linkedIds = familyGroup.parents.concat(familyGroup.children);
+  return state.people.filter(function(item) {
+    return linkedIds.indexOf(item.id) !== -1;
+  });
+}
+
+function moveResource(point) {
+  var owner = personById(dragging.ownerId);
+  var resource = resourceById(owner, dragging.resourceId);
+  resource.x = clamp(point.x - dragging.dx, resource.width / 2 + 10, 1090 - resource.width / 2);
+  resource.y = clamp(point.y - dragging.dy, resource.height / 2 + 10, 750 - resource.height / 2);
+}
+
+function resizeResource(point) {
+  var owner = personById(dragging.ownerId);
+  var resource = resourceById(owner, dragging.resourceId);
+  var bounds = resizeRectFromCorner(dragging, point, 110, 300, 56, 260);
+  resource.width = bounds.right - bounds.left;
+  resource.height = bounds.bottom - bounds.top;
+  resource.x = (bounds.left + bounds.right) / 2;
+  resource.y = (bounds.top + bounds.bottom) / 2;
+}
+
+function resizePerson(point) {
+  var person = personById(dragging.personId);
+  var bounds = resizeSquareFromCorner(dragging, point, 56, 180);
+  person.size = bounds.size;
+  person.x = (bounds.left + bounds.right) / 2;
+  person.y = (bounds.top + bounds.bottom) / 2;
+}
+
+function resizeRectFromCorner(start, point, minWidth, maxWidth, minHeight, maxHeight) {
+  var left = start.left;
+  var top = start.top;
+  var right = start.right;
+  var bottom = start.bottom;
+  if (start.corner.indexOf("w") !== -1) left = clamp(point.x, right - maxWidth, right - minWidth);
+  else right = clamp(point.x, left + minWidth, left + maxWidth);
+  if (start.corner.indexOf("n") !== -1) top = clamp(point.y, bottom - maxHeight, bottom - minHeight);
+  else bottom = clamp(point.y, top + minHeight, top + maxHeight);
+  return { left: left, top: top, right: right, bottom: bottom };
+}
+
+function resizeSquareFromCorner(start, point, minSize, maxSize) {
+  var anchorX = start.corner.indexOf("w") !== -1 ? start.right : start.left;
+  var anchorY = start.corner.indexOf("n") !== -1 ? start.bottom : start.top;
+  var size = Math.max(Math.abs(point.x - anchorX), Math.abs(point.y - anchorY));
+  size = clamp(size, minSize, maxSize);
+  var left = start.corner.indexOf("w") !== -1 ? anchorX - size : anchorX;
+  var top = start.corner.indexOf("n") !== -1 ? anchorY - size : anchorY;
+  return { left: left, top: top, right: left + size, bottom: top + size, size: size };
+}
+
+function finishDrag() {
+  if (!dragging) return;
+  if (dragging.moved) {
+    lastNodePress = { key: "", at: 0 };
+    rememberUndo(dragging.undoSnapshot);
+  }
+  dragging = null;
+  saveLocalState();
+  renderPeople();
+  renderSelected();
+  renderResources();
+}
+
+function isSecondNodePress(kind, id) {
+  var key = kind + ":" + id;
+  var now = Date.now();
+  if (lastNodePress.key === key && now - lastNodePress.at < 450) {
+    lastNodePress = { key: "", at: 0 };
+    return true;
+  }
+  lastNodePress = { key: key, at: now };
+  return false;
+}
+
+function startHouseholdDraft(householdId) {
+  openSidebarPanel("reviewPanel");
+  var existing = state.households.find(function(household) {
+    return household.id === householdId;
+  });
+  householdDraft = {
+    id: existing ? existing.id : null,
+    name: existing ? existing.name : "ë™ê±°ê°€ì¡± " + (state.households.length + 1),
+    memberIds: existing ? existing.memberIds.slice() : []
+  };
+  closeQuickEditor();
+  renderPeople();
+  renderHouseholds();
+  renderMap();
+  updateHouseholdStatus();
+}
+
+function toggleHouseholdMember(personId) {
+  if (!householdDraft) return;
+  var index = householdDraft.memberIds.indexOf(personId);
+  if (index === -1) householdDraft.memberIds.push(personId);
+  else householdDraft.memberIds.splice(index, 1);
+  renderPeople();
+  renderHouseholds();
+  renderMap();
+  updateHouseholdStatus();
+}
+
+function saveHouseholdDraft() {
+  if (!householdDraft || householdDraft.memberIds.length < 1) {
+    showToast("ë™ê±°ê°€ì¡±ì„ í•œ ëª… ì´ìƒ ì„ íƒí•´ì£¼ì„¸ìš”.");
+    return;
+  }
+  rememberUndo();
+  var existing = state.households.find(function(household) {
+    return household.id === householdDraft.id;
+  });
+  if (existing) {
+    existing.memberIds = householdDraft.memberIds.slice();
+    if (existing.memberIds.length === 1) existing.name = "ë…ê±°ê°€êµ¬";
+  } else {
+    state.households.push({
+      id: uid(),
+      name: householdDraft.memberIds.length === 1 ? "ë…ê±°ê°€êµ¬" : householdDraft.name,
+      memberIds: householdDraft.memberIds.slice()
+    });
+  }
+  householdDraft = null;
+  render();
+  document.getElementById("statusText").textContent =
+    "ì¸ë¬¼ê³¼ ìì›ì€ ì´ë™í•  ìˆ˜ ìˆê³ , ì„ íƒí•œ ìš”ì†Œì˜ ë„¤ ê¼­ì§“ì ì—ì„œ í¬ê¸°ë¥¼ ì¡°ì ˆí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.";
+}
+
+function cancelHouseholdDraft() {
+  householdDraft = null;
+  renderPeople();
+  renderHouseholds();
+  renderMap();
+  document.getElementById("statusText").textContent =
+    "ì¸ë¬¼ê³¼ ìì›ì€ ì´ë™í•  ìˆ˜ ìˆê³ , ìì› ì˜¤ë¥¸ìª½ ì•„ë˜ ì†ì¡ì´ë¡œ í¬ê¸°ë¥¼ ì¡°ì ˆí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.";
+}
+
+function updateHouseholdStatus() {
+  document.getElementById("statusText").textContent =
+    "ë™ê±°ê°€ì¡± ì„ íƒ ì¤‘ Â· " + householdDraft.memberIds.length + "ëª…";
+}
+
+function selectDiagramItem(personId, resourceId, targetGroup) {
+  state.selectedId = personId;
+  state.selectedResourceId = resourceId;
+  openSidebarPanel("editPanel");
+  svg.querySelectorAll(".person-node").forEach(function(node) {
+    node.classList.remove("selected");
+  });
+  svg.querySelectorAll(".resource-node").forEach(function(node) {
+    node.classList.remove("selected");
+  });
+  if (resourceId) targetGroup.classList.add("selected");
+  else targetGroup.classList.add("selected");
+  renderPeople();
+  renderSelected();
+  renderResources();
+  saveLocalState();
+}
+
+function bulkRole(value) {
+  var text = String(value || "").replace(/\s/g, "");
+  if (text === "ë¶€ëª¨" || text === "ì–´ë¨¸ë‹ˆ" || text === "ì•„ë²„ì§€" || text === "ì—„ë§ˆ" || text === "ì•„ë¹ ") return "parent";
+  if (text === "ë°°ìš°ì" || text === "íŒŒíŠ¸ë„ˆ" || text === "ë°°ìš°ì/íŒŒíŠ¸ë„ˆ") return "spouse";
+  if (text === "í˜•ì œ" || text === "í˜•ì œìë§¤" || text === "ìë§¤" || text === "ë‚¨ë§¤" || text === "ëˆ„ë‚˜" || text === "ì–¸ë‹ˆ" || text === "ì˜¤ë¹ " || text === "í˜•" || text === "ë™ìƒ") return "sibling";
+  if (text === "ìë…€" || text === "ì•„ë“¤" || text === "ë”¸" || text === "ì•„ì´") return "child";
+  if (text === "ì†ì" || text === "ì†ë…€" || text === "ì†ìë…€") return "grandchild";
+  if (text === "ë°˜ë ¤ë™ë¬¼" || text === "ê°•ì•„ì§€" || text === "ê³ ì–‘ì´") return "pet";
+  if (text === "ê¸°íƒ€ê°€ì¡±" || text === "ê°€ì¡±") return "family";
+  return null;
+}
+
+function bulkGender(value) {
+  var text = String(value || "").replace(/\s/g, "").toLowerCase();
+  if (text === "ë‚¨" || text === "ë‚¨ì„±" || text === "ë‚¨ì" || text === "male") {
+    return { gender: "male", genderUnknown: false };
+  }
+  if (text === "ì—¬" || text === "ì—¬ì„±" || text === "ì—¬ì" || text === "female") {
+    return { gender: "female", genderUnknown: false };
+  }
+  return { gender: "other", genderUnknown: true };
+}
+
+function bulkPetType(value, roleName) {
+  var text = String(value || "") + " " + String(roleName || "");
+  if (text.indexOf("ê°•ì•„ì§€") !== -1 || text.toLowerCase().indexOf("dog") !== -1) return "dog";
+  if (text.indexOf("ê³ ì–‘ì´") !== -1 || text.toLowerCase().indexOf("cat") !== -1) return "cat";
+  return "other";
+}
+
+function parseBulkPeople(value) {
+  var records = [];
+  var errors = [];
+  String(value || "").split(/\r?\n/).forEach(function(rawLine, index) {
+    var line = rawLine.trim();
+    if (!line || line.indexOf("#") === 0) return;
+    var parts = line.indexOf("|") !== -1
+      ? line.split("|")
+      : (line.indexOf("\t") !== -1 ? line.split("\t") : line.split(","));
+    parts = parts.map(function(part) { return part.trim(); });
+    var role = bulkRole(parts[0]);
+    var name = parts[1] || "";
+    if (!role || !name) {
+      errors.push((index + 1) + "ë²ˆì§¸ ì¤„: ê´€ê³„ì™€ ì´ë¦„ì„ í™•ì¸í•´ì£¼ì„¸ìš”.");
+      return;
+    }
+    var genderInfo = bulkGender(parts[2]);
+    var isPet = role === "pet";
+    var deathValue = isPet ? "" : (parts[4] || "");
+    var deathYearUnknown = /ë¯¸ìƒ|ë¯¸í™•ì¸|í™•ì¸ì•ˆë¨/.test(deathValue);
+    var birthOrderUnknown = /ìˆœì„œ.*ë¯¸ìƒ|ì¶œìƒìˆœì„œ.*ë¯¸ìƒ/.test(parts[5] || "");
+    records.push({
+      role: role,
+      name: name,
+      gender: isPet ? "other" : genderInfo.gender,
+      genderUnknown: isPet ? false : genderInfo.genderUnknown,
+      birthYear: isPet ? (parts[3] || "") : (parts[3] || ""),
+      deathYear: deathYearUnknown ? "" : deathValue,
+      deceased: !isPet && (Boolean(deathValue) || deathYearUnknown),
+      deathYearUnknown: !isPet && deathYearUnknown,
+      birthOrderUnknown: !isPet && birthOrderUnknown,
+      petType: isPet ? bulkPetType(parts[2], parts[0] + " " + name) : "other"
+    });
+  });
+  return { records: records, errors: errors };
+}
+
+function openBulkInput() {
+  var overlay = document.getElementById("bulkInputOverlay");
+  var input = document.getElementById("bulkPeopleInput");
+  overlay.hidden = false;
+  document.getElementById("bulkInputStatus").textContent = "";
+  input.focus();
+}
+
+function closeBulkInput() {
+  document.getElementById("bulkInputOverlay").hidden = true;
+}
+
+function applyBulkPeople() {
+  var parsed = parseBulkPeople(document.getElementById("bulkPeopleInput").value);
+  var status = document.getElementById("bulkInputStatus");
+  if (!parsed.records.length) {
+    status.textContent = parsed.errors[0] || "ì¶”ê°€í•  êµ¬ì„±ì›ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.";
+    return;
+  }
+  rememberUndo();
+  var added = [];
+  parsed.records.forEach(function(record) {
+    var person = {
+      id: uid(),
+      name: record.name,
+      gender: record.gender,
+      role: record.role,
+      generation: roles[record.role].generation,
+      birthYear: record.birthYear,
+      deathYear: record.deathYear,
+      deceased: record.deceased,
+      deathYearUnknown: record.deathYearUnknown,
+      genderUnknown: record.genderUnknown,
+      birthOrderUnknown: record.birthOrderUnknown,
+      coupleStatus: "married",
+      childType: "biological",
+      parentId: null,
+      petType: record.petType,
+      petOwnerId: record.role === "pet" ? clientPerson().id : null,
+      x: 550,
+      y: 400,
+      resources: [],
+      supportMemo: "",
+      supports: []
+    };
+    state.people.push(person);
+    attachByRole(person, record.role);
+    added.push(person);
+  });
+  state.selectedId = added[0].id;
+  state.selectedResourceId = null;
+  openSidebarPanel("familyPanel");
+  closeBulkInput();
+  document.getElementById("bulkPeopleInput").value = "";
+  layoutFamilyTree();
+  var message = added.length + "ëª…ì„ ì¶”ê°€í–ˆìŠµë‹ˆë‹¤.";
+  if (parsed.errors.length) message += " " + parsed.errors.length + "ê°œ ì¤„ì€ ê±´ë„ˆë›°ì—ˆìŠµë‹ˆë‹¤.";
+  showToast(message);
+}
+
+function addPerson() {
+  var input = document.getElementById("newPersonName");
+  var name = input.value.trim();
+  if (!name) {
+    showToast("ê°€ì¡± êµ¬ì„±ì›ì˜ ì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.");
+    input.focus();
+    return;
+  }
+  var role = document.getElementById("newRole").value;
+  var parentId = role === "grandchild" ? document.getElementById("newParentPerson").value : null;
+  var petOwnerId = role === "pet"
+    ? document.getElementById("newPetOwner").value
+    : null;
+  if (role === "grandchild" && !parentId) {
+    showToast("ì†ìë…€ë¥¼ ì—°ê²°í•  ìë…€ë¥¼ ë¨¼ì € ì¶”ê°€í•´ì£¼ì„¸ìš”.");
+    return;
+  }
+  rememberUndo();
+  var person = {
+    id: uid(),
+    name: name,
+    gender: role === "pet" ? "other" : (document.getElementById("newGenderUnknown").checked ? "other" : document.getElementById("newGender").value),
+    role: role,
+    generation: roles[role].generation,
+    birthYear: document.getElementById("newBirthYear").value.trim(),
+    deathYear: role === "pet" ? "" : document.getElementById("newDeathYear").value.trim(),
+    deceased: role === "pet" ? false : (document.getElementById("newDeceased").checked || document.getElementById("newDeathYearUnknown").checked),
+    deathYearUnknown: role === "pet" ? false : document.getElementById("newDeathYearUnknown").checked,
+    genderUnknown: role === "pet" ? false : document.getElementById("newGenderUnknown").checked,
+    birthOrderUnknown: document.getElementById("newBirthOrderUnknown").checked,
+    coupleStatus: document.getElementById("newCoupleStatus").value,
+    childType: document.getElementById("newChildType").value,
+    parentId: parentId,
+    petType: role === "pet" ? document.getElementById("newPetType").value : "other",
+    petOwnerId: petOwnerId,
+    x: 550,
+    y: 400,
+    resources: [],
+    supportMemo: "",
+    supports: []
+  };
+  state.people.push(person);
+  attachByRole(person, role);
+  if (role !== "pet") {
+    upsertSocialLink(
+      clientPerson().id,
+      person.id,
+      document.getElementById("newOutgoingRelationship").value,
+      document.getElementById("newIncomingRelationship").value
+    );
+  }
+  state.selectedId = person.id;
+  state.selectedResourceId = null;
+  openSidebarPanel("familyPanel");
+  input.value = "";
+  document.getElementById("newBirthYear").value = "";
+  document.getElementById("newDeathYear").value = "";
+  document.getElementById("newDeceased").checked = false;
+  document.getElementById("newDeathYearUnknown").checked = false;
+  document.getElementById("newGenderUnknown").checked = false;
+  document.getElementById("newBirthOrderUnknown").checked = false;
+  layoutFamilyTree();
+}
+
+function attachByRole(person, role) {
+  var client = clientPerson();
+  var group;
+  if (role === "parent" || role === "sibling") {
+    group = state.familyGroups.find(function(item) {
+      return item.children.indexOf(client.id) !== -1;
+    });
+    if (!group) {
+      group = {
+        id: uid(),
+        parents: [],
+        children: [client.id],
+        status: "married",
+        childTypes: {}
+      };
+      group.childTypes[client.id] = "biological";
+      state.familyGroups.push(group);
+    }
+    if (role === "parent") {
+      if (group.parents.length < 2) {
+        group.parents.push(person.id);
+        if (group.parents.length === 2) group.status = person.coupleStatus;
+      } else {
+        var additionalOriginGroup = {
+          id: uid(),
+          parents: [person.id],
+          children: [client.id],
+          status: person.coupleStatus,
+          childTypes: {}
+        };
+        additionalOriginGroup.childTypes[client.id] = "biological";
+        state.familyGroups.push(additionalOriginGroup);
+      }
+    } else if (group.children.indexOf(person.id) === -1) {
+      group.children.push(person.id);
+      group.childTypes[person.id] = person.childType;
+    }
+  } else if (role === "spouse" || role === "child") {
+    group = state.familyGroups.find(function(item) {
+      return item.parents.indexOf(client.id) !== -1;
+    });
+    if (!group) {
+      group = {
+        id: uid(),
+        parents: [client.id],
+        children: [],
+        status: "married",
+        childTypes: {}
+      };
+      state.familyGroups.push(group);
+    }
+    if (role === "spouse") {
+      if (group.parents.length < 2) {
+        group.parents.push(person.id);
+        group.status = person.coupleStatus;
+      }
+      else state.familyGroups.push({
+        id: uid(),
+        parents: [client.id, person.id],
+        children: [],
+        status: person.coupleStatus,
+        childTypes: {}
+      });
+    } else if (group.children.indexOf(person.id) === -1) {
+      group.children.push(person.id);
+      group.childTypes[person.id] = person.childType;
+    }
+  } else if (role === "grandchild") {
+    var grandchildParent = personById(person.parentId) || eligibleGrandchildParents()[0];
+    if (!grandchildParent) return;
+    person.parentId = grandchildParent.id;
+    group = state.familyGroups.find(function(item) {
+      return item.parents.indexOf(grandchildParent.id) !== -1;
+    });
+    if (!group) {
+      group = {
+        id: uid(),
+        parents: [grandchildParent.id],
+        children: [],
+        status: "married",
+        childTypes: {}
+      };
+      state.familyGroups.push(group);
+    }
+    if (group.children.indexOf(person.id) === -1) {
+      group.children.push(person.id);
+      group.childTypes[person.id] = person.childType;
+    }
+  }
+}
+
+function changePersonRole(person, nextRole) {
+  if (person.role === "client") return;
+  if (nextRole === "grandchild") {
+    var possibleParents = eligibleGrandchildParents().filter(function(parent) {
+      return parent.id !== person.id;
+    });
+    if (!possibleParents.length) {
+      showToast("ì†ìë…€ë¥¼ ì—°ê²°í•  ë‹¤ë¥¸ ìë…€ê°€ í•„ìš”í•©ë‹ˆë‹¤.");
+      render();
+      return;
+    }
+    if (!possibleParents.some(function(parent) { return parent.id === person.parentId; })) {
+      person.parentId = possibleParents[0].id;
+    }
+  }
+  if (nextRole === "pet") {
+    state.links = state.links.filter(function(link) {
+      return link.from !== person.id && link.to !== person.id;
+    });
+    person.petOwnerId = person.petOwnerId || clientPerson().id;
+    setPersonSupport(person, "");
+  } else if (person.role === "pet") {
+    person.petOwnerId = null;
+  }
+  removeFromFamilies(person.id);
+  person.role = nextRole;
+  person.generation = roles[nextRole].generation;
+  if (nextRole !== "grandchild") person.parentId = null;
+  attachByRole(person, nextRole);
+  layoutFamilyTree();
+}
+
+function addResource() {
+  var input = document.getElementById("resourceName");
+  var name = input.value.trim();
+  if (!name) {
+    showToast("ê¸°ê´€ëª… ë˜ëŠ” ìì› ì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.");
+    input.focus();
+    return;
+  }
+  var supportMemo = document.getElementById("resourceMemo").value.trim();
+  var familyTarget = familyPersonByName(name, selectedPerson().id);
+  if (familyTarget && splitSupports(supportMemo).length) {
+    rememberUndo();
+    addPersonSupport(familyTarget, supportMemo);
+    state.selectedId = familyTarget.id;
+    state.selectedResourceId = null;
+    input.value = "";
+    document.getElementById("resourceMemo").value = "";
+    openSidebarPanel("editPanel");
+    render();
+    showToast(familyTarget.name + "ì˜ ì§€ì› ë‚´ìš©ì„ ê°€ì¡± í•­ëª©ì— í‘œì‹œí–ˆìŠµë‹ˆë‹¤.");
+    return;
+  }
+  rememberUndo();
+  var person = selectedPerson();
+  var position = defaultResourcePosition(person, person.resources.length);
+  var resource = {
+    id: uid(),
+    type: document.getElementById("resourceType").value,
+    name: name,
+    memo: supportMemo,
+    supports: splitSupports(document.getElementById("resourceMemo").value),
+    relationship: document.getElementById("resourceRelationship").value,
+    direction: document.getElementById("resourceDirection").value,
+    x: position.x,
+    y: position.y,
+    width: 150,
+    height: 72
+  };
+  fitResourceHeight(resource);
+  person.resources.push(resource);
+  state.selectedResourceId = resource.id;
+  openSidebarPanel("editPanel");
+  input.value = "";
+  document.getElementById("resourceMemo").value = "";
+  render();
+}
+
+function upsertSocialLink(from, to, outType, inType) {
+  var fromPerson = personById(from);
+  var toPerson = personById(to);
+  if ((fromPerson && fromPerson.role === "pet") || (toPerson && toPerson.role === "pet")) return;
+  outType = normalizeDirectedRelationshipType(outType);
+  inType = normalizeDirectedRelationshipType(inType);
+  var existing = state.links.find(function(link) {
+    return (link.from === from && link.to === to) || (link.from === to && link.to === from);
+  });
+  if (outType === "none" && inType === "none") {
+    if (existing) {
+      state.links = state.links.filter(function(link) { return link.id !== existing.id; });
+    }
+    return;
+  }
+  if (existing) {
+    existing.from = from;
+    existing.to = to;
+    existing.outType = outType;
+    existing.inType = inType;
+  } else {
+    var link = {
+      id: uid(),
+      from: from,
+      to: to,
+      outType: outType,
+      inType: inType
+    };
+    state.links.push(link);
+  }
+}
+
+function openQuickEditor(kind, ownerId, itemId) {
+  closeQuickEditor();
+  quickEditor.hidden = false;
+  quickEditor.style.left = "50%";
+  quickEditor.style.top = "68px";
+  quickEditor.style.transform = "translateX(-50%)";
+
+  if (kind === "person") {
+    var person = personById(ownerId);
+    if (!person) return closeQuickEditor();
+    var quickCoupleGroup = coupleGroupForPerson(person.id);
+    var quickChildGroup = childGroupForPerson(person.id);
+    var quickGrandchildParents = person.role === "grandchild"
+      ? eligibleGrandchildParents().filter(function(parent) { return parent.id !== person.id; })
+      : [];
+    quickEditor.innerHTML =
+      '<h3>ì¸ë¬¼ ë°”ë¡œ ìˆ˜ì •</h3>' +
+      '<div class="field"><label for="quickName">ì´ë¦„</label><input id="quickName" value="' + attr(person.name) + '"></div>' +
+      '<div class="row"><div class="field"><label for="quickGender">ê°€ê³„ë„ ê¸°í˜¸</label><select id="quickGender"></select></div>' +
+      '<div class="field"><label for="quickRole">ì—­í• </label><select id="quickRole"></select></div></div>' +
+      (person.role === "pet" ?
+        '<div class="row"><div class="field"><label for="quickPetType">ë°˜ë ¤ë™ë¬¼ ì¢…ë¥˜</label>' +
+        '<select id="quickPetType"></select></div><div class="field"><label for="quickPetOwner">í•¨ê»˜ ì‚¬ëŠ” ê°€ì¡±</label>' +
+        '<select id="quickPetOwner"></select></div></div>' : "") +
+      (person.role === "pet" ? "" :
+        '<div class="field"><label for="quickSupportMemo">ê°€ì¡± ì§€ì› ë‚´ìš© (ì—¬ëŸ¬ ê°œ ê°€ëŠ¥)</label>' +
+        '<textarea id="quickSupportMemo" rows="3" placeholder="ì°¨ëŸ‰ ì´ë™ ë„ì›€ / ë¬¼í’ˆ êµ¬ë§¤ ë„ì›€ / ì‹¤ì§ˆì  ì§€ì›">' +
+        attr(person.supportMemo || personSupportItems(person).join("\n")) + '</textarea>' +
+        '<p class="field-help">ê°€ê³„ë„ ì¸ë¬¼ ì•„ë˜ì— ì§€ì› ë‚´ìš©ì´ í‘œì‹œë©ë‹ˆë‹¤.</p></div>') +
+      '<div class="row compact-row"><div class="field"><label for="quickBirthYear">ì¶œìƒì—°ë„</label>' +
+      '<input id="quickBirthYear" value="' + attr(person.birthYear) + '"></div>' +
+      '<div class="field"><label for="quickDeathYear">ì‚¬ë§ì—°ë„</label>' +
+      '<input id="quickDeathYear" value="' + attr(person.deathYear) + '"></div></div>' +
+      '<label class="check-field"><input id="quickDeceased" type="checkbox"' +
+      (person.deceased ? " checked" : "") + '><span>ì‚¬ë§ í‘œì‹œ</span></label>' +
+      '<label class="check-field"><input id="quickDeathYearUnknown" type="checkbox"' +
+      (person.deathYearUnknown ? " checked" : "") + '><span>ì‚¬ë§ì—°ë„ ë¯¸ìƒ</span></label>' +
+      '<div class="row compact-row"><label class="check-field"><input id="quickGenderUnknown" type="checkbox"' +
+      (person.genderUnknown ? " checked" : "") + '><span>ì„±ë³„ ë¯¸ìƒ</span></label>' +
+      ((person.role === "child" || person.role === "grandchild") ?
+        '<label class="check-field"><input id="quickBirthOrderUnknown" type="checkbox"' +
+        (person.birthOrderUnknown ? " checked" : "") + '><span>ìë…€ ì¶œìƒìˆœì„œ ë¯¸ìƒ</span></label></div>' : "</div>") +
+      (person.role === "client" ? "" :
+        '<div class="row"><div class="field"><label for="quickOutgoingRelationship">í´ë¼ì´ì–¸íŠ¸ â†’ ëŒ€ìƒ</label>' +
+        '<select id="quickOutgoingRelationship"></select></div><div class="field">' +
+        '<label for="quickIncomingRelationship">ëŒ€ìƒ â†’ í´ë¼ì´ì–¸íŠ¸</label>' +
+        '<select id="quickIncomingRelationship"></select></div></div>') +
+      (quickCoupleGroup ?
+        '<div class="field"><label for="quickCoupleStatus">ë¶€ë¶€/íŒŒíŠ¸ë„ˆ ìƒíƒœ</label>' +
+        '<select id="quickCoupleStatus"></select></div>' : "") +
+      (quickChildGroup ?
+        '<div class="field"><label for="quickChildType">ë¶€ëª¨-ìë…€ ìœ í˜•</label>' +
+        '<select id="quickChildType"></select></div>' : "") +
+      (person.role === "grandchild" ?
+        '<div class="field"><label for="quickParentPerson">ì†ìë…€ì˜ ë¶€ëª¨</label>' +
+        '<select id="quickParentPerson"></select></div>' : "") +
+      '<div class="editor-actions"><button class="btn" id="quickCancel" type="button">ì·¨ì†Œ</button>' +
+      '<button class="btn primary" id="quickSave" type="button">ì ìš©</button></div>';
+    fillSelect(document.getElementById("quickGender"), genders, person.gender);
+    fillSelect(document.getElementById("quickRole"), roles, person.role);
+    document.getElementById("quickRole").disabled = person.role === "client";
+    if (person.role === "pet") {
+      fillSelect(document.getElementById("quickPetType"), petTypes, person.petType);
+      fillPersonSelect(document.getElementById("quickPetOwner"), eligiblePetOwners(), person.petOwnerId);
+    }
+    var personRelationship = relationshipForPerson(person.id);
+    if (person.role !== "client") {
+      fillSelect(
+        document.getElementById("quickOutgoingRelationship"),
+        directedSocialTypes,
+        personRelationship ? personRelationship.outType : "none"
+      );
+      fillSelect(
+        document.getElementById("quickIncomingRelationship"),
+        directedSocialTypes,
+        personRelationship ? personRelationship.inType : "none"
+      );
+    }
+    if (quickCoupleGroup) {
+      fillSelect(document.getElementById("quickCoupleStatus"), coupleStatuses, quickCoupleGroup.status);
+    }
+    if (quickChildGroup) {
+      fillSelect(
+        document.getElementById("quickChildType"),
+        childTypes,
+        quickChildGroup.childTypes[person.id] || "biological"
+      );
+    }
+    if (person.role === "grandchild") {
+      fillPersonSelect(document.getElementById("quickParentPerson"), quickGrandchildParents, person.parentId);
+    }
+    document.getElementById("quickSave").addEventListener("click", function() {
+      rememberUndo();
+      var nextRole = document.getElementById("quickRole").value;
+      var previousParentId = person.parentId;
+      var nextParentId = person.role === "grandchild"
+        ? document.getElementById("quickParentPerson").value
+        : person.parentId;
+      person.name = document.getElementById("quickName").value.trim() || "ì´ë¦„ ì—†ìŒ";
+      person.gender = nextRole === "pet" ? "other" : document.getElementById("quickGender").value;
+      person.birthYear = document.getElementById("quickBirthYear").value.trim();
+      person.deathYear = document.getElementById("quickDeathYear").value.trim();
+      person.deceased = document.getElementById("quickDeceased").checked || document.getElementById("quickDeathYearUnknown").checked;
+      person.deathYearUnknown = document.getElementById("quickDeathYearUnknown").checked;
+      person.genderUnknown = document.getElementById("quickGenderUnknown").checked;
+      person.birthOrderUnknown = document.getElementById("quickBirthOrderUnknown")
+        ? document.getElementById("quickBirthOrderUnknown").checked : false;
+      var quickSupportMemo = document.getElementById("quickSupportMemo");
+      setPersonSupport(person, nextRole === "pet" || !quickSupportMemo ? "" : quickSupportMemo.value);
+      if (person.role === "pet") {
+        person.petType = document.getElementById("quickPetType").value;
+        person.petOwnerId = document.getElementById("quickPetOwner").value;
+      }
+      if (quickCoupleGroup) {
+        quickCoupleGroup.status = document.getElementById("quickCoupleStatus").value;
+        person.coupleStatus = quickCoupleGroup.status;
+      }
+      if (quickChildGroup) {
+        quickChildGroup.childTypes[person.id] = document.getElementById("quickChildType").value;
+        person.childType = quickChildGroup.childTypes[person.id];
+      }
+      if (person.role !== "client" && person.role !== "pet" && nextRole !== "pet") {
+        upsertSocialLink(
+          clientPerson().id,
+          person.id,
+          document.getElementById("quickOutgoingRelationship").value,
+          document.getElementById("quickIncomingRelationship").value
+        );
+      }
+      closeQuickEditor();
+      if (person.role !== "client" && person.role !== nextRole) {
+        person.parentId = nextParentId;
+        changePersonRole(person, nextRole);
+      } else if (person.role === "grandchild" && nextParentId && nextParentId !== previousParentId) {
+        removeFromFamilies(person.id);
+        person.parentId = nextParentId;
+        attachByRole(person, "grandchild");
+        layoutFamilyTree();
+      } else {
+        render();
+      }
+    });
+  } else {
+    var owner = personById(ownerId);
+    var resource = resourceById(owner, itemId);
+    if (!resource) return closeQuickEditor();
+    quickEditor.innerHTML =
+      '<h3>ìì› ë°”ë¡œ ìˆ˜ì •</h3>' +
+      '<div class="field"><label for="quickName">ê¸°ê´€ëª… ë˜ëŠ” ìì› ì´ë¦„</label>' +
+      '<input id="quickName" value="' + attr(resource.name) + '"></div>' +
+      '<div class="field"><label for="quickMemo">ì§€ì› ë‚´ìš© (ì—¬ëŸ¬ ê°œ ê°€ëŠ¥)</label>' +
+      '<textarea id="quickMemo" rows="3" placeholder="ì˜ˆ: ì°¨ëŸ‰ ì´ë™ ë„ì›€\në¬¼í’ˆ êµ¬ë§¤ ë„ì›€\nì‹¤ì§ˆì  ì§€ì›">' +
+      attr((resource.supports || []).join("\n") || resource.memo) + '</textarea></div>' +
+      '<div class="row"><div class="field"><label for="quickResourceType">ìì› ë¶„ë¥˜</label>' +
+      '<select id="quickResourceType"></select></div><div class="field">' +
+      '<label for="quickRelationship">ê´€ê³„</label><select id="quickRelationship"></select></div></div>' +
+      '<div class="field"><label for="quickDirection">ê´€ê³„ ë°©í–¥</label><select id="quickDirection"></select></div>' +
+      '<div class="editor-actions"><button class="btn" id="quickCancel" type="button">ì·¨ì†Œ</button>' +
+      '<button class="btn primary" id="quickSave" type="button">ì ìš©</button></div>';
+    fillSelect(document.getElementById("quickResourceType"), resourceTypes, resource.type);
+    fillSelect(document.getElementById("quickRelationship"), socialTypes, resource.relationship);
+    fillSelect(document.getElementById("quickDirection"), directionTypes, resource.direction);
+    document.getElementById("quickSave").addEventListener("click", function() {
+      rememberUndo();
+      var nextResourceName = document.getElementById("quickName").value.trim() || "ì´ë¦„ ì—†ëŠ” ìì›";
+      var nextResourceMemo = document.getElementById("quickMemo").value.trim();
+      var nextFamilyTarget = familyPersonByName(nextResourceName, owner.id);
+      if (nextFamilyTarget && splitSupports(nextResourceMemo).length) {
+        addPersonSupport(nextFamilyTarget, nextResourceMemo);
+        owner.resources = owner.resources.filter(function(item) { return item.id !== resource.id; });
+        state.selectedId = nextFamilyTarget.id;
+        state.selectedResourceId = null;
+        closeQuickEditor();
+        render();
+        showToast(nextFamilyTarget.name + "ì˜ ì§€ì› ë‚´ìš©ì„ ê°€ì¡± í•­ëª©ì— í‘œì‹œí–ˆìŠµë‹ˆë‹¤.");
+        return;
+      }
+      resource.name = nextResourceName;
+      resource.memo = nextResourceMemo;
+      resource.supports = splitSupports(resource.memo);
+      fitResourceHeight(resource);
+      resource.type = document.getElementById("quickResourceType").value;
+      resource.relationship = document.getElementById("quickRelationship").value;
+      resource.direction = document.getElementById("quickDirection").value;
+      state.selectedId = owner.id;
+      state.selectedResourceId = resource.id;
+      closeQuickEditor();
+      render();
+    });
+    positionEditorNearResource(resource.id);
+  }
+  document.getElementById("quickCancel").addEventListener("click", closeQuickEditor);
+  document.getElementById("quickName").focus();
+}
+
+function closeQuickEditor() {
+  quickEditor.hidden = true;
+  quickEditor.innerHTML = "";
+}
+
+function positionEditorNearResource(resourceId) {
+  var target = Array.from(svg.querySelectorAll(".resource-node")).find(function(element) {
+    return element.dataset.resourceId === resourceId;
+  });
+  if (!target) return;
+  var stage = document.querySelector(".stage");
+  var stageBox = stage.getBoundingClientRect();
+  var targetBox = target.getBoundingClientRect();
+  var width = quickEditor.offsetWidth || 330;
+  var height = quickEditor.offsetHeight || 360;
+  var left = targetBox.right - stageBox.left + 10;
+  if (left + width > stageBox.width - 10) {
+    left = targetBox.left - stageBox.left - width - 10;
+  }
+  quickEditor.style.transform = "none";
+  quickEditor.style.left = Math.max(10, left) + "px";
+  quickEditor.style.top = Math.max(
+    10,
+    Math.min(targetBox.top - stageBox.top, stageBox.height - height - 10)
+  ) + "px";
+}
+
+function layoutFamilyTree() {
+  var generations = {};
+  state.people.forEach(function(person) {
+    var key = String(person.generation);
+    if (!generations[key]) generations[key] = [];
+    generations[key].push(person);
+  });
+  Object.keys(generations).forEach(function(key) {
+    var generation = Number(key);
+    var row = generations[key].sort(byX);
+    var minX = 170;
+    var maxX = 930;
+    var generationY = {
+      "-2": 100,
+      "-1": 165,
+      "0": 385,
+      "1": 555,
+      "2": 700
+    };
+    var y = generationY[key] || clamp(385 + generation * 165, 90, 700);
+    row.forEach(function(person, index) {
+      person.x = row.length === 1
+        ? 550
+        : minX + (maxX - minX) * index / (row.length - 1);
+      person.y = y;
+    });
+  });
+  var grandchildrenByParent = {};
+  state.people.forEach(function(person) {
+    if (person.role !== "grandchild" || !person.parentId) return;
+    if (!grandchildrenByParent[person.parentId]) grandchildrenByParent[person.parentId] = [];
+    grandchildrenByParent[person.parentId].push(person);
+  });
+  Object.keys(grandchildrenByParent).forEach(function(parentId) {
+    var parent = personById(parentId);
+    if (!parent) return;
+    var grandchildren = grandchildrenByParent[parentId].sort(byX);
+    var spacing = 135;
+    var firstX = parent.x - spacing * (grandchildren.length - 1) / 2;
+    var lastX = firstX + spacing * (grandchildren.length - 1);
+    var shiftX = firstX < 70 ? 70 - firstX : (lastX > 1030 ? 1030 - lastX : 0);
+    grandchildren.forEach(function(grandchild, index) {
+      grandchild.x = firstX + index * spacing + shiftX;
+      grandchild.y = 700;
+    });
+  });
+  state.people.forEach(function(person) {
+    person.resources.forEach(function(resource, index) {
+      var position = defaultResourcePosition(person, index);
+      resource.x = position.x;
+      resource.y = position.y;
+    });
+  });
+  render();
+}
+
+function deleteSelectedPerson() {
+  var person = selectedPerson();
+  if (person.role === "client") return;
+  rememberUndo();
+  state.people = state.people.filter(function(item) { return item.id !== person.id; });
+  state.links = state.links.filter(function(link) {
+    return link.from !== person.id && link.to !== person.id;
+  });
+  removeFromFamilies(person.id);
+  state.households = state.households.map(function(household) {
+    household.memberIds = household.memberIds.filter(function(id) { return id !== person.id; });
+    return household;
+  }).filter(function(household) {
+    return household.memberIds.length >= 1;
+  });
+  state.selectedId = clientPerson().id;
+  state.selectedResourceId = null;
+  render();
+}
+
+function removeFromFamilies(personId) {
+  state.familyGroups.forEach(function(group) {
+    group.parents = group.parents.filter(function(id) { return id !== personId; });
+    group.children = group.children.filter(function(id) { return id !== personId; });
+    if (group.childTypes) delete group.childTypes[personId];
+  });
+  state.familyGroups = state.familyGroups.filter(function(group) {
+    return group.parents.length >= 2 || group.children.length > 0;
+  });
+}
+
+function createExternalState(source) {
+  var external = normalizeState(JSON.parse(JSON.stringify(source || state)));
+  var people = external.people;
+  var personIdMap = {};
+  var resourceIdMap = {};
+  var roleLabels = {
+    parent: "ë¶€ëª¨",
+    spouse: "ë°°ìš°ì",
+    sibling: "í˜•ì œìë§¤",
+    child: "ìë…€",
+    grandchild: "ì†ìë…€",
+    family: "ê°€ì¡±",
+    pet: "ë°˜ë ¤ë™ë¬¼"
+  };
+  var roleCounts = {};
+  people.forEach(function(person, index) {
+    personIdMap[person.id] = "person-" + (index + 1);
+  });
+  people.forEach(function(person) {
+    var base = person.role === "client" ? "ëŒ€ìƒì" : (roleLabels[person.role] || "ê°€ì¡±");
+    roleCounts[base] = (roleCounts[base] || 0) + 1;
+    person.name = base === "ëŒ€ìƒì" ? base : base + " " + roleCounts[base];
+    person.id = personIdMap[person.id];
+    person.parentId = personIdMap[person.parentId] || null;
+    person.petOwnerId = personIdMap[person.petOwnerId] || null;
+    person.birthYear = "";
+    person.deathYear = "";
+    person.deathYearUnknown = false;
+    var supportCount = personSupportItems(person).length;
+    person.supports = Array.from({ length: supportCount }, function(_, index) {
+      return "ì§€ì› ë‚´ìš© " + (index + 1);
+    });
+    person.supportMemo = person.supports.join("\n");
+  });
+  var resourceCount = 0;
+  people.forEach(function(person) {
+    person.resources = (person.resources || []).map(function(resource) {
+      var originalId = resource.id;
+      var resourceId = "resource-" + (++resourceCount);
+      resourceIdMap[originalId] = resourceId;
+      var supportCount = Array.isArray(resource.supports) && resource.supports.length
+        ? resource.supports.length
+        : splitSupports(resource.memo).length;
+      resource.id = resourceId;
+      resource.name = "ìì› " + resourceCount;
+      resource.supports = Array.from({ length: supportCount || 1 }, function(_, index) {
+        return "ì§€ì› ë‚´ìš© " + (index + 1);
+      });
+      resource.memo = resource.supports.join("\n");
+      return resource;
+    });
+  });
+  external.links = external.links.map(function(link, index) {
+    return {
+      id: "link-" + (index + 1),
+      from: personIdMap[link.from],
+      to: personIdMap[link.to],
+      outType: link.outType,
+      inType: link.inType
+    };
+  }).filter(function(link) {
+    return link.from && link.to;
+  });
+  external.familyGroups = external.familyGroups.map(function(group) {
+    var childTypes = {};
+    Object.keys(group.childTypes || {}).forEach(function(id) {
+      if (personIdMap[id]) childTypes[personIdMap[id]] = group.childTypes[id];
+    });
+    return {
+      id: group.id,
+      parents: group.parents.map(function(id) { return personIdMap[id]; }).filter(Boolean),
+      children: group.children.map(function(id) { return personIdMap[id]; }).filter(Boolean),
+      status: group.status,
+      childTypes: childTypes
+    };
+  });
+  external.households = external.households.map(function(household, index) {
+    var memberIds = household.memberIds.map(function(id) { return personIdMap[id]; }).filter(Boolean);
+    return {
+      id: "household-" + (index + 1),
+      name: memberIds.length === 1 ? "ë…ê±°ê°€êµ¬" : "ë™ê±°ê°€ì¡± " + (index + 1),
+      memberIds: memberIds
+    };
+  }).filter(function(household) {
+    return household.memberIds.length > 0;
+  });
+  external.title = "ì™¸ë¶€ ë°°í¬ìš© ê°€ê³„ë„Â·ìƒíƒœë„";
+  external.externalRedacted = true;
+  external.driveFileId = "";
+  external.reviewConfirmedKey = null;
+  external.selectedId = personIdMap[source.selectedId] || (external.people[0] && external.people[0].id) || null;
+  external.selectedResourceId = null;
+  external.selectedLinkId = null;
+  return external;
+}
+
+function redactSvgClone(clone, sourceState, externalState) {
+  clone.querySelectorAll("image").forEach(function(image) {
+    image.remove();
+  });
+  var sanitizedPeople = {};
+  sourceState.people.forEach(function(person, index) {
+    sanitizedPeople[person.id] = externalState.people[index];
+  });
+  clone.querySelectorAll(".person-node").forEach(function(node) {
+    var person = sanitizedPeople[node.dataset.personId];
+    if (!person) return;
+    var name = node.querySelector(".node-name");
+    if (name) name.textContent = person.name;
+    node.querySelectorAll(".node-year").forEach(function(year) { year.remove(); });
+    var support = node.querySelector(".node-support");
+    if (support) {
+      support.textContent = person.supports.join(" Â· ");
+      if (!person.supports.length) support.remove();
+    }
+  });
+  var sanitizedResources = {};
+  sourceState.people.forEach(function(person, personIndex) {
+    (person.resources || []).forEach(function(resource, resourceIndex) {
+      var sanitizedPerson = externalState.people[personIndex];
+      sanitizedResources[person.id + ":" + resource.id] = sanitizedPerson && sanitizedPerson.resources[resourceIndex];
+    });
+  });
+  clone.querySelectorAll(".resource-node").forEach(function(node) {
+    var resource = sanitizedResources[node.dataset.ownerId + ":" + node.dataset.resourceId];
+    if (!resource) return;
+    var name = node.querySelector(".resource-name");
+    if (name) name.textContent = resource.name;
+    var meta = node.querySelector(".resource-meta");
+    if (meta) meta.textContent = resource.supports.join(" Â· ");
+  });
+}
+
+function downloadJson() {
+  saveLocalState();
+  downloadBlob(
+    new Blob([JSON.stringify(state, null, 2)], { type: "application/json" }),
+    safeFilename(state.title || "ìƒíƒœë„") + ".json"
+  );
+  showToast("ìƒíƒœë„ íŒŒì¼ì„ ì €ì¥í–ˆìŠµë‹ˆë‹¤.");
+}
+
+function downloadExternalJson() {
+  var externalState = createExternalState(state);
+  downloadBlob(
+    new Blob([JSON.stringify(externalState, null, 2)], { type: "application/json" }),
+    safeFilename(externalState.title) + ".json"
+  );
+  showToast("ê°œì¸ì •ë³´ë¥¼ ê°€ë¦° ì™¸ë¶€ ë°°í¬ìš© JSONì„ ì €ì¥í–ˆìŠµë‹ˆë‹¤.");
+}
+
+function exportPng(embedState, options) {
+  options = options || {};
+  var exportState = options.state || state;
+  var exportButton = document.getElementById(options.buttonId || "saveButton");
+  if (exportInProgress || Date.now() - lastExportFinishedAt < 5000) {
+    showToast("PNG ì €ì¥ì´ ì´ë¯¸ ì²˜ë¦¬ë˜ì—ˆìŠµë‹ˆë‹¤.");
+    return;
+  }
+  exportInProgress = true;
+  if (exportButton) exportButton.disabled = true;
+  var clone = svg.cloneNode(true);
+  if (options.redactSvg) redactSvgClone(clone, state, exportState);
+  clone.setAttribute("width", "1760");
+  clone.setAttribute("height", "1216");
+  clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  var style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+  style.textContent = Array.from(document.styleSheets).map(function(sheet) {
+    try {
+      return Array.from(sheet.cssRules).map(function(rule) { return rule.cssText; }).join("\n");
+    } catch (error) {
+      return "";
+    }
+  }).join("\n");
+  clone.insertBefore(style, clone.firstChild);
+  var blob = new Blob([new XMLSerializer().serializeToString(clone)], {
+    type: "image/svg+xml;charset=utf-8"
+  });
+  var url = URL.createObjectURL(blob);
+  var image = new Image();
+  image.onload = function() {
+    var canvas = document.createElement("canvas");
+    canvas.width = 1760;
+    canvas.height = 1216;
+    var context = canvas.getContext("2d");
+    context.fillStyle = "#f7f8fa";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+    canvas.toBlob(async function(png) {
+      try {
+        if (!png) throw new Error("empty png");
+        var output = embedState ? await embedStateInPng(png, exportState) : png;
+        downloadBlob(output, safeFilename(exportState.title || "ìƒíƒœë„") + ".png");
+        showToast(options.redactSvg ? "ê°œì¸ì •ë³´ë¥¼ ê°€ë¦° ì™¸ë¶€ ë°°í¬ìš© PNGë¥¼ ì €ì¥í–ˆìŠµë‹ˆë‹¤." : "í¸ì§‘ ë°ì´í„°ë¥¼ í¬í•¨í•œ PNGë¥¼ ì €ì¥í–ˆìŠµë‹ˆë‹¤.");
+      } catch (error) {
+        showToast("PNG ì €ì¥ ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.");
+      } finally {
+        exportInProgress = false;
+        lastExportFinishedAt = Date.now();
+        setTimeout(function() {
+          if (exportButton) exportButton.disabled = false;
+        }, 2000);
+      }
+    }, "image/png");
+  };
+  image.onerror = function() {
+    URL.revokeObjectURL(url);
+    exportInProgress = false;
+    lastExportFinishedAt = Date.now();
+    setTimeout(function() {
+      if (exportButton) exportButton.disabled = false;
+    }, 2000);
+    showToast("PNG ì €ì¥ ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.");
+  };
+  image.src = url;
+}
+
+function exportExternalPng() {
+  var externalState = createExternalState(state);
+  exportPng(true, {
+    state: externalState,
+    redactSvg: true,
+    buttonId: "externalPngButton"
+  });
+}
+
+async function embedStateInPng(pngBlob, diagramState) {
+  var pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
+  var iendOffset = findPngChunkOffset(pngBytes, "IEND");
+  if (iendOffset < 0) return pngBlob;
+  var jsonBytes = new TextEncoder().encode(JSON.stringify(diagramState));
+  var payloadText = "ecomap-state\u0000" + bytesToBase64(jsonBytes);
+  var payload = new TextEncoder().encode(payloadText);
+  var textChunk = createPngChunk("tEXt", payload);
+  return new Blob([
+    pngBytes.slice(0, iendOffset),
+    textChunk,
+    pngBytes.slice(iendOffset)
+  ], { type: "image/png" });
+}
+
+async function extractStateFromPng(file) {
+  var bytes = new Uint8Array(await file.arrayBuffer());
+  if (bytes.length < 8 || bytes[0] !== 137 || bytes[1] !== 80 || bytes[2] !== 78 || bytes[3] !== 71) {
+    return null;
+  }
+  var view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  var offset = 8;
+  while (offset + 12 <= bytes.length) {
+    var length = view.getUint32(offset);
+    var type = String.fromCharCode(
+      bytes[offset + 4],
+      bytes[offset + 5],
+      bytes[offset + 6],
+      bytes[offset + 7]
+    );
+    var dataStart = offset + 8;
+    var dataEnd = dataStart + length;
+    if (dataEnd + 4 > bytes.length) break;
+    if (type === "tEXt") {
+      var text = new TextDecoder("latin1").decode(bytes.slice(dataStart, dataEnd));
+      if (text.indexOf("ecomap-state\u0000") === 0) {
+        var encoded = text.slice("ecomap-state\u0000".length);
+        return JSON.parse(new TextDecoder().decode(base64ToBytes(encoded)));
+      }
+    }
+    offset = dataEnd + 4;
+  }
+  return null;
+}
+
+function findPngChunkOffset(bytes, targetType) {
+  var view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  var offset = 8;
+  while (offset + 12 <= bytes.length) {
+    var length = view.getUint32(offset);
+    var type = String.fromCharCode(
+      bytes[offset + 4],
+      bytes[offset + 5],
+      bytes[offset + 6],
+      bytes[offset + 7]
+    );
+    if (type === targetType) return offset;
+    offset += 12 + length;
+  }
+  return -1;
+}
+
+function createPngChunk(type, data) {
+  var typeBytes = new TextEncoder().encode(type);
+  var chunk = new Uint8Array(12 + data.length);
+  var view = new DataView(chunk.buffer);
+  view.setUint32(0, data.length);
+  chunk.set(typeBytes, 4);
+  chunk.set(data, 8);
+  view.setUint32(8 + data.length, crc32(chunk.slice(4, 8 + data.length)));
+  return chunk;
+}
+
+function crc32(bytes) {
+  if (!crc32.table) {
+    crc32.table = [];
+    for (var index = 0; index < 256; index += 1) {
+      var value = index;
+      for (var bit = 0; bit < 8; bit += 1) {
+        value = (value & 1) ? (0xedb88320 ^ (value >>> 1)) : (value >>> 1);
+      }
+      crc32.table[index] = value >>> 0;
+    }
+  }
+  var crc = 0xffffffff;
+  for (var byteIndex = 0; byteIndex < bytes.length; byteIndex += 1) {
+    crc = crc32.table[(crc ^ bytes[byteIndex]) & 0xff] ^ (crc >>> 8);
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function bytesToBase64(bytes) {
+  var binary = "";
+  for (var index = 0; index < bytes.length; index += 1) {
+    binary += String.fromCharCode(bytes[index]);
+  }
+  return btoa(binary);
+}
+
+function base64ToBytes(value) {
+  var binary = atob(value);
+  var bytes = new Uint8Array(binary.length);
+  for (var index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return bytes;
+}
+
+function closeDocumentDraft() {
+  var overlay = document.getElementById("draftOverlay");
+  if (overlay) overlay.hidden = true;
+  documentDraft = null;
+}
+
+function showDocumentDraftPreview(draft) {
+  var people = draft.people || [];
+  var resources = people.reduce(function(total, person) {
+    return total + (person.resources || []).length;
+  }, 0);
+  var summary = document.getElementById("draftSummary");
+  var warnings = document.getElementById("draftWarnings");
+  var preview = document.getElementById("draftPreview");
+  var status = document.getElementById("draftStatus");
+  var apply = document.getElementById("draftApplyButton");
+  status.textContent = "ë¬¸ì„œì—ì„œ ì¶”ì¶œí•œ ë‚´ìš©ì„ í™•ì¸í•œ ë’¤ ì´ˆì•ˆì„ ì ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.";
+  summary.innerHTML =
+    '<div class="draft-stat"><strong>' + people.length + '</strong><span>ì¸ë¬¼</span></div>' +
+    '<div class="draft-stat"><strong>' + (draft.familyGroups || []).length + '</strong><span>ê°€ì¡±ê´€ê³„</span></div>' +
+    '<div class="draft-stat"><strong>' + resources + '</strong><span>ìì›</span></div>';
+  var warningItems = draft.source && draft.source.warnings ? draft.source.warnings : [];
+  warnings.innerHTML = warningItems.map(function(item) { return '<div>â€¢ ' + escapeHtml(item) + '</div>'; }).join("");
+  var peopleRows = people.map(function(person) {
+    var detail = [person.genderUnknown ? "ì„±ë³„ ë¯¸ìƒ" : person.gender === "male" ? "ë‚¨ì„±" : person.gender === "female" ? "ì—¬ì„±" : "ê¸°íƒ€/ë¯¸ìƒ"];
+    if (person.birthYear) detail.push(person.birthYear + "ë…„ìƒ");
+    if (person.birthOrderUnknown) detail.push("ì¶œìƒìˆœì„œ ë¯¸ìƒ");
+    return '<li><strong>' + escapeHtml(person.name) + '</strong> Â· ' + escapeHtml(detail.join(", ")) + '</li>';
+  }).join("");
+  var resourceRows = people.reduce(function(all, person) {
+    return all.concat((person.resources || []).map(function(resource) {
+      return '<li><strong>' + escapeHtml(resource.name) + '</strong> Â· ' + escapeHtml((resource.supports || []).join(", ")) + '</li>';
+    }));
+  }, []).join("");
+  preview.innerHTML =
+    '<div class="preview-section"><h3>ì¸ë¬¼ ì´ˆì•ˆ</h3><ul>' + (peopleRows || '<li>ì¶”ì¶œëœ ì¸ë¬¼ì´ ì—†ìŠµë‹ˆë‹¤.</li>') + '</ul></div>' +
+    '<div class="preview-section"><h3>ìì› ì´ˆì•ˆ</h3><ul>' + (resourceRows || '<li>ì¶”ì¶œëœ ìì›ì´ ì—†ìŠµë‹ˆë‹¤.</li>') + '</ul></div>';
+  apply.disabled = false;
+}
+
+function openDocumentDraft(file) {
+  var overlay = document.getElementById("draftOverlay");
+  var status = document.getElementById("draftStatus");
+  var summary = document.getElementById("draftSummary");
+  var warnings = document.getElementById("draftWarnings");
+  var preview = document.getElementById("draftPreview");
+  var apply = document.getElementById("draftApplyButton");
+  overlay.hidden = false;
+  status.textContent = file.name + "ì„(ë¥¼) ë¶„ì„í•˜ê³  ìˆìŠµë‹ˆë‹¤.";
+  summary.innerHTML = "";
+  warnings.innerHTML = "";
+  preview.innerHTML = "";
+  apply.disabled = true;
+  var reader = new FileReader();
+  reader.onload = async function() {
+    try {
+      var bytes = new Uint8Array(reader.result);
+      if (bytes.length > 12 * 1024 * 1024) throw new Error("íŒŒì¼ í¬ê¸°ëŠ” 12MB ì´í•˜ë§Œ ì§€ì›í•©ë‹ˆë‹¤.");
+      var response = await fetch("/api/document-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: file.name, data: bytesToBase64(bytes) })
+      });
+      var result = await response.json();
+      if (!response.ok) throw new Error(result.error || "ë¬¸ì„œ ë¶„ì„ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
+      documentDraft = result.draft;
+      showDocumentDraftPreview(documentDraft);
+    } catch (error) {
+      status.textContent = error.message || "ë¬¸ì„œ ë¶„ì„ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.";
+      warnings.innerHTML = "<div>ë¬¸ì„œë¥¼ ë¶„ì„í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤. íŒŒì¼ í˜•ì‹ê³¼ ë‚´ìš©ì„ í™•ì¸í•´ ì£¼ì„¸ìš”.</div>";
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function applyDocumentDraft() {
+  if (!documentDraft) return;
+  rememberUndo();
+  state = normalizeState(JSON.parse(JSON.stringify(documentDraft)));
+  state.source = documentDraft.source;
+  backgroundImageUrl = null;
+  householdDraft = null;
+  closeQuickEditor();
+  closeDocumentDraft();
+  layoutFamilyTree();
+  render();
+  showToast("ë¬¸ì„œ ë¶„ì„ ì´ˆì•ˆì„ ì ìš©í–ˆìŠµë‹ˆë‹¤. ë‚´ìš©ì„ í™•ì¸í•˜ê³  ìˆ˜ì •í•´ ì£¼ì„¸ìš”.");
+}
+
+function loadJson(file) {
+  var reader = new FileReader();
+  reader.onload = function() {
+    try {
+      var loadedState = JSON.parse(reader.result);
+      rememberUndo();
+      state = normalizeState(loadedState);
+      backgroundImageUrl = null;
+      householdDraft = null;
+      closeQuickEditor();
+      render();
+      showToast("ìƒíƒœë„ íŒŒì¼ì„ ë¶ˆëŸ¬ì™”ìŠµë‹ˆë‹¤.");
+    } catch (error) {
+      showToast("ì˜¬ë°”ë¥¸ ìƒíƒœë„ íŒŒì¼ì´ ì•„ë‹™ë‹ˆë‹¤.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+async function loadSelectedFile(file) {
+  var lowerName = file.name.toLowerCase();
+  var isJson = file.type === "application/json" || lowerName.endsWith(".json");
+  var isPng = file.type === "image/png" || lowerName.endsWith(".png");
+  var isImage = file.type.indexOf("image/") === 0 || /\.(png|jpe?g)$/i.test(lowerName);
+  if (isJson) {
+    loadJson(file);
+    return;
+  }
+
+  if (isPng) {
+    try {
+      var embeddedState = await extractStateFromPng(file);
+      if (embeddedState) {
+        rememberUndo();
+        state = normalizeState(embeddedState);
+        backgroundImageUrl = null;
+        householdDraft = null;
+        closeQuickEditor();
+        render();
+        showToast("í¸ì§‘ìš© PNGì—ì„œ ìƒíƒœë„ ë°ì´í„°ë¥¼ ë³µì›í–ˆìŠµë‹ˆë‹¤.");
+        return;
+      }
+    } catch (error) {
+      showToast("PNGì˜ í¸ì§‘ ë°ì´í„°ë¥¼ ì½ì§€ ëª»í•´ ì°¸ê³  ë°°ê²½ìœ¼ë¡œ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤.");
+    }
+  }
+
+  if (isImage) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      rememberUndo();
+      backgroundImageUrl = reader.result;
+      renderMap();
+      showToast("ì´ë¯¸ì§€ë¥¼ ì°¸ê³  ë°°ê²½ìœ¼ë¡œ ë¶ˆëŸ¬ì™”ìŠµë‹ˆë‹¤. ì¼ë°˜ ì´ë¯¸ì§€ëŠ” ìš”ì†Œë³„ í¸ì§‘ìœ¼ë¡œ ë³€í™˜ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
+    };
+    reader.readAsDataURL(file);
+    return;
+  }
+  showToast("JSON, PNG ë˜ëŠ” JPG íŒŒì¼ì„ ì„ íƒí•´ì£¼ì„¸ìš”.");
+}
+
+function clearState() {
+  rememberUndo();
+  state = initialState();
+  householdDraft = null;
+  backgroundImageUrl = null;
+  closeQuickEditor();
+  openSidebarPanel("startPanel");
+  render();
+  showToast("ê°€ê³„ë„ ê¸°ë³¸ í‹€ì„ ìƒˆë¡œ ë§Œë“¤ì—ˆìŠµë‹ˆë‹¤.");
+}
+
+function startBlankCase() {
+  rememberUndo();
+  state = blankCaseState();
+  householdDraft = null;
+  backgroundImageUrl = null;
+  closeQuickEditor();
+  openSidebarPanel("startPanel");
+  render();
+  showToast("ë¹ˆ ì‚¬ë¡€ë¥¼ ì‹œì‘í–ˆìŠµë‹ˆë‹¤. ì¤‘ì‹¬ ì¸ë¬¼ë¶€í„° ì…ë ¥í•´ì£¼ì„¸ìš”.");
+}
+
+function defaultResourcePosition(person, index) {
+  var side = index % 2 === 0 ? 1 : -1;
+  var tier = Math.floor(index / 2);
+  var verticalOffset = person.generation === 0 ? 105 + tier * 90 : tier * 90;
+  return {
+    x: clamp(person.x + side * (245 + tier * 45), 100, 1000),
+    y: clamp(person.y + verticalOffset, 70, 690)
+  };
+}
+
+function resourceConnectionPath(person, resource, relationship) {
+  var dx = resource.x - person.x;
+  var dy = resource.y - person.y;
+  if (Math.abs(dx) < .001 && Math.abs(dy) < .001) {
+    return "M " + person.x + " " + person.y;
+  }
+  var length = Math.hypot(dx, dy) || 1;
+  var personEdge = personEdgePoint(person, resource);
+  var personX = personEdge.x;
+  var personY = personEdge.y;
+  var scale = Math.min(
+    Math.abs(dx) > 0 ? resource.width / 2 / Math.abs(dx) : Infinity,
+    Math.abs(dy) > 0 ? resource.height / 2 / Math.abs(dy) : Infinity
+  );
+  var resourceX = resource.x - dx * scale;
+  var resourceY = resource.y - dy * scale;
+  return relationshipPath(personX, personY, resourceX, resourceY, relationship);
+}
+
+function splitLabel(value, maxChars) {
+  var text = String(value || "");
+  if (text.length <= maxChars) return [text];
+  var words = text.split(/\s+/);
+  if (words.length > 1) {
+    var lines = [""];
+    words.forEach(function(word) {
+      var last = lines.length - 1;
+      if ((lines[last] + " " + word).trim().length <= maxChars) {
+        lines[last] = (lines[last] + " " + word).trim();
+      } else {
+        lines.push(word);
+      }
+    });
+    return lines.map(function(line) {
+      return line.length > maxChars ? line.slice(0, maxChars - 1) + "â€¦" : line;
+    });
+  }
+  return [
+    text.slice(0, maxChars),
+    text.length > maxChars * 2 ? text.slice(maxChars, maxChars * 2 - 1) + "â€¦" : text.slice(maxChars)
+  ];
+}
+
+function fitResourceHeight(resource) {
+  var supports = resource.supports || splitSupports(resource.memo);
+  var itemCount = supports.length || 1;
+  var approximateLines = supports.reduce(function(total, item) {
+    return total + Math.max(1, Math.ceil(String(item || "").length / 18));
+  }, 0) || 1;
+  var requiredHeight = 50 + Math.max(itemCount, approximateLines) * 12;
+  resource.height = clamp(Math.max(Number(resource.height) || 72, requiredHeight), 56, 260);
+}
+
+function makeSvg(tag, attrs) {
+  var element = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  Object.keys(attrs).forEach(function(key) { element.setAttribute(key, attrs[key]); });
+  return element;
+}
+
+function svgPoint(event) {
+  var point = svg.createSVGPoint();
+  point.x = event.clientX;
+  point.y = event.clientY;
+  return point.matrixTransform(svg.getScreenCTM().inverse());
+}
+
+function personById(id) {
+  return state.people.find(function(person) { return person.id === id; });
+}
+
+function resourceById(person, id) {
+  return person && person.resources.find(function(resource) { return resource.id === id; });
+}
+
+function findResourceInState(source, id) {
+  if (!id) return null;
+  for (var index = 0; index < source.people.length; index += 1) {
+    var resource = source.people[index].resources.find(function(item) { return item.id === id; });
+    if (resource) return { owner: source.people[index], resource: resource };
+  }
+  return null;
+}
+
+function idOf(item) { return item.id; }
+function byX(a, b) { return a.x - b.x; }
+function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+function shortText(value, max) {
+  value = String(value || "");
+  return value.length > max ? value.slice(0, max - 1) + "â€¦" : value;
+}
+function safeFilename(value) {
+  return String(value).replace(/[\\/:*?"<>|]/g, "_").trim() || "ìƒíƒœë„";
+}
+function downloadBlob(blob, filename) {
+  var url = URL.createObjectURL(blob);
+  var anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(function() { toast.classList.remove("show"); }, 1800);
+}
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+function attr(value) { return escapeHtml(value); }
+
+document.getElementById("mapTitle").addEventListener("input", function(event) {
+  state.title = event.target.value;
+  saveLocalState();
+});
+document.getElementById("clientName").addEventListener("input", function(event) {
+  clientPerson().name = event.target.value || "í´ë¼ì´ì–¸íŠ¸";
+  renderPeople();
+  renderMap();
+  saveLocalState();
+});
+document.getElementById("selectedName").addEventListener("input", function(event) {
+  selectedPerson().name = event.target.value || "ì´ë¦„ ì—†ìŒ";
+  renderPeople();
+  renderMap();
+  saveLocalState();
+});
+document.getElementById("selectedSupportMemo").addEventListener("input", function(event) {
+  var person = selectedPerson();
+  setPersonSupport(person, event.target.value);
+  renderPeople();
+  renderMap();
+  saveLocalState();
+});
+document.getElementById("selectedGender").addEventListener("change", function(event) {
+  rememberUndo();
+  selectedPerson().gender = event.target.value;
+  render();
+});
+document.getElementById("selectedRole").addEventListener("change", function(event) {
+  rememberUndo();
+  changePersonRole(selectedPerson(), event.target.value);
+});
+document.getElementById("selectedBirthYear").addEventListener("input", function(event) {
+  selectedPerson().birthYear = event.target.value.trim();
+  renderPeople();
+  renderMap();
+  saveLocalState();
+});
+document.getElementById("selectedDeathYear").addEventListener("input", function(event) {
+  selectedPerson().deathYear = event.target.value.trim();
+  renderPeople();
+  renderMap();
+  saveLocalState();
+});
+document.getElementById("selectedDeceased").addEventListener("change", function(event) {
+  rememberUndo();
+  selectedPerson().deceased = event.target.checked;
+  render();
+});
+document.getElementById("selectedDeathYearUnknown").addEventListener("change", function(event) {
+  rememberUndo();
+  selectedPerson().deathYearUnknown = event.target.checked;
+  if (event.target.checked) selectedPerson().deceased = true;
+  render();
+});
+document.getElementById("selectedGenderUnknown").addEventListener("change", function(event) {
+  rememberUndo();
+  selectedPerson().genderUnknown = event.target.checked;
+  if (event.target.checked) selectedPerson().gender = "other";
+  render();
+});
+document.getElementById("selectedBirthOrderUnknown").addEventListener("change", function(event) {
+  rememberUndo();
+  selectedPerson().birthOrderUnknown = event.target.checked;
+  render();
+});
+document.getElementById("selectedPetType").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  if (person.role !== "pet") return;
+  rememberUndo();
+  person.petType = event.target.value;
+  render();
+});
+document.getElementById("selectedPetOwner").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  if (person.role !== "pet" || !event.target.value) return;
+  rememberUndo();
+  person.petOwnerId = event.target.value;
+  renderMap();
+  saveLocalState();
+});
+document.getElementById("selectedOutgoingRelationship").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  if (person.role === "client") return;
+  rememberUndo();
+  var relationship = relationshipForPerson(person.id);
+  upsertSocialLink(
+    clientPerson().id,
+    person.id,
+    event.target.value,
+    relationship ? relationship.inType : "none"
+  );
+  render();
+});
+document.getElementById("selectedIncomingRelationship").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  if (person.role === "client") return;
+  rememberUndo();
+  var relationship = relationshipForPerson(person.id);
+  upsertSocialLink(
+    clientPerson().id,
+    person.id,
+    relationship ? relationship.outType : "none",
+    event.target.value
+  );
+  render();
+});
+document.getElementById("selectedCoupleStatus").addEventListener("change", function(event) {
+  var group = coupleGroupForPerson(selectedPerson().id);
+  if (!group) return;
+  rememberUndo();
+  group.status = event.target.value;
+  selectedPerson().coupleStatus = event.target.value;
+  render();
+});
+document.getElementById("selectedChildType").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  var group = childGroupForPerson(person.id);
+  if (!group) return;
+  rememberUndo();
+  group.childTypes[person.id] = event.target.value;
+  person.childType = event.target.value;
+  render();
+});
+document.getElementById("selectedParentPerson").addEventListener("change", function(event) {
+  var person = selectedPerson();
+  if (person.role !== "grandchild" || !event.target.value) return;
+  rememberUndo();
+  removeFromFamilies(person.id);
+  person.parentId = event.target.value;
+  attachByRole(person, "grandchild");
+  layoutFamilyTree();
+});
+
+["mapTitle", "clientName", "selectedName", "selectedBirthYear", "selectedDeathYear"].forEach(
+  function(fieldId) {
+    var field = document.getElementById(fieldId);
+    var editSnapshot = null;
+    field.addEventListener("focus", function() {
+      editSnapshot = createUndoSnapshot();
+    });
+    field.addEventListener("change", function() {
+      if (editSnapshot && editSnapshot.stateJson !== JSON.stringify(state)) {
+        rememberUndo(editSnapshot);
+      }
+      editSnapshot = null;
+    });
+  }
+);
+
+document.getElementById("addPerson").addEventListener("click", addPerson);
+document.getElementById("newRole").addEventListener("change", updateNewFamilyFields);
+document.getElementById("newPersonName").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") addPerson();
+});
+document.getElementById("addResource").addEventListener("click", addResource);
+document.getElementById("resourceName").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") addResource();
+});
+document.getElementById("deletePerson").addEventListener("click", deleteSelectedPerson);
+document.getElementById("startHousehold").addEventListener("click", function() {
+  startHouseholdDraft(null);
+});
+document.getElementById("saveHousehold").addEventListener("click", saveHouseholdDraft);
+document.getElementById("cancelHousehold").addEventListener("click", cancelHouseholdDraft);
+document.getElementById("newButton").addEventListener("click", clearState);
+document.getElementById("blankCaseButton").addEventListener("click", startBlankCase);
+document.getElementById("bulkPeopleButton").addEventListener("click", openBulkInput);
+document.getElementById("sidebarDocumentDraftButton").addEventListener("click", function() {
+  document.getElementById("documentDraftInput").click();
+});
+document.getElementById("undoButton").addEventListener("click", undoLastAction);
+document.getElementById("resetButton").addEventListener("click", clearState);
+document.getElementById("saveButton").addEventListener("click", function() {
+  exportPng(true);
+});
+document.getElementById("externalPngButton").addEventListener("click", exportExternalPng);
+document.getElementById("externalJsonButton").addEventListener("click", downloadExternalJson);
+document.getElementById("loadButton").addEventListener("click", function() {
+  document.getElementById("loadInput").click();
+});
+document.getElementById("loadInput").addEventListener("change", function(event) {
+  var file = event.target.files[0];
+  if (file) loadSelectedFile(file);
+  event.target.value = "";
+});
+document.getElementById("documentDraftButton").addEventListener("click", function() {
+  document.getElementById("documentDraftInput").click();
+});
+document.getElementById("documentDraftInput").addEventListener("change", function(event) {
+  var file = event.target.files[0];
+  if (file) openDocumentDraft(file);
+  event.target.value = "";
+});
+document.getElementById("driveConnectButton").addEventListener("click", function() {
+  location.href = "/api/google-auth?action=login&returnTo=" + encodeURIComponent(location.pathname);
+});
+document.getElementById("driveSaveButton").addEventListener("click", saveCurrentToDrive);
+document.getElementById("driveRefreshButton").addEventListener("click", function() {
+  refreshDriveCases().catch(function(error) { showToast(error.message || "ì €ì¥ ëª©ë¡ì„ ìƒˆë¡œê³ ì¹¨í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤."); });
+});
+document.getElementById("driveLogoutButton").addEventListener("click", function() {
+  location.href = "/api/google-auth?action=logout&returnTo=" + encodeURIComponent(location.pathname);
+});
+document.getElementById("driveCaseSearch").addEventListener("input", renderDriveCases);
+document.getElementById("acknowledgeReviewButton").addEventListener("click", acknowledgeReview);
+document.getElementById("draftApplyButton").addEventListener("click", applyDocumentDraft);
+document.getElementById("draftCancelButton").addEventListener("click", closeDocumentDraft);
+document.getElementById("draftCloseButton").addEventListener("click", closeDocumentDraft);
+document.getElementById("bulkApplyButton").addEventListener("click", applyBulkPeople);
+document.getElementById("bulkCancelButton").addEventListener("click", closeBulkInput);
+document.getElementById("bulkCloseButton").addEventListener("click", closeBulkInput);
+document.getElementById("bulkPeopleInput").addEventListener("input", function() {
+  var parsed = parseBulkPeople(this.value);
+  document.getElementById("bulkInputStatus").textContent = parsed.errors.length
+    ? parsed.errors[0]
+    : (parsed.records.length ? parsed.records.length + "ëª…ì„ ì¶”ê°€í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤." : "");
+});
+var caseSaveButton = document.getElementById("caseSaveButton");
+if (window.parent !== window) {
+  caseSaveButton.hidden = false;
+  caseSaveButton.addEventListener("click", function() {
+    window.parent.postMessage({
+      type: "SARYE_GENOGRAM_SAVE",
+      payload: JSON.parse(JSON.stringify(state))
+    }, window.location.origin);
+    showToast("ì‚¬ë¡€ì— ì €ì¥í–ˆìŠµë‹ˆë‹¤.");
+  });
+  window.addEventListener("message", function(event) {
+    if (event.origin !== window.location.origin || event.source !== window.parent) return;
+    if (event.data && event.data.type === "SARYE_GENOGRAM_LOAD" && event.data.payload) {
+      rememberUndo();
+      state = normalizeState(JSON.parse(JSON.stringify(event.data.payload)));
+      backgroundImageUrl = null;
+      householdDraft = null;
+      closeQuickEditor();
+      layoutFamilyTree();
+      render();
+      showToast("ëŒ€ìƒì ìë£Œë¡œ ê°€ê³„ë„ ì´ˆì•ˆì„ ë§Œë“¤ì—ˆìŠµë‹ˆë‹¤.");
+    }
+  });
+  window.parent.postMessage({ type: "SARYE_GENOGRAM_READY" }, window.location.origin);
+}
+window.addEventListener("keydown", function(event) {
+  var target = event.target;
+  var tagName = target && target.tagName;
+  var isTyping = tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT" ||
+    (target && target.isContentEditable);
+  if (event.key === "Backspace" && !isTyping) {
+    event.preventDefault();
+    event.stopPropagation();
+    undoLastAction();
+    return;
+  }
+  if (event.key === "Escape") {
+    closeQuickEditor();
+    if (householdDraft) cancelHouseholdDraft();
+  }
+}, true);
+
+document.querySelectorAll(".sidebar-panel").forEach(function(panel) {
+  panel.addEventListener("toggle", function() {
+    if (!panel.open) return;
+    document.querySelectorAll(".sidebar-panel").forEach(function(other) {
+      if (other !== panel) other.open = false;
+    });
+  });
+});
+
+setDriveConnection(driveConnection);
+renderDriveCases();
+initializeDriveStorage();
+render();

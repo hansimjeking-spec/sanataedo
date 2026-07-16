@@ -457,6 +457,13 @@ textarea:focus {
   color: #fff;
   font-weight: 800;
 }
+.external-export-button {
+  color: #765300;
+  background: #fff8df;
+  border-color: #e4c66d;
+  font-weight: 700;
+}
+.external-export-button:hover { background: #fff0bd; }
 .stage {
   position: relative;
   min-height: 0;
